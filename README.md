@@ -1,23 +1,23 @@
 # Worktime
 
-Worktime unifies holiday planning and rotation-based scheduling into a single offline-first web app so teams can align time-off requests with shift coverage without needing a server. It combines lightweight `.hday` files for time-off data with deterministic schedule rules that run entirely in the browser.
+Worktime is the proposed merge of HdayPlanner and NextShift: an offline-first, browser-only planner that overlays `.hday` time-off files on top of deterministic shift rotations so teams can balance coverage and leave without needing a backend.
 
 **Product positioning**
-- **All-in-one planner**: plan time off and validate coverage against shift rotations in one view.
-- **Offline-first**: local files + in-browser logic, no backend required.
-- **Portable data**: simple, human-readable formats that travel with the team.
-- **Merge-ready**: intentionally bridges HdayPlanner’s holiday focus and NextShift’s schedule logic.
+- **Unified planning context**: view holidays/time off and shift rotations together.
+- **Frontend-first**: runs entirely in the browser (local files + deterministic rules).
+- **Portable data**: `.hday` files and simple configs stay with the team.
+- **Merge intent**: combines HdayPlanner’s time-off editor with NextShift’s schedule engine.
 
 ## Overview
 
-Worktime is an offline-first planning tool that lets people request, review, and coordinate time off while keeping shift rotations intact. It loads time-off data from local `.hday` files and applies schedule rules in the browser to visualize coverage and conflicts, all without requiring a backend.
+Worktime brings together holiday planning and rotation-based scheduling in one offline-first web application. The recommended integration path is to keep NextShift as the shell (PWA + rotation views) and embed HdayPlanner’s `.hday` import/edit/export workflow, so a single UI can show coverage alongside time off.
 
 ## Key Features
 
-- Time-off planning with `.hday` files
-- Rotation-based schedule visualization
-- Conflict detection between time off and shifts
-- Local-first data handling for privacy and portability
+- Import, edit, and export `.hday` time-off files
+- Rotation-based schedule generation in the browser
+- Overlay holidays on shift views to detect conflicts
+- Offline-first operation with local storage
 - Exportable views for sharing and review
 
 ## Who It’s For
@@ -39,39 +39,37 @@ Worktime is an offline-first planning tool that lets people request, review, and
 
 ## Time-Off + Schedule Logic (No Backend)
 
-Worktime treats time-off data and schedule logic as complementary inputs to a single in-browser calculation. The `.hday` files represent requests and approved time off, while deterministic rotation rules generate expected staffing. The UI overlays these two datasets to highlight coverage gaps and conflicts. Because both data sources live locally and the logic is deterministic, the app can operate fully offline without any server.
+Worktime merges two inputs into a single in-memory event model: imported `.hday` holidays and computed shift events. The schedule engine deterministically generates shifts in the browser, and the UI overlays time-off entries to highlight gaps or conflicts. Because both sources are local and the rules are deterministic, the app can run entirely offline with no server.
 
 ## Comparison to Current Tools
 
 **HdayPlanner vs NextShift**
 
-- **HdayPlanner**: excels at time-off capture and simple holiday planning, but lacks schedule context.
+- **HdayPlanner**: excels at time-off capture and `.hday` editing, but lacks schedule context.
 - **NextShift**: excels at rotation logic and coverage visualization, but lacks integrated time-off data.
 - **Worktime**: intentionally merges both workflows into a single, offline-first experience.
 
 ## Quick Start
 
-1. **Clone and install**
+1. **Install dependencies**
    ```bash
-   git clone <repo-url>
-   cd worktime
-   # install dependencies
+   npm install
    ```
 2. **Run locally**
    ```bash
-   # start the dev server
+   npm run dev
    ```
 3. **Example workflow**
-   - Load a `.hday` file with upcoming requests.
+   - Import a `.hday` file with upcoming requests.
    - Configure rotation rules for your team’s shifts.
    - Review coverage conflicts and adjust time off or rotations.
 
 ## Roadmap
 
-- Time-off approval flows
-- Shared team views with optional backend storage
+- Holiday overlay on shift views (merge-ready UI)
+- Unified event model for shifts + time off
+- Optional shared team storage and approval flows
 - Calendar integrations and export automation
-- Policy rules (blackout dates, minimum coverage)
 
 ## Contributing
 
