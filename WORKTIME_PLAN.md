@@ -51,6 +51,7 @@ export interface CalendarEvent {
 **Choice: NextShift as the shell**
 
 Reasons:
+
 - Already a lightweight PWA with offline-first behavior.
 - Rotation schedule views are the core navigation experience for shift teams.
 - HdayPlanner’s `.hday` editing can be integrated without introducing backend needs.
@@ -70,24 +71,29 @@ Reasons:
 ## 5. Migration phases & compatibility requirements
 
 ### Phase 1: Library extraction
+
 - Isolate `.hday` parsing/validation into `lib/hday`.
 - Isolate shift rotation logic into `lib/shift`.
 - Add shared date/config utilities.
 
 ### Phase 2: Unified event store
+
 - Build an in-memory event store combining computed shifts + `.hday` events.
 - Define event merge rules and overlay semantics.
 
 ### Phase 3: UI integration (NextShift shell)
+
 - Add a **Holiday/Time Off** tab to NextShift.
 - Integrate `.hday` import/export and editor UI.
 - Overlay holiday events on schedule and transfer views.
 
 ### Phase 4: Refinement & export
+
 - Add/export CSV or iCal adapters (optional).
 - Iterate on UX to keep shift views fast and uncluttered.
 
 ### Compatibility requirements
+
 - Offline-first operation (no backend dependency for core flows).
 - Deterministic schedule calculation using the existing reference date/team model.
 - Full `.hday` format compatibility for import/export.

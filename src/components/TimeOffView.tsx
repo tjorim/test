@@ -1,0 +1,457 @@
+import { useRef, useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import Table from 'react-bootstrap/Table';
+import type { EventFlag, HdayEvent, TimeLocationFlag, TypeFlag } from '../lib/hday/types';
+import {
+  buildPreviewLine,
+  getEventColor,
+  getEventTypeLabel,
+  getTimeLocationSymbol,
+  normalizeEventFlags,
+  parseHday,
+} from '../lib/hday/parser';
+import { isValidDate } from '../lib/hday/validation';
+import { useEventStore } from '../contexts/EventStoreContext';
+import { useToast } from '../contexts/ToastContext';
+import { EventModal } from './EventModal';
+import { ConfirmationDialog } from './ConfirmationDialog';
+
+const TYPE_FLAG_OPTIONS: Array<[TypeFlag | 'none', string]> = [
+  ['none', 'Holiday (default)'],
+  ['business', 'Business trip'],
+  ['course', 'Training/Course'],
+  ['in', 'In office'],
+  ['weekend', 'Weekend'],
+  ['birthday', 'Birthday'],
+  ['ill', 'Sick leave'],
+  ['other', 'Other'],
+];
+
+const TIME_LOCATION_FLAG_OPTIONS: Array<[TimeLocationFlag | 'none', string]> = [
+  ['none', 'Full day'],
+  ['half_am', 'AM (half day)'],
+  ['half_pm', 'PM (half day)'],
+  ['onsite', 'Onsite'],
+  ['no_fly', 'No fly'],
+  ['can_fly', 'Can fly'],
+];
+
+const TYPE_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TYPE_FLAG_OPTIONS.map(
+  ([flag]) => flag,
+).filter((f) => f !== 'none') as EventFlag[];
+
+const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_FLAG_OPTIONS.map(
+  ([flag]) => flag,
+).filter((f) => f !== 'none') as EventFlag[];
+
+/**
+ * Time Off View Component
+ *
+ * Accessibility Features:
+ * - Semantic table structure with proper thead/tbody for screen readers
+ * - ARIA labels on icon-only buttons (Edit/Delete) for screen reader announcements
+ * - aria-hidden on decorative icons to prevent redundant announcements
+ * - Proper form labels and ARIA attributes in EventModal (aria-required, aria-describedby)
+ * - Keyboard navigation supported via standard HTML elements (buttons, inputs, table)
+ * - Color contrast: Event badges use #000 text on colored backgrounds for readability
+ * - Modal dialogs use React Bootstrap's built-in accessibility features (focus trap, Escape key)
+ * - Empty state provides helpful context for new users
+ * - Import/Export buttons clearly labeled with icons and text
+ * - Responsive table layout adapts to smaller screens
+ */
+export function TimeOffView() {
+  const { events, addEvent, updateEvent, deleteEvent, importHday, exportHday } = useEventStore();
+  const toast = useToast();
+
+  // Modal state
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [editIndex, setEditIndex] = useState(-1);
+
+  // Event form state
+  const [eventType, setEventType] = useState<'range' | 'weekly'>('range');
+  const [eventWeekday, setEventWeekday] = useState(1);
+  const [eventStart, setEventStart] = useState('');
+  const [eventEnd, setEventEnd] = useState('');
+  const [eventTitle, setEventTitle] = useState('');
+  const [eventFlags, setEventFlags] = useState<EventFlag[]>([]);
+
+  // Validation errors
+  const [startDateError, setStartDateError] = useState('');
+  const [endDateError, setEndDateError] = useState('');
+
+  // Delete confirmation
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState(-1);
+
+  // Refs
+  const formRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const resetForm = () => {
+    setEventType('range');
+    setEventWeekday(1);
+    setEventStart('');
+    setEventEnd('');
+    setEventTitle('');
+    setEventFlags([]);
+    setStartDateError('');
+    setEndDateError('');
+  };
+
+  const validateForm = (): boolean => {
+    let valid = true;
+
+    if (eventType === 'range') {
+      // Validate start date
+      if (!eventStart) {
+        setStartDateError('Start date is required');
+        valid = false;
+      } else if (!isValidDate(eventStart)) {
+        setStartDateError('Invalid date (e.g., Feb 30 or April 31)');
+        valid = false;
+      } else {
+        setStartDateError('');
+      }
+
+      // Validate end date
+      if (eventEnd && !isValidDate(eventEnd)) {
+        setEndDateError('Invalid date (e.g., Feb 30 or April 31)');
+        valid = false;
+      } else if (eventEnd && eventStart && eventEnd < eventStart) {
+        setEndDateError('End date must be after start date');
+        valid = false;
+      } else {
+        setEndDateError('');
+      }
+    }
+
+    return valid;
+  };
+
+  const handleOpenAddModal = () => {
+    resetForm();
+    setEditIndex(-1);
+    setShowEventModal(true);
+  };
+
+  const handleOpenEditModal = (index: number) => {
+    const event = events[index];
+    if (!event) return;
+
+    setEditIndex(index);
+
+    if (event.type === 'range') {
+      setEventType('range');
+      setEventStart(event.start || '');
+      setEventEnd(event.end || '');
+    } else if (event.type === 'weekly') {
+      setEventType('weekly');
+      setEventWeekday(event.weekday || 1);
+    }
+
+    setEventTitle(event.title || '');
+    setEventFlags(event.flags || []);
+    setShowEventModal(true);
+  };
+
+  const handleSubmitEvent = () => {
+    if (!validateForm()) {
+      toast.showError('Please fix validation errors before saving');
+      return;
+    }
+
+    const normalizedFlags = normalizeEventFlags(eventFlags);
+
+    let newEvent: HdayEvent;
+
+    if (eventType === 'range') {
+      newEvent = {
+        type: 'range',
+        start: eventStart,
+        end: eventEnd || eventStart,
+        flags: normalizedFlags,
+        title: eventTitle,
+      };
+    } else {
+      newEvent = {
+        type: 'weekly',
+        weekday: eventWeekday,
+        flags: normalizedFlags,
+        title: eventTitle,
+      };
+    }
+
+    if (editIndex >= 0) {
+      updateEvent(editIndex, newEvent);
+      toast.showSuccess(`Event updated successfully`, '✓');
+    } else {
+      addEvent(newEvent);
+      toast.showSuccess(`Event added successfully`, '✓');
+    }
+
+    setShowEventModal(false);
+    resetForm();
+  };
+
+  const handleDeleteClick = (index: number) => {
+    setDeleteIndex(index);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteIndex >= 0) {
+      deleteEvent(deleteIndex);
+      toast.showSuccess('Event deleted successfully', '🗑️');
+    }
+    setShowDeleteConfirm(false);
+    setDeleteIndex(-1);
+  };
+
+  const handleImport = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      // Validate by parsing
+      parseHday(text);
+      // Import if valid
+      importHday(text);
+      toast.showSuccess(`Imported ${file.name}`, '📥');
+    } catch (error) {
+      console.error('Failed to import .hday file:', error);
+      toast.showError('Failed to import file. Please check the format.');
+    }
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleExport = () => {
+    const hdayContent = exportHday();
+
+    if (!hdayContent.trim()) {
+      toast.showError('No events to export');
+      return;
+    }
+
+    const blob = new Blob([hdayContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'timeoff.hday';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast.showSuccess('Exported timeoff.hday', '📤');
+  };
+
+  const previewLine = buildPreviewLine({
+    eventType,
+    start: eventStart,
+    end: eventEnd,
+    weekday: eventWeekday,
+    title: eventTitle,
+    flags: eventFlags,
+  });
+
+  const handleTypeFlagChange = (flag: TypeFlag | 'none') => {
+    if (flag === 'none') {
+      setEventFlags((prev) => prev.filter((f) => !TYPE_FLAGS_AS_EVENT_FLAGS.includes(f)));
+    } else {
+      setEventFlags((prev) => {
+        const filtered = prev.filter((f) => !TYPE_FLAGS_AS_EVENT_FLAGS.includes(f));
+        return [...filtered, flag];
+      });
+    }
+  };
+
+  const handleTimeFlagChange = (flag: TimeLocationFlag | 'none') => {
+    if (flag === 'none') {
+      setEventFlags((prev) => prev.filter((f) => !TIME_LOCATION_FLAGS_AS_EVENT_FLAGS.includes(f)));
+    } else {
+      setEventFlags((prev) => {
+        const filtered = prev.filter((f) => !TIME_LOCATION_FLAGS_AS_EVENT_FLAGS.includes(f));
+        return [...filtered, flag];
+      });
+    }
+  };
+
+  return (
+    <div className="time-off-view py-3">
+      <Card>
+        <Card.Header className="d-flex justify-content-between align-items-center">
+          <h5 className="mb-0">
+            <i className="bi bi-calendar-check me-2"></i>
+            Time Off Management
+          </h5>
+          <div>
+            <Button variant="outline-primary" size="sm" onClick={handleImport} className="me-2">
+              <i className="bi bi-upload me-1"></i>
+              Import
+            </Button>
+            <Button variant="outline-primary" size="sm" onClick={handleExport} className="me-2">
+              <i className="bi bi-download me-1"></i>
+              Export
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleOpenAddModal}>
+              <i className="bi bi-plus-lg me-1"></i>
+              Add Event
+            </Button>
+          </div>
+        </Card.Header>
+        <Card.Body>
+          {events.length === 0 ? (
+            <div className="text-center text-muted py-5">
+              <i className="bi bi-calendar-x display-4 d-block mb-3"></i>
+              <p>No time-off events yet.</p>
+              <p className="small">
+                Click "Add Event" to create your first event, or "Import" to load an existing .hday
+                file.
+              </p>
+            </div>
+          ) : (
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Date / Pattern</th>
+                  <th>Title</th>
+                  <th>Flags</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {events.map((event, index) => {
+                  const eventColor = event.type !== 'unknown' ? getEventColor(event.flags) : '#ccc';
+                  const eventLabel =
+                    event.type !== 'unknown' ? getEventTypeLabel(event.flags) : 'Unknown';
+                  const symbol = event.type !== 'unknown' ? getTimeLocationSymbol(event.flags) : '';
+
+                  return (
+                    <tr key={index}>
+                      <td>
+                        <span
+                          className="badge"
+                          style={{ backgroundColor: eventColor, color: '#000' }}
+                        >
+                          {symbol && `${symbol} `}
+                          {eventLabel}
+                        </span>
+                      </td>
+                      <td>
+                        {event.type === 'range' && (
+                          <>
+                            {event.start}
+                            {event.end && event.end !== event.start && ` → ${event.end}`}
+                          </>
+                        )}
+                        {event.type === 'weekly' &&
+                          `Every ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][event.weekday! - 1]}`}
+                        {event.type === 'unknown' && (
+                          <span className="text-muted">Unknown format</span>
+                        )}
+                      </td>
+                      <td>{event.title || <span className="text-muted">—</span>}</td>
+                      <td>
+                        {event.flags && event.flags.length > 0 ? (
+                          <span className="text-muted small">{event.flags.join(', ')}</span>
+                        ) : (
+                          <span className="text-muted">—</span>
+                        )}
+                      </td>
+                      <td>
+                        {event.type !== 'unknown' && (
+                          <>
+                            <Button
+                              variant="outline-secondary"
+                              size="sm"
+                              onClick={() => handleOpenEditModal(index)}
+                              className="me-2"
+                              aria-label={`Edit ${event.title || eventLabel}`}
+                            >
+                              <i className="bi bi-pencil" aria-hidden="true"></i>
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => handleDeleteClick(index)}
+                              aria-label={`Delete ${event.title || eventLabel}`}
+                            >
+                              <i className="bi bi-trash" aria-hidden="true"></i>
+                            </Button>
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          )}
+        </Card.Body>
+      </Card>
+
+      {/* Hidden file input for import */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".hday,text/plain"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
+      {/* Event Modal */}
+      <EventModal
+        show={showEventModal}
+        editIndex={editIndex}
+        formRef={formRef}
+        eventType={eventType}
+        eventWeekday={eventWeekday}
+        eventStart={eventStart}
+        eventEnd={eventEnd}
+        eventTitle={eventTitle}
+        eventFlags={eventFlags}
+        startDateError={startDateError}
+        endDateError={endDateError}
+        previewLine={previewLine}
+        typeFlagOptions={TYPE_FLAG_OPTIONS}
+        timeLocationFlagOptions={TIME_LOCATION_FLAG_OPTIONS}
+        typeFlagsAsEventFlags={TYPE_FLAGS_AS_EVENT_FLAGS}
+        timeLocationFlagsAsEventFlags={TIME_LOCATION_FLAGS_AS_EVENT_FLAGS}
+        onHide={() => setShowEventModal(false)}
+        onEntered={() => formRef.current?.focus()}
+        onEventTypeChange={setEventType}
+        onEventTitleChange={setEventTitle}
+        onEventWeekdayChange={setEventWeekday}
+        onStartDateChange={setEventStart}
+        onEndDateChange={setEventEnd}
+        onTypeFlagChange={handleTypeFlagChange}
+        onTimeFlagChange={handleTimeFlagChange}
+        onResetForm={resetForm}
+        onSubmit={handleSubmitEvent}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        title="Delete Event"
+        message="Are you sure you want to delete this event? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
+    </div>
+  );
+}

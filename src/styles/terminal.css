@@ -1,0 +1,312 @@
+/* Terminal CSS Custom Properties */
+:root {
+  --terminal-bg: #0c0c0c;
+  --terminal-fg: #cccccc;
+  --terminal-border: #444;
+  --terminal-border-alt: #666;
+  --terminal-header-border: #17a2b8;
+  --terminal-header-bg: #1a1a1a;
+  --terminal-subtitle: #999;
+  --terminal-dim: #888;
+  --terminal-white: #fff;
+  --terminal-black: #000;
+  --terminal-cyan: #17a2b8;
+  --terminal-green: #28a745;
+  --terminal-yellow: #ffc107;
+  --terminal-magenta: #e83e8c;
+  --terminal-blue: #007bff;
+  --terminal-red: #dc3545;
+  --terminal-gray: #868e96;
+}
+
+/* Terminal View Styles */
+.terminal-view {
+  background-color: var(--terminal-bg);
+  color: var(--terminal-fg);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 1rem;
+  min-height: 100vh;
+  overflow: auto;
+}
+
+.terminal-box {
+  border: 1px solid var(--terminal-border);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.terminal-box.double-border {
+  border: 2px double var(--terminal-border-alt);
+}
+
+.terminal-box.round-border {
+  border-radius: 8px;
+}
+
+.terminal-header {
+  text-align: center;
+  border: 2px double var(--terminal-header-border);
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  background-color: var(--terminal-header-bg);
+}
+
+.terminal-title {
+  font-weight: bold;
+  color: var(--terminal-cyan);
+  font-size: 1.1rem;
+}
+
+.terminal-subtitle {
+  color: var(--terminal-subtitle);
+  font-size: 0.9rem;
+}
+
+.terminal-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.terminal-col {
+  display: inline-block;
+}
+
+.terminal-text {
+  display: inline;
+}
+
+.terminal-text.bold {
+  font-weight: bold;
+}
+
+.terminal-text.dim {
+  color: var(--terminal-dim);
+}
+
+/* Terminal Colors */
+.terminal-text.cyan {
+  color: var(--terminal-cyan);
+}
+
+.terminal-text.green {
+  color: var(--terminal-green);
+}
+
+.terminal-text.yellow {
+  color: var(--terminal-yellow);
+}
+
+.terminal-text.magenta {
+  color: var(--terminal-magenta);
+}
+
+.terminal-text.blue {
+  color: var(--terminal-blue);
+}
+
+.terminal-text.red {
+  color: var(--terminal-red);
+}
+
+.terminal-text.gray {
+  color: var(--terminal-gray);
+}
+
+/* View selector */
+.terminal-view-selector {
+  color: var(--terminal-dim);
+  margin-bottom: 1rem;
+}
+
+.terminal-view-selector .view-item {
+  display: inline-block;
+  margin-right: 0.5rem;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.terminal-view-selector .view-item:hover {
+  color: var(--terminal-cyan);
+}
+
+.terminal-view-selector .view-item.active {
+  color: var(--terminal-white);
+}
+
+.terminal-view-selector .view-item.active:hover {
+  color: var(--terminal-white);
+}
+
+/* Team list */
+.terminal-team-row {
+  display: flex;
+  margin-bottom: 0.25rem;
+}
+
+.terminal-team-row.selected {
+  color: var(--terminal-cyan);
+  font-weight: bold;
+}
+
+.terminal-team-col {
+  display: inline-block;
+}
+
+.terminal-team-col.name {
+  width: 120px;
+}
+
+.terminal-team-col.shift {
+  width: 180px;
+}
+
+.terminal-team-col.hours {
+  width: 160px;
+}
+
+.terminal-team-col.code {
+  flex: 1;
+}
+
+/* Exit button */
+.terminal-exit-button {
+  background: transparent;
+  border: 1px solid var(--terminal-red);
+  color: var(--terminal-red);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.terminal-exit-button:hover {
+  background-color: var(--terminal-red);
+  color: var(--terminal-bg);
+}
+
+.terminal-exit-button:active {
+  transform: scale(0.98);
+}
+
+/* Help bar */
+.terminal-help {
+  border: 1px solid var(--terminal-border-alt);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  color: var(--terminal-dim);
+  font-size: 0.85rem;
+}
+
+/* Date header */
+.terminal-date-header {
+  color: var(--terminal-green);
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Transfer items */
+.terminal-transfer-item {
+  display: flex;
+  margin-top: 0.75rem;
+  gap: 1rem;
+}
+
+.terminal-transfer-date {
+  width: 150px;
+  color: var(--terminal-dim);
+}
+
+.terminal-transfer-code {
+  width: 100px;
+  color: var(--terminal-dim);
+}
+
+.terminal-transfer-info {
+  flex: 1;
+}
+
+/* Info boxes */
+.terminal-info-box {
+  border: 1px solid var(--terminal-border-alt);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.terminal-info-box.success {
+  border-color: var(--terminal-green);
+}
+
+.terminal-info-box.error {
+  border-color: var(--terminal-red);
+}
+
+.terminal-info-row {
+  margin-bottom: 0.5rem;
+}
+
+.terminal-info-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .terminal-view {
+    font-size: 12px;
+    padding: 0.5rem;
+  }
+
+  .terminal-team-col.name {
+    width: 80px;
+  }
+
+  .terminal-team-col.shift {
+    width: 120px;
+  }
+
+  .terminal-team-col.hours {
+    width: 100px;
+  }
+}
+
+/* Accessibility */
+.terminal-view:focus {
+  outline: 2px solid var(--terminal-cyan);
+  outline-offset: 2px;
+}
+
+/* Selection */
+.terminal-view ::selection {
+  background-color: var(--terminal-cyan);
+  color: var(--terminal-black);
+}
+
+/* Utility Classes */
+.mb-1 {
+  margin-bottom: 1rem;
+}
+
+.mb-075 {
+  margin-bottom: 0.75rem;
+}
+
+.mt-05 {
+  margin-top: 0.5rem;
+}
+
+.text-right {
+  text-align: right;
+}
