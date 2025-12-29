@@ -341,8 +341,11 @@ export function TimeOffView() {
                     event.type !== "unknown" ? getEventTypeLabel(event.flags) : "Unknown";
                   const symbol = event.type !== "unknown" ? getTimeLocationSymbol(event.flags) : "";
 
+                  const unknownDescriptionId =
+                    event.type === "unknown" ? `unknown-event-${index}` : undefined;
+
                   return (
-                    <tr key={index}>
+                    <tr key={index} aria-describedby={unknownDescriptionId}>
                       <td>
                         <span
                           className="badge"
@@ -362,7 +365,13 @@ export function TimeOffView() {
                         {event.type === "weekly" &&
                           `Every ${event.weekday ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][event.weekday - 1] : "Unknown"}`}
                         {event.type === "unknown" && (
-                          <span className="text-muted">Unknown format</span>
+                          <>
+                            <span className="text-muted">Unknown format</span>
+                            <span id={unknownDescriptionId} className="visually-hidden">
+                              Unknown event format. Remove or re-import this entry to resolve the
+                              issue.
+                            </span>
+                          </>
                         )}
                       </td>
                       <td>{event.title || <span className="text-muted">—</span>}</td>

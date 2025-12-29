@@ -166,13 +166,6 @@ describe("App", () => {
       // Even though we can't directly test toast context value without accessing internals,
       // successful rendering indicates the provider is working correctly
       expect(screen.getByTestId("current-status")).toBeInTheDocument();
-      expect(() =>
-        render(
-          <SettingsProvider>
-            <App />
-          </SettingsProvider>,
-        ),
-      ).not.toThrow();
     });
   });
 
@@ -201,15 +194,5 @@ describe("App", () => {
       expect(screen.getByTestId("main-tabs")).toBeInTheDocument();
     });
 
-    it("imports and uses required dependencies", () => {
-      // Test that all required CSS and dependencies are imported correctly
-      expect(() =>
-        render(
-          <SettingsProvider>
-            <App />
-          </SettingsProvider>,
-        ),
-      ).not.toThrow();
-    });
   });
 });

@@ -146,7 +146,7 @@ body:
         - Must-have - Critical for daily use
         - Should-have - Would significantly improve experience
         - Could-have - Nice to have enhancement
-        - Won't-have - Low-priority suggestion
+        - Nice-to-have - Low-priority suggestion
     validations:
       required: true
 

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TransferView } from "../../src/components/TransferView";
 import { useTransferCalculations } from "../../src/hooks/useTransferCalculations";
 import { dayjs } from "../../src/utils/dateTimeUtils";
@@ -58,8 +58,7 @@ vi.mock("../../src/utils/config", () => ({
   },
 }));
 
-// Mock console.warn to test validation
-const mockConsoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+let mockConsoleWarn: ReturnType<typeof vi.spyOn>;
 
 // Default hook return value
 const defaultHookReturn = {
@@ -77,7 +76,11 @@ const defaultProps = {
 describe("TransferView", () => {
   beforeEach(() => {
     mockUseTransferCalculations.mockReturnValue(defaultHookReturn);
-    mockConsoleWarn.mockClear();
+    mockConsoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    mockConsoleWarn.mockRestore();
   });
 
   describe("Basic rendering", () => {

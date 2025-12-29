@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
@@ -97,14 +97,17 @@ export function ToastProvider({ children }: ToastProviderProps) {
     [addToast],
   );
 
-  const contextValue: ToastContextType = {
-    addToast,
-    removeToast,
-    showSuccess,
-    showError,
-    showWarning,
-    showInfo,
-  };
+  const contextValue = useMemo<ToastContextType>(
+    () => ({
+      addToast,
+      removeToast,
+      showSuccess,
+      showError,
+      showWarning,
+      showInfo,
+    }),
+    [addToast, removeToast, showSuccess, showError, showWarning, showInfo],
+  );
 
   return (
     <ToastContext.Provider value={contextValue}>

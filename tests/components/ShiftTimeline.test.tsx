@@ -77,11 +77,9 @@ describe("ShiftTimeline", () => {
 
     renderWithProviders(<ShiftTimeline currentWorkingTeam={currentWorkingTeam} today={today} />);
 
-    // There are two T2 badges, select the one with the current badge class
-    const badges = screen.getAllByText("T2");
-    const currentBadge = badges.find((badge) => badge.className.includes("timeline-current-badge"));
+    const currentBadge = document.querySelector(".timeline-current-badge");
     expect(currentBadge).toBeInTheDocument();
-    expect(currentBadge?.className.includes("timeline-current-badge")).toBe(true);
+    expect(currentBadge).toHaveTextContent("T2");
   });
 
   it("applies correct shift styling classes", () => {

@@ -148,10 +148,10 @@ export function useTransferCalculations({
       );
     }
 
-    const currentDate = startDate;
+    let lastScannedDate = startDate;
 
     for (let day = 0; day < maxDaysToScan && foundTransfers.length < limit; day++) {
-      const scanDate = currentDate.add(day, "day");
+      const scanDate = startDate.add(day, "day");
       const nextDate = scanDate.add(1, "day");
 
       // If we have an end date, don't scan beyond it
@@ -245,6 +245,8 @@ export function useTransferCalculations({
           foundTransfers.push(transfer);
         }
       });
+
+      lastScannedDate = scanDate;
     }
 
     // Sort transfers by date
@@ -253,7 +255,7 @@ export function useTransferCalculations({
     // Check if there are more transfers available
     const hasMoreTransfers =
       foundTransfers.length === limit &&
-      (!endDate || currentDate.add(maxDaysToScan, "day").isBefore(endDate));
+      (!endDate || lastScannedDate.isBefore(endDate));
 
     return {
       transfers: foundTransfers,

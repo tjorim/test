@@ -155,7 +155,7 @@ export function EventModal({
       <Modal.Header closeButton>
         <Modal.Title>{editIndex >= 0 ? "Edit event" : "New event"}</Modal.Title>
       </Modal.Header>
-      <Modal.Body ref={formRef}>
+      <Modal.Body ref={formRef} tabIndex={-1}>
         <Form>
           <Row className="g-3">
             <Col xs={12}>

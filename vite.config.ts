@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 import * as packageJson from "./package.json";
 
 export default defineConfig(() => ({
-  base: "/",
+  base: "/worktime/",
   define: {
     __APP_VERSION__: JSON.stringify(packageJson.version),
   },

@@ -12,12 +12,12 @@ The `.hday` format is a human-readable, line-based text format for managing time
 
 Specific date or date range:
 
-```
+```text
 [flags]YYYY/MM/DD[-YYYY/MM/DD] [# comment]
 ```
 
 **Examples:**
-```
+```text
 2025/01/15 # Single day vacation
 2025/12/23-2025/12/27 # Christmas vacation
 b2025/03/10-2025/03/14 # Business trip (b = business)
@@ -28,14 +28,14 @@ ba2025/04/20 # Half-day AM business trip
 
 Recurring events on a specific weekday:
 
-```
+```text
 dN[flags] [# comment]
 ```
 
 Where `N` = 1-7 (Monday to Sunday, ISO week numbering)
 
 **Examples:**
-```
+```text
 d1 # Every Monday off
 d5k # Every Friday in office (k = in-office)
 d1ka # Every Monday morning in office
@@ -145,7 +145,7 @@ A 100-line file parses in ~100μs and uses ~50KB memory.
 
 ### Complete .hday File
 
-```
+```text
 # Vacation days
 2025/01/15 # Personal day
 2025/12/23-2025/12/27 # Christmas vacation

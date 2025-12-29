@@ -22,9 +22,7 @@ describe("useShiftCalculation", () => {
       expect(result.current.currentShift).toBeNull();
     });
 
-    it("initializes with stored team from localStorage", () => {
-      // This test is no longer relevant since we use SettingsContext instead of direct localStorage
-      // The SettingsContext handles localStorage internally
+    it("initializes with a null team before settings are loaded", () => {
       const { result } = renderHook(() => useShiftCalculation(), {
         wrapper,
       });

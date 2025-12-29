@@ -294,6 +294,28 @@ describe("CurrentStatus Component", () => {
     });
 
     it("should not show countdown when no countdown data", () => {
+      vi.mocked(shiftCalculations.getNextShift).mockReturnValue({
+        date: dayjs("2024-01-16"),
+        shift: {
+          code: "O",
+          name: "Off",
+          hours: "",
+          start: null,
+          end: null,
+          isWorking: false,
+        },
+        code: "2404.2O",
+      });
+      vi.mocked(useCountdownHook.useCountdown).mockReturnValue({
+        days: 0,
+        hours: 2,
+        minutes: 30,
+        seconds: 0,
+        totalSeconds: 9000,
+        formatted: "2h 30m",
+        isExpired: false,
+      });
+
       vi.mocked(useCountdownHook.useCountdown).mockReturnValue({
         days: 0,
         hours: 0,
@@ -306,6 +328,7 @@ describe("CurrentStatus Component", () => {
 
       renderWithProviders(<CurrentStatus myTeam={1} onChangeTeam={mockOnChangeTeam} />);
 
+      expect(useCountdownHook.useCountdown).toHaveBeenCalledWith(null);
       expect(screen.queryByText(/⏰ Starts in/)).not.toBeInTheDocument();
     });
   });

@@ -91,9 +91,9 @@ export function TeamDetailModal({
   const { settings, myTeam } = useSettings();
 
   // Share handler for this team
-  const handleShareSchedule = async () => {
+  const handleShareSchedule = () => {
     const today = dayjs().format("YYYY-MM-DD");
-    await shareTeamSchedule(
+    shareTeamSchedule(
       teamNumber,
       () => toast?.showSuccess("Share dialog opened or link copied!"),
       () => toast?.showError("Could not share. Try copying the link manually."),
