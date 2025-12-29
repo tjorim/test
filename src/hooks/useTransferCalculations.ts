@@ -31,7 +31,17 @@ interface UseTransferCalculationsReturn {
 }
 
 /**
- * Helper function to check for transfer between two shifts
+ * Create a TransferInfo when the current and next shift codes match the specified transition.
+ *
+ * @param currentShift - The shift on the current date
+ * @param nextShift - The shift on the next date
+ * @param fromShift - Expected code of the originating shift
+ * @param toShift - Expected code of the destination shift
+ * @param date - The date to assign to the transfer
+ * @param fromTeam - Team number initiating the transfer
+ * @param toTeam - Team number receiving the transfer
+ * @param type - Either `'handover'` or `'takeover'`
+ * @returns A TransferInfo describing the transfer if `currentShift.code === fromShift` and `nextShift.code === toShift`, `null` otherwise
  */
 function checkTransfer(
   currentShift: { code: ShiftType; name: string },
@@ -57,11 +67,44 @@ function checkTransfer(
 }
 
 /**
- * Custom hook for managing transfer calculations between the user's team and other teams.
+ * Compute transfer events (handovers and takeovers) between the user's team and a selected other team over a date window.
  *
- * Calculates shift transfers between user's team and comparison team,
- * detecting handover/takeover patterns based on shift transitions.
- * Supports optional date range filtering.
+ * Scans day-by-day from a start date (default today) up to an end date (optional) or a default forward window, detects shift transitions that represent handovers or takeovers, and returns sorted transfer entries up to the specified limit.
+ *
+ * @param myTeam - The user's team id; when `null` no transfers are calculated
+ * @param limit - Maximum number of transfers to return (default: 20)
+ * @param customStartDate - Optional start date string parseable by dayjs; defaults to today when omitted
+ * @param customEndDate - Optional end date string parseable by dayjs; when provided the scan is constrained to this inclusive end date
+ * @returns An object containing:
+ *  - `transfers`: an array of transfer records sorted by date (each record contains `date`, `fromTeam`, `toTeam`, `fromShiftType`, `toShiftType`, and `type`)
+ *  - `hasMoreTransfers`: `true` if there are likely additional transfers beyond the returned set, `false` otherwise
+ *  - `availableOtherTeams`: list of team ids available for comparison (excludes `myTeam`)
+ *  - `otherTeam`: the currently selected comparison team id
+ *  - `setOtherTeam`: setter function to change the selected comparison team
+ *
+ * @example
+ * // In a React component - show handover/takeover points between teams
+ * function TransferView({ myTeam }) {
+ *   const { transfers, otherTeam, setOtherTeam, availableOtherTeams, hasMoreTransfers } =
+ *     useTransferCalculations({ myTeam, limit: 10 });
+ *
+ *   return (
+ *     <div>
+ *       <select value={otherTeam} onChange={(e) => setOtherTeam(Number(e.target.value))}>
+ *         {availableOtherTeams.map(t => <option key={t} value={t}>Team {t}</option>)}
+ *       </select>
+ *
+ *       <h3>Transfers between Team {myTeam} and Team {otherTeam}</h3>
+ *       {transfers.map(t => (
+ *         <div key={t.date.format()}>
+ *           {t.date.format('MMM D')}: {t.type === 'handover' ? '→' : '←'}
+ *           {' '}T{t.fromTeam} ({t.fromShiftType}) to T{t.toTeam} ({t.toShiftType})
+ *         </div>
+ *       ))}
+ *       {hasMoreTransfers && <p>More transfers available...</p>}
+ *     </div>
+ *   );
+ * }
  */
 export function useTransferCalculations({
   myTeam,

@@ -165,6 +165,11 @@ function AppContent() {
   );
 }
 
+/**
+ * Root application component that composes context providers and renders the app content.
+ *
+ * @returns The root React element: SettingsProvider, EventStoreProvider and ToastProvider wrapping AppContent
+ */
 function App() {
   return (
     <SettingsProvider>

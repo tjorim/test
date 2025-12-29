@@ -116,11 +116,11 @@ export class ErrorBoundary extends Component<Props, State> {
 }
 
 /**
- * Wraps a React component with an error boundary to catch rendering errors and display a fallback UI.
+ * Create a higher-order component that renders the given component inside an error boundary.
  *
- * @param Component - The React component to be wrapped with error handling
- * @param fallback - Optional custom UI to display when an error is caught
- * @returns A new component that renders the original component inside an error boundary
+ * @param Component - Component to render inside the error boundary
+ * @param fallback - Optional UI to show when an error is caught
+ * @returns A component that renders `Component` wrapped by `ErrorBoundary`
  */
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,

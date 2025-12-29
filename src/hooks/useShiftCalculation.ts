@@ -24,8 +24,34 @@ export interface UseShiftCalculationReturn {
 }
 
 /**
- * Custom hook for managing shift calculations and state
- * @returns Object containing shift state and calculation functions
+ * Provide shift-related state and memoized calculations for the current user team.
+ *
+ * The hook exposes a team identifier and date state and computes the current shift,
+ * the next upcoming shift for the team, all teams' shifts for the selected date,
+ * and the canonical shift day (accounts for pre-07:00 night-shift handling). Computed
+ * values update when `currentDate` or the user's team change.
+ *
+ * @returns An object exposing `myTeam`, `setMyTeam`, `currentDate`, `setCurrentDate`, `currentShift`, `nextShift`, `todayShifts` and `currentShiftDay`
+ *
+ * @example
+ * // In a React component
+ * function MyShiftView() {
+ *   const { myTeam, currentShift, nextShift, todayShifts } = useShiftCalculation();
+ *
+ *   if (!myTeam) {
+ *     return <div>Please select your team</div>;
+ *   }
+ *
+ *   return (
+ *     <div>
+ *       <h2>Team {myTeam}</h2>
+ *       <p>Current: {currentShift?.shift.name} ({currentShift?.code})</p>
+ *       <p>Next: {nextShift?.shift.name} on {nextShift?.date.format('MMM D')}</p>
+ *       <h3>All Teams Today:</h3>
+ *       {todayShifts.map(s => <div key={s.teamNumber}>T{s.teamNumber}: {s.shift.name}</div>)}
+ *     </div>
+ *   );
+ * }
  */
 export function useShiftCalculation(): UseShiftCalculationReturn {
   // Use unified user state from SettingsContext

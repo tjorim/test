@@ -37,15 +37,15 @@ interface CurrentStatusProps {
 }
 
 /**
- * Display the user's current and upcoming shift information, personalized when a team is selected.
+ * Render current and upcoming shift information, personalized when a team is selected.
  *
- * Shows current shift status, next shift details and countdown, off-day progress, a timeline of the currently working team,
- * and controls to select/change the team or view who is working.
+ * Shows current shift status, next shift details with countdown, off-day progress, an optional timeline
+ * for the currently working team, and controls to select/change the team or view who is working.
  *
  * @param myTeam - The user's team number from onboarding, or `null` to show a generic view.
  * @param onChangeTeam - Callback invoked when the user requests to select or change their team.
- * @param onShowWhoIsWorking - Optional callback to show who is currently working; if not provided the control is disabled.
- * @returns The Current Status UI as a React element (card with status, timeline, and next-shift information).
+ * @param onShowWhoIsWorking - Optional callback to show who is currently working; the corresponding control is disabled if omitted.
+ * @returns A React element containing the Current Status card with status, timeline and next-shift information.
  */
 export function CurrentStatus({ myTeam, onChangeTeam, onShowWhoIsWorking }: CurrentStatusProps) {
   // Generate unique IDs for tooltips to avoid HTML ID conflicts

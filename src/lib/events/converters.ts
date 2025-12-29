@@ -1,7 +1,28 @@
 /**
- * Event conversion utilities
+ * Event conversion utilities for Worktime calendar system
  *
- * Converts between shift calculations, .hday events, and the unified CalendarEvent model.
+ * Converts between three event models:
+ * 1. **ShiftResult** - Team shift assignments from shift calculations
+ * 2. **HdayEvent** - Time-off events from .hday parser (range/weekly/unknown)
+ * 3. **CalendarEvent** - Unified calendar model for rendering
+ *
+ * ## One-Way Conversions
+ *
+ * - ShiftResult → CalendarEvent (for shift display)
+ * - HdayEvent → CalendarEvent[] (for time-off overlays)
+ *
+ * There is NO reverse conversion (CalendarEvent → HdayEvent) because the
+ * source .hday text is preserved in EventStoreContext for round-trip fidelity.
+ *
+ * ## Performance Warning
+ *
+ * **Weekly events**: Generating occurrences for large date ranges can be slow.
+ * A 1-year range generates ~52 events per weekly rule. For large ranges:
+ * - Limit the date window (e.g., current month ± 3 months)
+ * - Use virtual scrolling for event lists
+ * - Memoize conversion results in React components
+ *
+ * @module lib/events/converters
  */
 
 import { v4 as uuidv4 } from "uuid";
@@ -14,8 +35,35 @@ import type { CalendarEvent, HolidayMetadata, ShiftMetadata } from "./types";
 /**
  * Convert a ShiftResult to a CalendarEvent
  *
+ * Off-days (shift code 'O') are converted with null start/end times.
+ * Each call generates a new UUID for the event.
+ *
  * @param shift - The shift result from shift calculations
  * @returns CalendarEvent representing the shift
+ *
+ * @example
+ * // Convert a morning shift for Team 1
+ * const shiftResult = {
+ *   date: dayjs('2025-01-06'),
+ *   shift: SHIFTS.MORNING,
+ *   code: '2502.1M',
+ *   teamNumber: 1
+ * };
+ * shiftToCalendarEvent(shiftResult)
+ * // Returns: {
+ * //   id: '...uuid...',
+ * //   type: 'shift',
+ * //   start: '2025-01-06',
+ * //   end: '2025-01-06',
+ * //   label: 'Morning (T1)',
+ * //   meta: { type: 'shift', team: 1, shiftCode: 'M', startTime: '07:00', endTime: '15:00', className: 'shift-morning' }
+ * // }
+ *
+ * @example
+ * // Off-day shift has null times
+ * const offDay = { date: dayjs('2025-01-07'), shift: SHIFTS.OFF, code: '2502.2O', teamNumber: 1 };
+ * shiftToCalendarEvent(offDay).meta.startTime // undefined
+ * shiftToCalendarEvent(offDay).meta.endTime   // undefined
  */
 export function shiftToCalendarEvent(shift: ShiftResult): CalendarEvent {
   const dateStr = shift.date.format("YYYY-MM-DD");
@@ -44,14 +92,45 @@ export function shiftToCalendarEvent(shift: ShiftResult): CalendarEvent {
 /**
  * Convert an HdayEvent to CalendarEvent(s)
  *
- * Range events produce 1 CalendarEvent.
- * Weekly events produce N CalendarEvents (one per occurrence within the date range).
+ * **Event Expansion:**
+ * - Range events → 1 CalendarEvent
+ * - Weekly events → N CalendarEvents (one per matching weekday in range)
+ * - Unknown events → empty array (ignored for calendar display)
+ *
+ * **Performance Warning:**
+ * Weekly events iterate day-by-day through the date range. For a 1-year range,
+ * a single weekly event generates ~52 calendar events. With 10 weekly rules,
+ * that's 520 events. Use reasonable date windows (e.g., ±3 months from today).
  *
  * @param event - The .hday event to convert
  * @param startDate - Start of date range (for weekly event generation)
  * @param endDate - End of date range (for weekly event generation)
  * @param sourceIndex - Original index in the .hday events array (for CRUD operations)
  * @returns Array of CalendarEvent(s)
+ *
+ * @example
+ * // Range event produces one calendar event
+ * const rangeEvent = { type: 'range', start: '2025/01/15', end: '2025/01/17', flags: ['holiday'], title: 'Vacation' };
+ * hdayToCalendarEvents(rangeEvent, new Date('2025-01-01'), new Date('2025-12-31'))
+ * // Returns: [{ id: '...', type: 'holiday', start: '2025-01-15', end: '2025-01-17', label: 'Vacation', meta: {...} }]
+ *
+ * @example
+ * // Weekly event produces multiple calendar events (one per occurrence)
+ * const weeklyEvent = { type: 'weekly', weekday: 1, flags: ['in'], title: 'Office Monday' };
+ * hdayToCalendarEvents(weeklyEvent, new Date('2025-01-06'), new Date('2025-01-20'))
+ * // Returns: [
+ * //   { id: '...', type: 'holiday', start: '2025-01-06', end: '2025-01-06', label: 'Office Monday', meta: {...} },
+ * //   { id: '...', type: 'holiday', start: '2025-01-13', end: '2025-01-13', label: 'Office Monday', meta: {...} },
+ * //   { id: '...', type: 'holiday', start: '2025-01-20', end: '2025-01-20', label: 'Office Monday', meta: {...} }
+ * // ]
+ *
+ * @example
+ * // Unknown events are ignored
+ * const unknownEvent = { type: 'unknown', raw: 'malformed line', flags: ['holiday'] };
+ * hdayToCalendarEvents(unknownEvent, new Date('2025-01-01'), new Date('2025-12-31'))
+ * // Returns: [] (empty array)
+ *
+ * @see parseHday For parsing .hday text into HdayEvent objects
  */
 export function hdayToCalendarEvents(
   event: HdayEvent,
@@ -72,7 +151,34 @@ export function hdayToCalendarEvents(
 }
 
 /**
- * Convert a range HdayEvent to a single CalendarEvent
+ * Create a CalendarEvent representing a range-type HdayEvent.
+ *
+ * Converts the given range HdayEvent into a single holiday CalendarEvent and
+ * attaches derived holiday metadata.
+ *
+ * @param event - The range HdayEvent; must include `start` and `end` date strings.
+ * @param sourceIndex - Optional index mapping this event back to its source (used for CRUD/source tracking).
+ * @returns A CalendarEvent that covers the event's start–end range with holiday metadata.
+ * @throws {Error} If `event.start` or `event.end` is missing.
+ *
+ * @example
+ * // Convert a multi-day business trip
+ * const event = {
+ *   type: 'range',
+ *   start: '2025/03/10',
+ *   end: '2025/03/14',
+ *   flags: ['business', 'half_am'],
+ *   title: 'Conference'
+ * };
+ * hdayRangeToCalendarEvent(event, 0)
+ * // Returns: {
+ * //   id: '...uuid...',
+ * //   type: 'holiday',
+ * //   start: '2025-03-10',
+ * //   end: '2025-03-14',
+ * //   label: 'Conference',
+ * //   meta: { type: 'holiday', color: '#FFC04D', flags: ['business', 'half_am'], typeLabel: 'Business', symbol: 'a', sourceIndex: 0 }
+ * // }
  */
 function hdayRangeToCalendarEvent(event: HdayEvent, sourceIndex?: number): CalendarEvent {
   if (!event.start || !event.end) {
@@ -108,7 +214,31 @@ function hdayRangeToCalendarEvent(event: HdayEvent, sourceIndex?: number): Calen
 }
 
 /**
- * Convert a weekly HdayEvent to multiple CalendarEvents (one per occurrence in range)
+ * Create calendar events for each weekly occurrence of an HdayEvent within the inclusive date range.
+ *
+ * @param event - The weekly HdayEvent; its `weekday` determines which weekday to generate events for
+ * @param startDate - Start of the inclusive date range to search for occurrences
+ * @param endDate - End of the inclusive date range to search for occurrences
+ * @param sourceIndex - Optional source index to include in each event's metadata for reverse mapping
+ * @returns An array of calendar events, one for each occurrence of the event's weekday between `startDate` and `endDate` (inclusive)
+ * @throws {Error} If `event.weekday` is undefined
+ *
+ * @example
+ * // Generate calendar events for "every Friday in office"
+ * const event = {
+ *   type: 'weekly',
+ *   weekday: 5, // Friday
+ *   flags: ['in', 'half_am'],
+ *   title: 'Office Friday AM'
+ * };
+ * hdayWeeklyToCalendarEvents(event, new Date('2025-01-01'), new Date('2025-01-31'), 2)
+ * // Returns: [
+ * //   { id: '...', type: 'holiday', start: '2025-01-03', end: '2025-01-03', label: 'Office Friday AM', meta: {...} },
+ * //   { id: '...', type: 'holiday', start: '2025-01-10', end: '2025-01-10', label: 'Office Friday AM', meta: {...} },
+ * //   { id: '...', type: 'holiday', start: '2025-01-17', end: '2025-01-17', label: 'Office Friday AM', meta: {...} },
+ * //   { id: '...', type: 'holiday', start: '2025-01-24', end: '2025-01-24', label: 'Office Friday AM', meta: {...} },
+ * //   { id: '...', type: 'holiday', start: '2025-01-31', end: '2025-01-31', label: 'Office Friday AM', meta: {...} }
+ * // ]
  */
 function hdayWeeklyToCalendarEvents(
   event: HdayEvent,

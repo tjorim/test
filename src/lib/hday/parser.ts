@@ -1,3 +1,68 @@
+/**
+ * .hday Format Parser and Serializer
+ *
+ * Parser and serializer for the `.hday` format - a human-readable text format
+ * for managing time-off events (vacations, business trips, recurring office days, etc.).
+ *
+ * ## Format Specification
+ *
+ * **Range Events** (specific dates):
+ * ```
+ * [flags]YYYY/MM/DD[-YYYY/MM/DD] [# comment]
+ * ```
+ * Examples:
+ * - `2025/01/15 # Single day off`
+ * - `2025/12/23-2025/12/27 # Multi-day vacation`
+ * - `b2025/03/10-2025/03/14 # Business trip (b flag)`
+ *
+ * **Weekly Events** (recurring patterns):
+ * ```
+ * dN[flags] [# comment]
+ * ```
+ * Where N = 1-7 (Monday to Sunday)
+ * Examples:
+ * - `d1 # Every Monday`
+ * - `d5k # Every Friday in office (k flag)`
+ *
+ * ## Flags
+ *
+ * **Type Flags** (mutually exclusive, first wins):
+ * - `b` = business trip
+ * - `s` = course/training
+ * - `k` = in office
+ * - `u` = other
+ * - `e` = weekend
+ * - `h` = birthday
+ * - `i` = sick leave
+ * - (default: holiday if no type flag)
+ *
+ * **Time/Location Flags** (mutually exclusive, first wins):
+ * - `a` = half day AM
+ * - `p` = half day PM
+ * - `w` = onsite
+ * - `n` = no fly zone
+ * - `f` = can fly
+ *
+ * ## Round-Trip Guarantee
+ *
+ * Unknown/malformed lines are preserved in the `raw` field, ensuring that
+ * parsing → editing → serializing maintains the original text exactly.
+ *
+ * ## Flag Normalization
+ *
+ * The parser automatically enforces mutual exclusivity:
+ * - Multiple type flags → keeps first, removes rest (with console warning)
+ * - Multiple time/location flags → keeps first, removes rest (with console warning)
+ * - No type flag → adds default 'holiday'
+ *
+ * ## Accessibility
+ *
+ * All color constants meet WCAG AA standards (4.5:1 minimum contrast with black text).
+ * See `EVENT_COLORS` for verified contrast ratios.
+ *
+ * @module lib/hday/parser
+ */
+
 import type { EventFlag, HdayEvent, TimeLocationFlag, TypeFlag } from "./types";
 
 // Type flags that override the default 'holiday' flag
@@ -37,12 +102,27 @@ export const EVENT_COLORS = {
 } as const;
 
 /**
- * Parse a prefix string of single-character flags into normalized event flags.
+ * Convert a string of single-character flags into the corresponding event flags.
  *
- * Unknown characters in the prefix are ignored (a console warning is emitted).
+ * Unknown characters are ignored and a console warning is emitted for each.
  *
- * @param prefix - A string of single-character flags (e.g., "ap" for `half_am` + `half_pm`)
- * @returns The list of normalized `EventFlag` values; if no type flag (`business`, `course`, `in`) is present, the result will include `holiday`.
+ * @param prefix - Single-character flag string (e.g. "ap" for half-am and half-pm)
+ * @returns The normalized array of `EventFlag` values; if no type flag is present the result includes `holiday`
+ *
+ * @example
+ * parsePrefixFlags("ba") // Business trip, half-day AM
+ * // Returns: ['business', 'half_am']
+ *
+ * @example
+ * parsePrefixFlags("ka") // In office, half-day AM
+ * // Returns: ['in', 'half_am']
+ *
+ * @example
+ * parsePrefixFlags("xyz") // Invalid flags trigger warnings
+ * // Console: "Unknown flag character 'x' ignored. Known flags: a, p, b, e, h, i, k, s, u, w, n, f"
+ * // Returns: ['holiday'] (default when no valid type flag)
+ *
+ * @see normalizeEventFlags For the flag normalization logic applied to the result
  */
 function parsePrefixFlags(prefix: string): EventFlag[] {
   const flagMap: Record<string, EventFlag> = {
@@ -75,12 +155,12 @@ function parsePrefixFlags(prefix: string): EventFlag[] {
 }
 
 /**
- * Ensure an array of event flags includes a type flag by appending `'holiday'` when none is present.
- * Also enforces mutual exclusivity of both time/location flags (a/p/w/n/f) and type flags (b/e/h/i/k/s/u)
- * by keeping only the first one found in the INPUT order for each category (not based on any priority).
+ * Normalises an array of event flags so it contains at most one time/location flag and at least one type flag.
  *
- * @param flags - The event flags to normalize
- * @returns A new array with `'holiday'` appended if no type flag is present; the input array is never modified.
+ * If multiple time/location flags (half_am, half_pm, onsite, no_fly, can_fly) are present, keeps the first one found in the input order and removes the others. If multiple type flags (business, weekend, birthday, ill, in, course, other) are present, keeps the first one found in the input order and removes the others; the `'holiday'` flag is treated as a default and is not considered when selecting the first explicit type. If no recognised type flag is present after filtering, `'holiday'` is appended.
+ *
+ * @param flags - The event flags to normalise
+ * @returns A new array of flags with mutual exclusivity enforced and `'holiday'` appended if no type flag is present; the input array is not modified.
  */
 export function normalizeEventFlags(flags: EventFlag[]): EventFlag[] {
   let normalized = [...flags];
@@ -136,16 +216,41 @@ export function normalizeEventFlags(flags: EventFlag[]): EventFlag[] {
 }
 
 /**
- * Parse .hday text format into an array of HdayEvent objects.
+ * Parse .hday file content into event entries.
  *
- * Format:
- * - Range events: `[flags]YYYY/MM/DD-YYYY/MM/DD # title`
- * - Weekly events: `dN[flags] # title` where N is 1-7 (Mon-Sun, ISO weekday)
- * - Flags: a=half_am, p=half_pm, b=business, s=course, i=in, w=onsite, n=no_fly, f=can_fly
- * - Events without type flags (b/s/i) default to 'holiday'
+ * Supported line formats:
+ * - Range: `[flags]YYYY/MM/DD-YYYY/MM/DD # title` (end date optional; defaults to start)
+ * - Weekly: `dN[flags] # title` where N is 1–7 (ISO weekday, Monday = 1)
+ * - Unknown lines are preserved as `unknown` events with a default `holiday` flag
  *
- * @param text Raw .hday file content
- * @returns Array of parsed events
+ * Flags (single letters): a=half_am, p=half_pm, b=business, s=course, i=in, w=onsite, n=no_fly, f=can_fly.
+ *
+ * Edge cases:
+ * - Empty lines and whitespace-only lines are ignored
+ * - Invalid flag characters are ignored with console warnings
+ * - Malformed dates or lines that don't match any pattern are preserved as `unknown` type
+ * - Multiple type flags: only the first is kept (others removed)
+ * - Multiple time/location flags: only the first is kept (others removed)
+ *
+ * @param text - Raw .hday file content
+ * @returns An array of parsed HdayEvent objects representing range, weekly or unknown events
+ *
+ * @example
+ * // Single day vacation
+ * parseHday("2025/01/15 # Vacation day")
+ * // Returns: [{ type: 'range', start: '2025/01/15', end: '2025/01/15', title: 'Vacation day', flags: ['holiday'], raw: '2025/01/15 # Vacation day' }]
+ *
+ * @example
+ * // Multi-day business trip
+ * parseHday("b2025/12/23-2025/12/27 # Christmas business trip")
+ * // Returns: [{ type: 'range', start: '2025/12/23', end: '2025/12/27', title: 'Christmas business trip', flags: ['business'], raw: 'b2025/12/23-2025/12/27 # Christmas business trip' }]
+ *
+ * @example
+ * // Weekly recurring event (every Monday in office, half day AM)
+ * parseHday("d1ka # Monday morning in office")
+ * // Returns: [{ type: 'weekly', weekday: 1, title: 'Monday morning in office', flags: ['in', 'half_am'], raw: 'd1ka # Monday morning in office' }]
+ *
+ * @see toLine For the inverse operation (serializing events back to .hday format)
  */
 export function parseHday(text: string): HdayEvent[] {
   const reRange =
@@ -217,7 +322,24 @@ export function parseHday(text: string): HdayEvent[] {
  *
  * @param ev - The event to serialize; for `unknown` events the `raw` field must be present.
  * @returns The corresponding single-line representation suitable for a .hday file.
- * @throws Error if an `unknown` event is missing its `raw` field or if the event `type` is unsupported.
+ * @throws {Error} If an `unknown` event is missing its `raw` field or if the event `type` is unsupported.
+ *
+ * @example
+ * // Serialize a single-day vacation
+ * toLine({ type: 'range', start: '2025/01/15', end: '2025/01/15', title: 'Day off', flags: ['holiday'] })
+ * // Returns: "2025/01/15 # Day off"
+ *
+ * @example
+ * // Serialize a business trip with half-day AM flag
+ * toLine({ type: 'range', start: '2025/03/10', end: '2025/03/14', flags: ['business', 'half_am'], title: 'Conference' })
+ * // Returns: "ba2025/03/10-2025/03/14 # Conference"
+ *
+ * @example
+ * // Serialize a weekly recurring event
+ * toLine({ type: 'weekly', weekday: 5, flags: ['in'], title: 'Office Friday' })
+ * // Returns: "d5k # Office Friday"
+ *
+ * @see parseHday For the inverse operation (parsing .hday text into events)
  */
 export function toLine(ev: Omit<HdayEvent, "raw"> | HdayEvent): string {
   const flagMap: Record<string, string> = {
@@ -325,15 +447,10 @@ export function getEventColor(flags?: EventFlag[]): string {
 }
 
 /**
- * Return a symbol representing time/location based on event flags.
+ * Get a single-character symbol that represents time or location from event flags.
  *
- * @param flags - Optional list of event flags; presence of time/location flags determines the symbol
- * @returns Symbol for the time/location flag, or empty string if none present
- * - `◐` for half_am (morning half-day)
- * - `◑` for half_pm (afternoon half-day)
- * - `W` for onsite (onsite support)
- * - `N` for no_fly (not able to fly)
- * - `F` for can_fly (in principle able to fly)
+ * @param flags - Optional array of event flags to inspect
+ * @returns `◐` for `half_am`, `◑` for `half_pm`, `W` for `onsite`, `N` for `no_fly`, `F` for `can_fly`, or an empty string if none match
  */
 export function getTimeLocationSymbol(flags?: EventFlag[]): string {
   if (!flags) return "";
@@ -353,10 +470,10 @@ export function getTimeLocationSymbol(flags?: EventFlag[]): string {
 export const getHalfDaySymbol = getTimeLocationSymbol;
 
 /**
- * Compute the CSS class name for an event from its flags.
+ * Determine the CSS class for an event based on its flags.
  *
- * @param flags - Array of event flags; type flags are 'business', 'weekend', 'birthday', 'ill', 'course', 'in', 'other', and half-day flags are 'half_am' and 'half_pm'.
- * @returns A class of the form `event--{type}-{full|half}` where the type is chosen by priority (business > weekend > birthday > ill > course > in > other > holiday) and the suffix is `half` when exactly one of `half_am` or `half_pm` is present (otherwise `full` for both or neither).
+ * @param flags - Event flags that indicate type (business, weekend, birthday, ill, course, in, other, holiday) and time-of-day (`half_am`, `half_pm`)
+ * @returns A string of the form `event--{type}-{full|half}` where `type` is selected by priority (business, weekend, birthday, ill, course, in, other, holiday) and the suffix is `half` when exactly one of `half_am` or `half_pm` is present, `full` otherwise
  */
 export function getEventClass(flags?: EventFlag[]): string {
   if (!flags || flags.length === 0) return "event--holiday-full";
@@ -376,10 +493,10 @@ export function getEventClass(flags?: EventFlag[]): string {
 }
 
 /**
- * Return a human-readable label for the event type based on flags.
+ * Get a human-readable label for an event's type from its flags.
  *
- * @param flags - Optional list of event flags.
- * @returns A label such as "Business trip" or "Holiday".
+ * @param flags - Optional list of event flags to inspect
+ * @returns The label for the event type, for example "Business trip", "Weekend", "Birthday", "Sick leave", "Training", "In office", "Other" or "Holiday"
  */
 export function getEventTypeLabel(flags?: EventFlag[]): string {
   if (!flags || flags.length === 0) return "Holiday";

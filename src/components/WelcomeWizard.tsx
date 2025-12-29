@@ -20,21 +20,15 @@ interface WelcomeWizardProps {
 }
 
 /**
- * Welcome wizard component that guides new users through getting started with Worktime.
+ * Present a three-step onboarding modal that guides users through welcome, feature highlights and team selection.
  *
- * Features a multi-step onboarding experience with:
- * - Welcome and app introduction
- * - Feature highlights and benefits
- * - Team selection or option to browse without selection
- * - Progress indicators and smooth transitions
- *
- * @param show - Whether the wizard is visible
- * @param onTeamSelect - Invoked with the selected team number when a team is chosen
- * @param onSkip - Optional callback invoked when user chooses to skip team selection
- * @param onHide - Invoked to hide the wizard
- * @param isLoading - If true, displays a loading spinner and disables interaction
- *
- * @returns The welcome wizard component
+ * @param show - Whether the wizard modal is visible
+ * @param onTeamSelect - Called with the chosen team number when a team button is selected
+ * @param onSkip - Optional callback invoked when the user chooses to browse all teams instead of selecting one
+ * @param onHide - Called to request the wizard be hidden
+ * @param isLoading - When true, disables interactions and displays a setup spinner
+ * @param startStep - Initial step to show when the wizard opens ("welcome" | "features" | "team-selection")
+ * @returns The WelcomeWizard React element
  */
 export function WelcomeWizard({
   show,

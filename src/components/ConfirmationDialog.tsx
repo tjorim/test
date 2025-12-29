@@ -13,20 +13,18 @@ interface ConfirmationDialogProps {
 }
 
 /**
- * Displays an accessible confirmation dialog when open.
+ * Display a confirmation dialog with title, message and confirm/cancel actions.
  *
- * The dialog uses React Bootstrap Modal for consistent styling and accessibility.
- * It can be dismissed by clicking the backdrop or pressing the Escape key, and provides confirm and cancel action buttons.
+ * The dialog invokes `onCancel` when dismissed (cancel button, backdrop click or Escape) and `onConfirm` when the confirm button is clicked.
  *
- * @param isOpen - Whether the dialog is currently open; when false, nothing is rendered.
- * @param title - The title text displayed at the top of the dialog.
- * @param message - The main message or description shown inside the dialog body.
- * @param confirmLabel - Optional label for the primary confirm button (defaults to "Confirm").
- * @param cancelLabel - Optional label for the secondary cancel button (defaults to "Cancel").
- * @param onConfirm - Callback invoked when the confirm button is clicked.
- * @param onCancel - Callback invoked when the dialog is dismissed (cancel button, backdrop click, or Escape key).
- * @param variant - Button variant for the confirm button (defaults to "primary").
- * @returns The dialog's JSX element when `isOpen` is true, otherwise `null`.
+ * @param title - Heading text shown at the top of the dialog
+ * @param message - Body text displayed inside the dialog
+ * @param confirmLabel - Label for the confirm button (defaults to "Confirm")
+ * @param cancelLabel - Label for the cancel button (defaults to "Cancel")
+ * @param onConfirm - Callback invoked when the confirm button is clicked
+ * @param onCancel - Callback invoked when the dialog is dismissed (cancel action, backdrop click or Escape)
+ * @param variant - Visual variant of the confirm button; typically "danger", "primary" or "warning" (defaults to "primary")
+ * @returns The dialog element when `isOpen` is true, `null` otherwise
  */
 export function ConfirmationDialog({
   isOpen,

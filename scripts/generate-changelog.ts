@@ -4,6 +4,16 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { changelogData, futurePlans } from "../src/data/changelog";
 
+/**
+ * Build the repository changelog content as a single Markdown string.
+ *
+ * Includes an "Unreleased" Future Enhancements section, per-version sections
+ * (Added, Changed, Fixed, Planned, and optional technical details), a
+ * "Version Planning" footer constructed from future plans, and Keep a Changelog
+ * style comparison links for each version.
+ *
+ * @returns The complete changelog content formatted as Markdown
+ */
 function generateChangelog(): string {
   const header = `# Changelog
 
@@ -103,6 +113,13 @@ ${versionLinks.join("\n")}
   return header + versions + footer;
 }
 
+/**
+ * Generate the project CHANGELOG.md file and persist it to the repository root.
+ *
+ * Builds the changelog content with `generateChangelog()`, writes it to
+ * `CHANGELOG.md` in the current working directory using UTF‑8 encoding, and
+ * prints a success message to stdout.
+ */
 function main() {
   const changelog = generateChangelog();
   const changelogPath = join(process.cwd(), "CHANGELOG.md");

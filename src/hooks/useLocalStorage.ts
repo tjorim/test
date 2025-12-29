@@ -1,22 +1,13 @@
 import { useEffect, useState } from "react";
 
 /**
- * Simple localStorage hook for persisting state.
+ * Synchronises a React state value with window.localStorage.
  *
- * This hook synchronizes React state with localStorage, providing automatic
- * persistence across browser sessions. Updates to localStorage in other tabs
- * are automatically reflected in the app.
+ * The hook initialises state from localStorage (or uses `initialValue` when running outside a browser or when no valid stored value exists), keeps state and localStorage in sync, and updates state when the same key changes in other tabs via the `storage` event. The setter accepts either a direct value or an updater function and persists the value as JSON; storage and parsing errors are caught and ignored.
  *
- * @param key - The localStorage key (should use 'worktime_' prefix)
- * @param initialValue - The initial value if nothing is stored
- * @returns [value, setValue] tuple similar to useState
- *
- * @example
- * // For user preferences
- * const [theme, setTheme] = useLocalStorage('worktime_theme', 'light');
- *
- * // For app state
- * const [onboarding, setOnboarding] = useLocalStorage('worktime_onboarding', false);
+ * @param key - The localStorage key to read and write
+ * @param initialValue - Value to use when no stored value is available
+ * @returns A tuple [storedValue, setValue]; `setValue` accepts a value of `T` or a function `(prev: T) => T`
  */
 export function useLocalStorage<T>(
   key: string,

@@ -46,7 +46,9 @@ const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_F
 ).filter((f) => f !== "none") as EventFlag[];
 
 /**
- * Time Off View Component
+ * Render the Time Off Management UI that lists time-off events and provides add, edit, import, export and delete flows.
+ *
+ * The component manages form state and validation, displays a responsive table of events, and shows modal dialogs for event editing and deletion confirmation. It uses the EventStore and Toast contexts for persistence and user feedback.
  *
  * Accessibility Features:
  * - Semantic table structure with proper thead/tbody for screen readers
@@ -59,6 +61,8 @@ const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_F
  * - Empty state provides helpful context for new users
  * - Import/Export buttons clearly labeled with icons and text
  * - Responsive table layout adapts to smaller screens
+ *
+ * @returns The Time Off Management React element.
  */
 export function TimeOffView() {
   const { events, addEvent, updateEvent, deleteEvent, importHday, exportHday } = useEventStore();

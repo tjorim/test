@@ -102,7 +102,11 @@ function createIcon(size: number) {
 }
 
 /**
- * Generate and save icon files
+ * Generate a predefined set of PNG icons and write them to the icons directory.
+ *
+ * Creates icons for the configured sizes (16, 32, 48, 192, 512) using the internal icon
+ * generator, saves each file under ICONS_DIR with filenames like `icon-<size>.png`, and logs
+ * progress and final status to the console.
  */
 function generateIcons(): void {
   const icons: IconConfig[] = [

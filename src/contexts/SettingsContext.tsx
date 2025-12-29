@@ -78,6 +78,15 @@ interface SettingsProviderProps {
  * All settings are persisted to localStorage for the internal user base.
  */
 export function SettingsProvider({ children }: SettingsProviderProps) {
+  /**
+   * Determine whether a value conforms to the WorktimeUserState shape and allowed settings values.
+   *
+   * Validates presence and types of `hasCompletedOnboarding`, `myTeam` and `settings`, and that
+   * `settings.timeFormat` is "12h" or "24h", `settings.theme` is "light", "dark" or "auto",
+   * and `settings.notifications` is "on" or "off".
+   *
+   * @returns `true` if `state` is a valid WorktimeUserState, `false` otherwise.
+   */
   function validateUserState(state: unknown): state is WorktimeUserState {
     if (typeof state !== "object" || state === null) return false;
     const s = state as Record<string, unknown>;
@@ -195,8 +204,10 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
 }
 
 /**
- * Hook to access settings context.
- * Must be used within a SettingsProvider.
+ * Accesses the settings context.
+ *
+ * @returns The current settings context value.
+ * @throws {Error} If the hook is used outside a SettingsProvider.
  */
 export function useSettings(): SettingsContextType {
   const context = useContext(SettingsContext);
