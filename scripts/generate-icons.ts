@@ -10,6 +10,26 @@ import { join } from "node:path";
 import { createCanvas } from "canvas";
 
 const ICONS_DIR = join(process.cwd(), "public", "assets", "icons");
+const COLORS = {
+  gradientStart: "#1e3a8a",
+  gradientEnd: "#0d6efd",
+  foreground: "white",
+  centerDot: "#0d6efd",
+} as const;
+const RATIOS = {
+  radius: 0.4,
+  clockFace: 0.9,
+  hourMarkerOuter: 0.8,
+  hourMarkerInner: 0.7,
+  clockFaceStroke: 0.015,
+  hourMarkerStroke: 0.01,
+  clockHandStroke: 0.015,
+  hourHandLength: 0.15,
+  minuteHandLength: 0.2,
+  centerDotRadius: 0.02,
+  textOffset: 0.45,
+  textSize: 0.15,
+} as const;
 
 interface IconConfig {
   size: number;
@@ -33,12 +53,12 @@ function createIcon(size: number) {
 
   const centerX = size / 2;
   const centerY = size / 2;
-  const radius = size * 0.4;
+  const radius = size * RATIOS.radius;
 
   // Background gradient
   const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-  gradient.addColorStop(0, "#1e3a8a"); // Blue-900
-  gradient.addColorStop(1, "#0d6efd"); // Bootstrap primary
+  gradient.addColorStop(0, COLORS.gradientStart); // Blue-900
+  gradient.addColorStop(1, COLORS.gradientEnd); // Bootstrap primary
 
   ctx.fillStyle = gradient;
   ctx.beginPath();
@@ -46,21 +66,21 @@ function createIcon(size: number) {
   ctx.fill();
 
   // Clock face
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = size * 0.015;
+  ctx.strokeStyle = COLORS.foreground;
+  ctx.lineWidth = size * RATIOS.clockFaceStroke;
   ctx.beginPath();
-  ctx.arc(centerX, centerY, radius * 0.9, 0, 2 * Math.PI);
+  ctx.arc(centerX, centerY, radius * RATIOS.clockFace, 0, 2 * Math.PI);
   ctx.stroke();
 
   // Hour markers
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = size * 0.01;
+  ctx.strokeStyle = COLORS.foreground;
+  ctx.lineWidth = size * RATIOS.hourMarkerStroke;
   for (let i = 0; i < 12; i++) {
     const angle = (i * Math.PI) / 6;
-    const x1 = centerX + Math.cos(angle) * radius * 0.8;
-    const y1 = centerY + Math.sin(angle) * radius * 0.8;
-    const x2 = centerX + Math.cos(angle) * radius * 0.7;
-    const y2 = centerY + Math.sin(angle) * radius * 0.7;
+    const x1 = centerX + Math.cos(angle) * radius * RATIOS.hourMarkerOuter;
+    const y1 = centerY + Math.sin(angle) * radius * RATIOS.hourMarkerOuter;
+    const x2 = centerX + Math.cos(angle) * radius * RATIOS.hourMarkerInner;
+    const y2 = centerY + Math.sin(angle) * radius * RATIOS.hourMarkerInner;
 
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -69,33 +89,33 @@ function createIcon(size: number) {
   }
 
   // Clock hands showing 3:00 (shift change time)
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = size * 0.015;
+  ctx.strokeStyle = COLORS.foreground;
+  ctx.lineWidth = size * RATIOS.clockHandStroke;
 
   // Hour hand (pointing to 3)
   ctx.beginPath();
   ctx.moveTo(centerX, centerY);
-  ctx.lineTo(centerX + size * 0.15, centerY);
+  ctx.lineTo(centerX + size * RATIOS.hourHandLength, centerY);
   ctx.stroke();
 
   // Minute hand (pointing to 12)
   ctx.beginPath();
   ctx.moveTo(centerX, centerY);
-  ctx.lineTo(centerX, centerY - size * 0.2);
+  ctx.lineTo(centerX, centerY - size * RATIOS.minuteHandLength);
   ctx.stroke();
 
   // Center dot
-  ctx.fillStyle = "#0d6efd";
+  ctx.fillStyle = COLORS.centerDot;
   ctx.beginPath();
-  ctx.arc(centerX, centerY, size * 0.02, 0, 2 * Math.PI);
+  ctx.arc(centerX, centerY, size * RATIOS.centerDotRadius, 0, 2 * Math.PI);
   ctx.fill();
 
   // Add text "NS" for NextShift (only for larger icons)
   if (size >= 48) {
-    ctx.fillStyle = "white";
-    ctx.font = `bold ${size * 0.15}px Arial`;
+    ctx.fillStyle = COLORS.foreground;
+    ctx.font = `bold ${size * RATIOS.textSize}px Arial`;
     ctx.textAlign = "center";
-    ctx.fillText("NS", centerX, centerY + size * 0.45);
+    ctx.fillText("NS", centerX, centerY + size * RATIOS.textOffset);
   }
 
   return canvas;
@@ -120,13 +140,18 @@ function generateIcons(): void {
   console.log("🎨 Generating NextShift icons...\n");
 
   icons.forEach(({ size, filename, name }) => {
-    const canvas = createIcon(size);
-    const buffer = canvas.toBuffer("image/png");
-    const filePath = join(ICONS_DIR, filename);
+    try {
+      const canvas = createIcon(size);
+      const buffer = canvas.toBuffer("image/png");
+      const filePath = join(ICONS_DIR, filename);
 
-    writeFileSync(filePath, buffer);
-    const sizeKB = (buffer.length / 1024).toFixed(1);
-    console.log(`✅ Generated ${name}: ${filename} (${sizeKB}KB)`);
+      writeFileSync(filePath, buffer);
+      const sizeKB = (buffer.length / 1024).toFixed(1);
+      console.log(`✅ Generated ${name}: ${filename} (${sizeKB}KB)`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`❌ Failed to generate ${name} (${filename}): ${message}`);
+    }
   });
 
   console.log(`\n🎉 All icons generated successfully in ${ICONS_DIR}`);

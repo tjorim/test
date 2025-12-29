@@ -239,7 +239,7 @@ The .hday format is a simple, human-readable text format for time-off events:
 
 **Range Events** (specific dates):
 
-```
+```text
 2025/01/15 # Vacation day
 2025/12/23-2025/12/27 # Christmas vacation
 2025/03/10-2025/03/14b # Business trip
@@ -247,7 +247,7 @@ The .hday format is a simple, human-readable text format for time-off events:
 
 **Weekly Events** (recurring patterns):
 
-```
+```text
 d1 # Every Monday
 d5 # Every Friday
 d1i # Every Monday in office
