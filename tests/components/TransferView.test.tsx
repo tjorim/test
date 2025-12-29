@@ -58,8 +58,7 @@ vi.mock("../../src/utils/config", () => ({
   },
 }));
 
-// Mock console.warn to test validation
-const mockConsoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+let mockConsoleWarn: ReturnType<typeof vi.spyOn>;
 
 // Default hook return value
 const defaultHookReturn = {
@@ -77,7 +76,7 @@ const defaultProps = {
 describe("TransferView", () => {
   beforeEach(() => {
     mockUseTransferCalculations.mockReturnValue(defaultHookReturn);
-    mockConsoleWarn.mockClear();
+    mockConsoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {

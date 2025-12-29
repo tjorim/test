@@ -278,6 +278,16 @@ describe("CurrentStatus Component", () => {
     });
 
     it("should not show countdown when expired", () => {
+      vi.mocked(useCountdownHook.useCountdown).mockReturnValue({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        totalSeconds: 0,
+        formatted: "",
+        isExpired: true,
+      });
+
       renderWithProviders(<CurrentStatus myTeam={1} onChangeTeam={mockOnChangeTeam} />);
 
       expect(screen.queryByText(/⏰ Starts in/)).not.toBeInTheDocument();
