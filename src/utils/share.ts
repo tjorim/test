@@ -8,10 +8,13 @@ export interface ShareOptions {
 }
 
 /**
- * Attempts to share using the Web Share API, falling back to clipboard.
- * @param options ShareOptions (title, text, url)
- * @param onSuccess Optional callback for success
- * @param onError Optional callback for error
+ * Share provided title, text and/or URL using the Web Share API with progressive clipboard fallbacks.
+ *
+ * Attempts navigator.share; if unavailable, writes the URL (or current page URL) to the clipboard; if that is unavailable, attempts a manual textarea copy. Calls `onSuccess` after a successful share or copy, and calls `onError` with an error if all methods fail or an exception occurs.
+ *
+ * @param options - Share options containing optional `title`, `text` and `url`
+ * @param onSuccess - Optional callback invoked after a successful share or copy
+ * @param onError - Optional callback invoked with an error when sharing fails
  */
 export async function share(
   options: ShareOptions,
@@ -52,7 +55,12 @@ export async function share(
 }
 
 /**
- * Shares the app's main URL and title.
+ * Initiates sharing of Worktime's title, promotional text and the current page URL.
+ *
+ * Initiates a share of the app with the title "Worktime", a short promotional message and the current origin + pathname, and calls the provided callbacks after success or failure.
+ *
+ * @param onSuccess - Optional callback invoked when the share or copy operation succeeds
+ * @param onError - Optional callback invoked with an error when all sharing methods fail
  */
 export function shareApp(onSuccess?: () => void, onError?: (err: unknown) => void) {
   share(
@@ -67,9 +75,12 @@ export function shareApp(onSuccess?: () => void, onError?: (err: unknown) => voi
 }
 
 /**
- * Shares the app with additional context (e.g., team, date, view).
- * @param contextText Additional context to include in the share text
- * @param queryParams Optional query parameters to add to the URL for deep linking
+ * Share the app with contextual text and an optional deep-link URL.
+ *
+ * @param contextText - Contextual text to include in the shared message (e.g. "Team 3 schedule")
+ * @param onSuccess - Optional callback invoked when the share or copy operation succeeds
+ * @param onError - Optional callback invoked with an error when the share or copy operation fails
+ * @param queryParams - Optional record of query parameter names and values to append to the current URL for deep linking
  */
 export function shareAppWithContext(
   contextText: string,
@@ -100,9 +111,12 @@ export function shareAppWithContext(
 }
 
 /**
- * Shares a specific team's schedule with deep linking
- * @param teamNumber The team number to share
- * @param date Optional specific date to share
+ * Initiates sharing of a team's schedule by building a deep link and delegating to the share flow.
+ *
+ * @param teamNumber - Numeric identifier of the team to include in the deep link
+ * @param onSuccess - Optional callback invoked when sharing or copying completes successfully
+ * @param onError - Optional callback invoked with an error if all sharing methods fail
+ * @param date - Optional ISO date string to deep-link to a specific date's schedule
  */
 export function shareTeamSchedule(
   teamNumber: number,
@@ -137,8 +151,11 @@ export function shareTodayView(onSuccess?: () => void, onError?: (err: unknown) 
 }
 
 /**
- * Shares transfer information for a specific team
- * @param teamNumber The team number for transfer context
+ * Share the transfer schedule view for a given team.
+ *
+ * @param teamNumber - The team number to include in the deep link
+ * @param onSuccess - Optional callback invoked after a successful share or copy
+ * @param onError - Optional callback invoked with an error if sharing fails
  */
 export function shareTransferView(
   teamNumber: number,

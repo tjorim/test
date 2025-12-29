@@ -72,7 +72,15 @@ export function hdayToCalendarEvents(
 }
 
 /**
- * Convert a range HdayEvent to a single CalendarEvent
+ * Create a CalendarEvent representing a range-type HdayEvent.
+ *
+ * Converts the given range HdayEvent into a single holiday CalendarEvent and
+ * attaches derived holiday metadata.
+ *
+ * @param event - The range HdayEvent; must include `start` and `end` date strings.
+ * @param sourceIndex - Optional index mapping this event back to its source (used for CRUD/source tracking).
+ * @returns A CalendarEvent that covers the event's start–end range with holiday metadata.
+ * @throws Error if `event.start` or `event.end` is missing.
  */
 function hdayRangeToCalendarEvent(event: HdayEvent, sourceIndex?: number): CalendarEvent {
   if (!event.start || !event.end) {
@@ -108,7 +116,14 @@ function hdayRangeToCalendarEvent(event: HdayEvent, sourceIndex?: number): Calen
 }
 
 /**
- * Convert a weekly HdayEvent to multiple CalendarEvents (one per occurrence in range)
+ * Create calendar events for each weekly occurrence of an HdayEvent within the inclusive date range.
+ *
+ * @param event - The weekly HdayEvent; its `weekday` determines which weekday to generate events for
+ * @param startDate - Start of the inclusive date range to search for occurrences
+ * @param endDate - End of the inclusive date range to search for occurrences
+ * @param sourceIndex - Optional source index to include in each event's metadata for reverse mapping
+ * @returns An array of calendar events, one for each occurrence of the event's weekday between `startDate` and `endDate` (inclusive)
+ * @throws Error if `event.weekday` is undefined
  */
 function hdayWeeklyToCalendarEvents(
   event: HdayEvent,

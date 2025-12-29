@@ -14,6 +14,15 @@ interface TimelineData {
   nextShift: ShiftResult | null;
 }
 
+/**
+ * Build a timeline of working shifts for the given day and identify the previous and next shifts relative to the provided current working team.
+ *
+ * If the current team is the first working shift of the day, the previous shift (if any) is taken from the last working shift of the previous day. If the current team is the last working shift of the day, the next shift (if any) is taken from the first working shift of the following day.
+ *
+ * @param today - The reference date for which to build the timeline
+ * @param currentWorkingTeam - The team currently active within today's shifts
+ * @returns An object with `prevShift` set to the adjacent previous working shift or `null`, `currentShift` equal to `currentWorkingTeam`, and `nextShift` set to the adjacent next working shift or `null`
+ */
 function computeShiftTimeline(today: Dayjs, currentWorkingTeam: ShiftResult): TimelineData {
   // Get all teams for today to build timeline
   const allTeamsToday = getAllTeamsShifts(today);
@@ -96,10 +105,13 @@ interface ShiftTimelineProps {
 }
 
 /**
- * Displays today's shift timeline showing the sequence of working teams
+ * Render today's horizontal shift timeline highlighting the previous, current and next working teams.
  *
- * @param currentWorkingTeam - The team currently working
- * @param today - Current date for timeline calculation
+ * Shows the previous and next working teams when available and a highlighted current team badge with tooltips for shift details and live updates.
+ *
+ * @param currentWorkingTeam - The ShiftResult representing the currently active team
+ * @param today - The Dayjs date used to compute the timeline for the current day
+ * @returns A React element that displays the shift timeline UI
  */
 export function ShiftTimeline({ currentWorkingTeam, today }: ShiftTimelineProps) {
   // Generate unique ID for tooltip to avoid HTML ID conflicts

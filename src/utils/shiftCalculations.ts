@@ -77,14 +77,20 @@ export const SHIFTS = Object.freeze({
 });
 
 /**
- * Helper function to get the full display name (emoji + name) for a shift
+ * Combine a shift's emoji and name into a single display label.
+ *
+ * @param shift - The shift object whose emoji and name will be used
+ * @returns The display string in the form "`<emoji> <name>`"
  */
 export function getShiftDisplayName(shift: ReturnType<typeof getShiftByCode>): string {
   return `${shift.emoji} ${shift.name}`;
 }
 
 /**
- * Helper function to get shift details by code with unknown fallback
+ * Retrieve a shift definition for a given shift code, returning an 'Unknown' shift object when no match is found.
+ *
+ * @param code - Shift code to look up; may be null or undefined
+ * @returns The matching shift object from `SHIFTS`, or a fallback object with code `'U'`, emoji `❓`, name `'Unknown'`, non-working flags and null times when no match exists
  */
 export function getShiftByCode(code: string | null | undefined) {
   const shift = Object.values(SHIFTS).find((s) => s.code === code);
@@ -103,10 +109,12 @@ export function getShiftByCode(code: string | null | undefined) {
 }
 
 /**
- * Calculates the shift for a given team on a specific date.
- * @param date - The date to calculate the shift for
- * @param teamNumber - The team number (1-5)
- * @returns The shift information for the team on that date
+ * Determine the scheduled shift for a team on a given date.
+ *
+ * @param date - Date to evaluate (string, Date or Dayjs)
+ * @param teamNumber - Team index starting at 1; must be between 1 and CONFIG.TEAMS_COUNT
+ * @returns The Shift object for that team and date (one of MORNING, EVENING, NIGHT or OFF)
+ * @throws Error - If `teamNumber` is outside the range 1..CONFIG.TEAMS_COUNT
  */
 export function calculateShift(date: string | Date | Dayjs, teamNumber: number): Shift {
   // Validate team number
@@ -142,9 +150,10 @@ export function calculateShift(date: string | Date | Dayjs, teamNumber: number):
 }
 
 /**
- * Returns the current shift day for a given date
- * @param date - The date to check
- * @returns The current shift day
+ * Map a timestamp to the shift's effective day, assigning times before 07:00 to the previous calendar day.
+ *
+ * @param date - The date or timestamp to evaluate
+ * @returns The Dayjs representing the shift day (the previous day if `date` is before 07:00)
  */
 export function getCurrentShiftDay(date: string | Date | Dayjs): Dayjs {
   const current = dayjs(date);
@@ -159,10 +168,11 @@ export function getCurrentShiftDay(date: string | Date | Dayjs): Dayjs {
 }
 
 /**
- * Returns the shift code for a given date and team, adjusting for night shifts to use the previous day's date code.
- * @param date - The date for which to generate the shift code
+ * Generate the shift code for a given date and team, using the previous calendar day for night shifts.
+ *
+ * @param date - The date to evaluate (string, Date or Dayjs); night shifts map to the prior calendar day for code generation
  * @param teamNumber - The team number
- * @returns The shift code in the format YYWW.DX (e.g., "2520.2M")
+ * @returns The shift code in the format YYWW.DX (for example, "2520.2M")
  */
 export function getShiftCode(date: string | Date | Dayjs, teamNumber: number): string {
   const shift = calculateShift(date, teamNumber);
@@ -179,10 +189,11 @@ export function getShiftCode(date: string | Date | Dayjs, teamNumber: number): s
 }
 
 /**
- * Finds the next working shift for a team starting from a given date
- * @param fromDate - The date to start searching from
- * @param teamNumber - The team number
- * @returns The next shift information or null if not found within cycle
+ * Locate the next working shift for a team after a given date.
+ *
+ * @param fromDate - Date to start the search from (exclusive)
+ * @param teamNumber - Team identifier; must be between 1 and CONFIG.TEAMS_COUNT
+ * @returns The upcoming shift result containing `date`, `shift` and `code`, or `null` if no working shift is found within the shift cycle
  */
 export function getNextShift(
   fromDate: string | Date | Dayjs,
@@ -211,9 +222,10 @@ export function getNextShift(
 }
 
 /**
- * Gets all teams' shifts for a specific date
- * @param date - The date to get shifts for
- * @returns Array of shift results for all teams
+ * Return the shift assignment for every team on the given date.
+ *
+ * @param date - The reference date (string, Date or Dayjs) for which to compute each team's shift
+ * @returns An array of ShiftResult objects where each item contains the provided date as a Dayjs, the team's shift, the shift code and the team number
  */
 export function getAllTeamsShifts(date: string | Date | Dayjs): ShiftResult[] {
   const results: ShiftResult[] = [];
@@ -234,11 +246,11 @@ export function getAllTeamsShifts(date: string | Date | Dayjs): ShiftResult[] {
 }
 
 /**
- * Determine which day of a team's off (break) period the provided date falls on.
+ * Determine which day of a team's four-day off period the given date falls on.
  *
- * @param date - The date to evaluate
- * @param teamNumber - The team number (1-based)
- * @returns An `OffDayProgress` object with `current` and `total` (total is 4) if the team is currently on an off day; `null` if the team is working or `teamNumber` is out of range
+ * @param date - Date to evaluate (string | Date | Dayjs)
+ * @param teamNumber - 1-based team index; must be between 1 and CONFIG.TEAMS_COUNT
+ * @returns `OffDayProgress` with `current` and `total` (`total` is 4) if the team is currently on an off day, `null` if the team is working or `teamNumber` is out of range
  */
 export function getOffDayProgress(
   date: string | Date | Dayjs,
@@ -275,11 +287,11 @@ export function getOffDayProgress(
 }
 
 /**
- * Determine whether a shift is active at the given current time for the specified shift date.
+ * Determine whether the given shift is active at the specified reference time for its assigned date.
  *
- * @param shift - Object with `code`, `start`, and `end` hour values; `start`/`end` are hours in 0–23 or `null` when not applicable
- * @param date - The shift date to evaluate (the day the shift is assigned to)
- * @param currentTime - The reference time used to decide activity; used to align to the shift's effective day
+ * @param shift - Object containing `code` and `start`/`end` hour values; `start` and `end` are hours in 0–23 or `null` when not applicable
+ * @param date - The shift's assigned date (Dayjs)
+ * @param currentTime - The reference time used to decide activity and to align to the shift's effective day
  * @returns `true` if the shift is active at `currentTime` for `date`, `false` otherwise
  */
 export function isCurrentlyWorking(

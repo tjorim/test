@@ -8,11 +8,10 @@ interface HeaderProps {
 }
 
 /**
- * Displays the top navigation bar for the Worktime application.
- *
- * The header shows the app title and action buttons for About modal and Settings.
+ * Render the application header showing the title and action buttons for About and Settings.
  *
  * @param onShowAbout - Optional callback invoked when the About button is clicked
+ * @returns The header React element containing the app title and action controls
  */
 export function Header({ onShowAbout }: HeaderProps = {}) {
   const [showSettings, setShowSettings] = useState(false);

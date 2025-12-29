@@ -19,6 +19,19 @@ interface TodayViewProps {
   onTeamClick?: (teamNumber: number) => void;
 }
 
+/**
+ * Render a team shift card showing shift details, live status and optional interactivity.
+ *
+ * Renders a Card displaying team number, shift code badge (with tooltip), shift name and working hours.
+ * Shows a live overlay and LIVE badge when the team is currently active. When `onTeamClick` is provided
+ * the card is rendered as interactive and invokes the callback with the team number on click or keyboard activation.
+ *
+ * @param shiftResult - ShiftResult containing team number, shift, date and full code to display
+ * @param isMyTeam - Whether this card corresponds to the current user's team (applies "my-team" styling)
+ * @param isCurrentlyActive - Whether the team's shift is currently active (controls live overlay and badge)
+ * @param onTeamClick - Optional callback invoked with the team number when the card is activated
+ * @returns The Card element for the given team and shift; interactive when `onTeamClick` is provided
+ */
 function TeamCard({
   shiftResult,
   isMyTeam,
@@ -144,13 +157,13 @@ function TeamCard({
 }
 
 /**
- * Renders an overview card listing all teams scheduled for today with quick access to each team and a Today action.
+ * Render a card listing all teams scheduled for today, with an optional Today action and per-team interactivity.
  *
  * @param todayShifts - Array of shift results for today; each item represents a team's scheduled shift and metadata.
- * @param myTeam - The current user's team number, or `null` if not applicable; used to highlight the user's team.
- * @param onTodayClick - Click handler invoked when the "Today" button is pressed.
- * @param onTeamClick - Optional click handler invoked with a team number when a team card is activated (click or keyboard).
- * @returns The card containing a responsive grid of team cards for today's shifts.
+ * @param myTeam - Current user's team number, or `null`; used to visually highlight the user's team card.
+ * @param onTodayClick - Handler invoked when the "Today" button is pressed.
+ * @param onTeamClick - Optional handler invoked with a team number when a team card is activated (click or keyboard).
+ * @returns A React element representing the Today card containing a responsive grid of team cards and any time-off alerts.
  */
 export function TodayView({ todayShifts, myTeam, onTodayClick, onTeamClick }: TodayViewProps) {
   const { getEventsInRange } = useEventStore();

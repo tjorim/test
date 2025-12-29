@@ -61,10 +61,11 @@ interface EventStoreProviderProps {
 }
 
 /**
- * Event store reducer function
+ * Apply an EventStoreAction to the current events array and produce the updated events array.
  *
- * Handles all state mutations for events array in a centralized, predictable way.
- * All cases return a new array reference to trigger React re-renders.
+ * @param state - Current array of HdayEvent objects
+ * @param action - Action describing the mutation to perform (ADD_EVENT, UPDATE_EVENT, DELETE_EVENT, IMPORT_HDAY, CLEAR_ALL)
+ * @returns The updated HdayEvent array after applying the action; returns the original `state` for unknown actions or when an invalid index is provided
  */
 function eventsReducer(state: HdayEvent[], action: EventStoreAction): HdayEvent[] {
   switch (action.type) {
@@ -107,10 +108,13 @@ function eventsReducer(state: HdayEvent[], action: EventStoreAction): HdayEvent[
 }
 
 /**
- * Event Store Provider
+ * Provides a React context for storing and managing .hday time-off events with localStorage persistence.
  *
- * Provides event storage and management for time-off events.
- * All data is persisted to localStorage with no consent checks (internal users only).
+ * The provider initialises events from localStorage, keeps a serialised `.hday` representation in sync,
+ * and exposes CRUD, import/export and range-query operations via the EventStoreContext.
+ *
+ * @param children - React children that will receive the event store context
+ * @returns The provider element that supplies the event store context to its descendants
  */
 export function EventStoreProvider({ children }: EventStoreProviderProps) {
   // Load and parse events from localStorage on mount (parse once, managed by reducer)

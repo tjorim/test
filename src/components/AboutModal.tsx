@@ -11,7 +11,11 @@ interface AboutModalProps {
 }
 
 /**
- * About & Help modal for Worktime, showing version, features, support, and credits.
+ * Render the About modal for Worktime with version, features, support links and credits.
+ *
+ * @param show - Whether the modal is visible
+ * @param onHide - Callback invoked when the modal should be closed
+ * @returns The React element for the About modal
  */
 export function AboutModal({ show, onHide }: AboutModalProps) {
   return (

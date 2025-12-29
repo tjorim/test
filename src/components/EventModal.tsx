@@ -13,6 +13,17 @@ type FlagCheckboxProps = {
   type?: "checkbox" | "radio";
 };
 
+/**
+ * Render a labelled checkbox or radio input using React-Bootstrap's Form.Check.
+ *
+ * @param id - DOM id for the input element
+ * @param label - Visible label text for the control
+ * @param checked - Whether the control is selected
+ * @param onChange - Change event handler for the input
+ * @param name - Name attribute used to group related controls
+ * @param type - Input type; `"checkbox"` or `"radio"` (defaults to `"checkbox"`)
+ * @returns The configured Form.Check element
+ */
 function FlagCheckbox({
   id,
   label,
@@ -64,18 +75,40 @@ type EventModalProps = {
 };
 
 /**
- * Event Modal Component
+ * Render a controlled modal for creating or editing a calendar event.
  *
- * Accessibility Features:
- * - Modal.Header closeButton provides keyboard-accessible close (Escape key, X button)
- * - All form inputs have associated <Form.Label> elements for screen readers
- * - Required fields marked with aria-required="true" and visual * indicator
- * - Form validation errors use aria-describedby to link error messages to inputs
- * - Live preview section provides immediate feedback on event formatting
- * - Form.Check components (checkboxes/radios) have proper label associations
- * - Semantic HTML structure with proper heading hierarchy
- * - Focus trap built into React Bootstrap Modal component
- * - Modal backdrop click and Escape key both trigger onHide for flexibility
+ * Displays a live preview, inputs for event type, title, date/weekday, and two sets of mutually
+ * exclusive flags (type and time/location). Validation messages for start/end dates are surfaced
+ * to assistive technologies via ARIA attributes.
+ *
+ * @param show - Whether the modal is visible
+ * @param editIndex - Index of the event being edited, or -1 for a new event
+ * @param formRef - Ref attached to the modal body for focus management
+ * @param eventType - Either `"range"` (start/end date) or `"weekly"` (weekday)
+ * @param eventWeekday - Weekday number (1–7) when `eventType` is `"weekly"`
+ * @param eventStart - Start date string in `YYYY/MM/DD` format when `eventType` is `"range"`
+ * @param eventEnd - Optional end date string in `YYYY/MM/DD` format when `eventType` is `"range"`
+ * @param eventTitle - Optional comment/title for the event
+ * @param eventFlags - List of currently selected event flags
+ * @param startDateError - Validation message for the start date, if any
+ * @param endDateError - Validation message for the end date, if any
+ * @param previewLine - Generated raw `.hday` line to display in the preview
+ * @param typeFlagOptions - Pairs of type-flag key and label for the type flags fieldset
+ * @param timeLocationFlagOptions - Pairs of time/location-flag key and label for that fieldset
+ * @param typeFlagsAsEventFlags - Mapping of type-flag keys to event flag values
+ * @param timeLocationFlagsAsEventFlags - Mapping of time/location-flag keys to event flag values
+ * @param onHide - Called when the modal requests to be closed (backdrop click, Escape, or close button)
+ * @param onEntered - Called after the modal has finished opening
+ * @param onEventTypeChange - Handler for changes to the event type selector
+ * @param onEventTitleChange - Handler for the event title input
+ * @param onEventWeekdayChange - Handler for changes to the weekday selector
+ * @param onStartDateChange - Handler for the start date input (receives `YYYY/MM/DD` or empty string)
+ * @param onEndDateChange - Handler for the end date input (receives `YYYY/MM/DD` or empty string)
+ * @param onTypeFlagChange - Handler invoked with a type-flag key when a type flag is selected
+ * @param onTimeFlagChange - Handler invoked with a time/location-flag key when selected
+ * @param onResetForm - Resets the form to its initial state
+ * @param onSubmit - Submits the form to add or update the event
+ * @returns The rendered EventModal component (a Bootstrap Modal containing the editor)
  */
 export function EventModal({
   show,

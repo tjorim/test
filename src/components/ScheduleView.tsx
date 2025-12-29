@@ -26,13 +26,14 @@ interface ScheduleViewProps {
 }
 
 /**
- * Renders a weekly schedule table for all teams, allowing users to view, navigate, and select weeks using buttons, a date picker, or keyboard shortcuts.
+ * Render the weekly schedule overview for all teams, with navigation, date jump and keyboard shortcuts.
  *
- * The component displays each team's shift assignments for the selected week, highlights the current day and user's team, and provides accessible ARIA labels for navigation and table elements. Users can move between weeks, jump to the current week, or select a specific date to update the schedule view.
+ * Validates the provided `myTeam` and treats out-of-range team numbers as no team selected.
  *
- * @param myTeam - The user's team number from onboarding, or null if no team is selected.
- * @param currentDate - The date used to determine the week displayed.
- * @param setCurrentDate - Function to update the current date in the schedule view.
+ * @param myTeam - The user's team number from onboarding, or `null` if none is set
+ * @param currentDate - The date used to determine which week is displayed
+ * @param setCurrentDate - Callback to update the displayed date
+ * @returns The rendered schedule overview component
  */
 export function ScheduleView({
   myTeam: inputMyTeam,

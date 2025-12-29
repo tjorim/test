@@ -34,6 +34,15 @@ interface ToastProviderProps {
   children: React.ReactNode;
 }
 
+/**
+ * Provides a toast notification context and renders a ToastContainer that displays active toasts.
+ *
+ * The provider supplies context methods to add and remove toasts and to show success, error,
+ * warning and info messages with optional icons.
+ *
+ * @param children - React nodes to render inside the provider
+ * @returns The provider element which renders its children and the toast container
+ */
 export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 

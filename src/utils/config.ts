@@ -1,7 +1,10 @@
 /**
- * Parse date string in UTC to avoid timezone interpretation issues
- * @param dateString - Date string in YYYY-MM-DD format
- * @returns Date object parsed in UTC
+ * Parse a YYYY-MM-DD date string as midnight UTC.
+ *
+ * If the input is not a valid date string, the returned Date will be invalid.
+ *
+ * @param dateString - Date string in `YYYY-MM-DD` format
+ * @returns A Date representing the given date at 00:00:00.000 UTC; may be invalid if `dateString` is not a valid `YYYY-MM-DD`
  */
 function parseUTCDate(dateString: string): Date {
   // Simple UTC parsing without dayjs dependency to avoid test issues

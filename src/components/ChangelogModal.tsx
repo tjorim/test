@@ -11,6 +11,13 @@ interface ChangelogModalProps {
   onHide: () => void;
 }
 
+/**
+ * Render a modal displaying the application's changelog, per-version details and upcoming plans.
+ *
+ * @param show - Whether the modal is visible
+ * @param onHide - Callback invoked to request closing the modal
+ * @returns The Modal JSX element containing the changelog, versioned entries and "Coming Soon" plans
+ */
 export function ChangelogModal({ show, onHide }: ChangelogModalProps) {
   const [activeKey, setActiveKey] = useState<string>("0");
 

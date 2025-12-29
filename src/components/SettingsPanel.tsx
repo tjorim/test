@@ -17,18 +17,9 @@ interface SettingsPanelProps {
 }
 
 /**
- * Settings panel component that provides access to app preferences, information, and features.
+ * Render the settings sidebar with preferences, information and quick actions.
  *
- * Features an offcanvas sidebar with organized sections for:
- * - App preferences and configuration
- * - About and help information
- * - Changelog and version history
- * - Quick actions and utilities
- *
- * @param show - Whether the settings panel is visible
- * @param onHide - Callback to hide the settings panel
- * @param onShowAbout - Optional callback to show the About modal
- * @returns The settings panel component
+ * @returns The rendered settings panel element
  */
 export function SettingsPanel({ show, onHide, onShowAbout }: SettingsPanelProps) {
   const [showChangelog, setShowChangelog] = useState(false);

@@ -24,8 +24,14 @@ export interface UseShiftCalculationReturn {
 }
 
 /**
- * Custom hook for managing shift calculations and state
- * @returns Object containing shift state and calculation functions
+ * Provide shift-related state and memoised calculations for the current user team.
+ *
+ * The hook exposes a team identifier and date state and computes the current shift,
+ * the next upcoming shift for the team, all teams' shifts for the selected date,
+ * and the canonical shift day (accounts for pre-07:00 night-shift handling). Computed
+ * values update when `currentDate` or the user's team change.
+ *
+ * @returns An object exposing `myTeam`, `setMyTeam`, `currentDate`, `setCurrentDate`, `currentShift`, `nextShift`, `todayShifts` and `currentShiftDay`
  */
 export function useShiftCalculation(): UseShiftCalculationReturn {
   // Use unified user state from SettingsContext

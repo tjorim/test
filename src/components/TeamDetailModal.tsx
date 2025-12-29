@@ -23,18 +23,14 @@ interface TeamDetailModalProps {
 }
 
 /**
- * Team detail modal component that displays comprehensive information about a specific team.
+ * Render a modal showing a team's seven-day schedule, current status, statistics and quick actions.
  *
- * Features detailed views of:
- * - 7-day schedule overview with shift types and times
- * - Current status and next shift information
- * - Team statistics and patterns
- * - Quick actions for team management
+ * Displays the selected team's current shift and next shift, a day-by-day schedule with shift times,
+ * weekly statistics (working/rest days and shift distribution), and quick actions including share and view transfers.
  *
- * @param show - Whether the modal is visible
- * @param onHide - Callback to hide the modal
- * @param teamNumber - The team number to display details for (1-5)
- * @returns The team detail modal component
+ * @param teamNumber - Team number to display (1–5)
+ * @param onViewTransfers - Optional callback invoked with the team number when "View Transfers" is activated
+ * @returns The modal element for the specified team
  */
 export function TeamDetailModal({
   show,

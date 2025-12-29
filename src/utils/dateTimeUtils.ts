@@ -64,22 +64,24 @@ export const formatYYWWD = (date: string | Date | dayjs.Dayjs): string => {
 };
 
 /**
- * Format a dayjs object as time according to user preference ('12h' or '24h').
- * @param dayjsObj - The dayjs object to format
- * @param timeFormat - '12h' or '24h'
+ * Format a Dayjs object into a time string using the specified 12h or 24h preference.
+ *
+ * @param timeFormat - "12h" produces `hh:mm A` (e.g. `07:30 PM`); "24h" produces `HH:mm` (e.g. `19:30`)
+ * @returns The formatted time string
  */
 export function formatTimeByPreference(dayjsObj: dayjs.Dayjs, timeFormat: "12h" | "24h"): string {
   return dayjsObj.format(timeFormat === "12h" ? "hh:mm A" : "HH:mm");
 }
 
 /**
- * Returns the localized time string for a shift's start, end, or range.
- * If both start and end are provided, returns a range (e.g., "07:00–15:00" or "7:00 AM–3:00 PM").
- * If only one is provided, returns just that time.
- * Returns null if neither is valid.
- * @param start - Start hour (0–23) or null
- * @param end - End hour (0–23) or null
- * @param timeFormat - '12h' or '24h'
+ * Produce a localized time representation for a shift start, end, or range.
+ *
+ * Formats times according to `timeFormat`. When both `start` and `end` are provided returns a range joined with an en dash (e.g. "07:00–15:00" or "7:00 AM–3:00 PM"). If only one is provided returns that time. Special-case: an `end` value of `0` is rendered as "24:00" for `24h` or "12:00 AM" for `12h`.
+ *
+ * @param start - Start hour (0–23) or `null`
+ * @param end - End hour (0–23) or `null`
+ * @param timeFormat - Either `"12h"` or `"24h"` to control formatting style
+ * @returns The formatted time string or `null` if neither `start` nor `end` is provided
  */
 export function getLocalizedShiftTime(
   start: number | null,

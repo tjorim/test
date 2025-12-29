@@ -37,12 +37,12 @@ export const EVENT_COLORS = {
 } as const;
 
 /**
- * Parse a prefix string of single-character flags into normalized event flags.
+ * Convert a string of single-character flags into the corresponding event flags.
  *
- * Unknown characters in the prefix are ignored (a console warning is emitted).
+ * Unknown characters are ignored and a console warning is emitted for each.
  *
- * @param prefix - A string of single-character flags (e.g., "ap" for `half_am` + `half_pm`)
- * @returns The list of normalized `EventFlag` values; if no type flag (`business`, `course`, `in`) is present, the result will include `holiday`.
+ * @param prefix - Single-character flag string (e.g. "ap" for half-am and half-pm)
+ * @returns The normalised array of `EventFlag` values; if no type flag is present the result includes `holiday`
  */
 function parsePrefixFlags(prefix: string): EventFlag[] {
   const flagMap: Record<string, EventFlag> = {
@@ -75,12 +75,12 @@ function parsePrefixFlags(prefix: string): EventFlag[] {
 }
 
 /**
- * Ensure an array of event flags includes a type flag by appending `'holiday'` when none is present.
- * Also enforces mutual exclusivity of both time/location flags (a/p/w/n/f) and type flags (b/e/h/i/k/s/u)
- * by keeping only the first one found in the INPUT order for each category (not based on any priority).
+ * Normalises an array of event flags so it contains at most one time/location flag and at least one type flag.
  *
- * @param flags - The event flags to normalize
- * @returns A new array with `'holiday'` appended if no type flag is present; the input array is never modified.
+ * If multiple time/location flags (half_am, half_pm, onsite, no_fly, can_fly) are present, keeps the first one found in the input order and removes the others. If multiple type flags (business, weekend, birthday, ill, in, course, other) are present, keeps the first one found in the input order and removes the others; the `'holiday'` flag is treated as a default and is not considered when selecting the first explicit type. If no recognised type flag is present after filtering, `'holiday'` is appended.
+ *
+ * @param flags - The event flags to normalise
+ * @returns A new array of flags with mutual exclusivity enforced and `'holiday'` appended if no type flag is present; the input array is not modified.
  */
 export function normalizeEventFlags(flags: EventFlag[]): EventFlag[] {
   let normalized = [...flags];
@@ -136,16 +136,17 @@ export function normalizeEventFlags(flags: EventFlag[]): EventFlag[] {
 }
 
 /**
- * Parse .hday text format into an array of HdayEvent objects.
+ * Parse .hday file content into event entries.
  *
- * Format:
- * - Range events: `[flags]YYYY/MM/DD-YYYY/MM/DD # title`
- * - Weekly events: `dN[flags] # title` where N is 1-7 (Mon-Sun, ISO weekday)
- * - Flags: a=half_am, p=half_pm, b=business, s=course, i=in, w=onsite, n=no_fly, f=can_fly
- * - Events without type flags (b/s/i) default to 'holiday'
+ * Supported line formats:
+ * - Range: `[flags]YYYY/MM/DD-YYYY/MM/DD # title` (end date optional; defaults to start)
+ * - Weekly: `dN[flags] # title` where N is 1–7 (ISO weekday, Monday = 1)
+ * - Unknown lines are preserved as `unknown` events with a default `holiday` flag
  *
- * @param text Raw .hday file content
- * @returns Array of parsed events
+ * Flags (single letters): a=half_am, p=half_pm, b=business, s=course, i=in, w=onsite, n=no_fly, f=can_fly.
+ *
+ * @param text - Raw .hday file content
+ * @returns An array of parsed HdayEvent objects representing range, weekly or unknown events
  */
 export function parseHday(text: string): HdayEvent[] {
   const reRange =
@@ -325,15 +326,10 @@ export function getEventColor(flags?: EventFlag[]): string {
 }
 
 /**
- * Return a symbol representing time/location based on event flags.
+ * Get a single-character symbol that represents time or location from event flags.
  *
- * @param flags - Optional list of event flags; presence of time/location flags determines the symbol
- * @returns Symbol for the time/location flag, or empty string if none present
- * - `◐` for half_am (morning half-day)
- * - `◑` for half_pm (afternoon half-day)
- * - `W` for onsite (onsite support)
- * - `N` for no_fly (not able to fly)
- * - `F` for can_fly (in principle able to fly)
+ * @param flags - Optional array of event flags to inspect
+ * @returns `◐` for `half_am`, `◑` for `half_pm`, `W` for `onsite`, `N` for `no_fly`, `F` for `can_fly`, or an empty string if none match
  */
 export function getTimeLocationSymbol(flags?: EventFlag[]): string {
   if (!flags) return "";
@@ -353,10 +349,10 @@ export function getTimeLocationSymbol(flags?: EventFlag[]): string {
 export const getHalfDaySymbol = getTimeLocationSymbol;
 
 /**
- * Compute the CSS class name for an event from its flags.
+ * Determine the CSS class for an event based on its flags.
  *
- * @param flags - Array of event flags; type flags are 'business', 'weekend', 'birthday', 'ill', 'course', 'in', 'other', and half-day flags are 'half_am' and 'half_pm'.
- * @returns A class of the form `event--{type}-{full|half}` where the type is chosen by priority (business > weekend > birthday > ill > course > in > other > holiday) and the suffix is `half` when exactly one of `half_am` or `half_pm` is present (otherwise `full` for both or neither).
+ * @param flags - Event flags that indicate type (business, weekend, birthday, ill, course, in, other, holiday) and time-of-day (`half_am`, `half_pm`)
+ * @returns A string of the form `event--{type}-{full|half}` where `type` is selected by priority (business, weekend, birthday, ill, course, in, other, holiday) and the suffix is `half` when exactly one of `half_am` or `half_pm` is present, `full` otherwise
  */
 export function getEventClass(flags?: EventFlag[]): string {
   if (!flags || flags.length === 0) return "event--holiday-full";
@@ -376,10 +372,10 @@ export function getEventClass(flags?: EventFlag[]): string {
 }
 
 /**
- * Return a human-readable label for the event type based on flags.
+ * Get a human-readable label for an event's type from its flags.
  *
- * @param flags - Optional list of event flags.
- * @returns A label such as "Business trip" or "Holiday".
+ * @param flags - Optional list of event flags to inspect
+ * @returns The label for the event type, for example "Business trip", "Weekend", "Birthday", "Sick leave", "Training", "In office", "Other" or "Holiday"
  */
 export function getEventTypeLabel(flags?: EventFlag[]): string {
   if (!flags || flags.length === 0) return "Holiday";
