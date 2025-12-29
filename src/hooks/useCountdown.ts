@@ -1,6 +1,6 @@
-import type { Dayjs } from 'dayjs';
-import { useEffect, useState } from 'react';
-import { dayjs } from '../utils/dateTimeUtils';
+import type { Dayjs } from "dayjs";
+import { useEffect, useState } from "react";
+import { dayjs } from "../utils/dateTimeUtils";
 
 interface CountdownResult {
   days: number;
@@ -29,12 +29,12 @@ function calculateTimeLeft(targetDate: Dayjs | null): CountdownResult {
       seconds: 0,
       isExpired: true,
       totalSeconds: 0,
-      formatted: '',
+      formatted: "",
     };
   }
 
   const now = dayjs();
-  const diff = targetDate.diff(now, 'second');
+  const diff = targetDate.diff(now, "second");
 
   if (diff <= 0) {
     return {
@@ -44,7 +44,7 @@ function calculateTimeLeft(targetDate: Dayjs | null): CountdownResult {
       seconds: 0,
       isExpired: true,
       totalSeconds: 0,
-      formatted: '',
+      formatted: "",
     };
   }
 
@@ -53,7 +53,7 @@ function calculateTimeLeft(targetDate: Dayjs | null): CountdownResult {
   const minutes = Math.floor((diff % (60 * 60)) / 60);
   const seconds = diff % 60;
 
-  let formatted = '';
+  let formatted = "";
   if (days > 0) {
     formatted = `${days}d ${hours}h ${minutes}m`;
   } else if (hours > 0) {

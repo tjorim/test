@@ -1,4 +1,4 @@
-import { type RefObject, useEffect } from 'react';
+import { type RefObject, useEffect } from "react";
 
 /**
  * Trap keyboard focus within a container element while active.
@@ -18,22 +18,22 @@ export function useFocusTrap(ref: RefObject<HTMLElement>, isActive: boolean): vo
     // Helper to get focusable elements
     const getFocusableElements = (container: HTMLElement): HTMLElement[] => {
       const focusableSelector = [
-        'button',
-        '[href]',
-        'input',
-        'select',
-        'textarea',
+        "button",
+        "[href]",
+        "input",
+        "select",
+        "textarea",
         '[contenteditable="true"]',
-        'audio[controls]',
-        'video[controls]',
+        "audio[controls]",
+        "video[controls]",
         '[tabindex]:not([tabindex="-1"])',
-      ].join(', ');
+      ].join(", ");
 
       const nodeList = container.querySelectorAll(focusableSelector);
 
       return Array.from(nodeList).filter((el) => {
         const style = window.getComputedStyle(el as Element);
-        const ariaHidden = el.getAttribute('aria-hidden') === 'true';
+        const ariaHidden = el.getAttribute("aria-hidden") === "true";
         const tabIndex = (el as HTMLElement).tabIndex;
 
         // Type-safe checks for disabled and hidden properties
@@ -50,7 +50,7 @@ export function useFocusTrap(ref: RefObject<HTMLElement>, isActive: boolean): vo
           while (current && current !== container) {
             if (current instanceof HTMLFieldSetElement && current.disabled) {
               // Elements inside the first <legend> of a disabled fieldset are NOT disabled
-              const firstLegend = current.querySelector(':scope > legend');
+              const firstLegend = current.querySelector(":scope > legend");
               if (firstLegend && firstLegend.contains(element)) {
                 return false;
               }
@@ -67,8 +67,8 @@ export function useFocusTrap(ref: RefObject<HTMLElement>, isActive: boolean): vo
           !isDisabled &&
           !isInDisabledFieldset(el) &&
           !isHiddenAttr &&
-          style.display !== 'none' &&
-          style.visibility !== 'hidden' &&
+          style.display !== "none" &&
+          style.visibility !== "hidden" &&
           ariaHidden !== true &&
           tabIndex !== -1
         );
@@ -82,8 +82,8 @@ export function useFocusTrap(ref: RefObject<HTMLElement>, isActive: boolean): vo
       focusableElements[0]?.focus();
     } else {
       // No focusable children: make container focusable and focus it
-      if (!ref.current.hasAttribute('tabindex')) {
-        ref.current.setAttribute('tabindex', '-1');
+      if (!ref.current.hasAttribute("tabindex")) {
+        ref.current.setAttribute("tabindex", "-1");
         addedTabIndex = true;
       }
       ref.current.focus();
@@ -91,7 +91,7 @@ export function useFocusTrap(ref: RefObject<HTMLElement>, isActive: boolean): vo
 
     // Focus trap handler
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' || !ref.current) return;
+      if (e.key !== "Tab" || !ref.current) return;
 
       const focusableElements = getFocusableElements(ref.current);
 
@@ -115,12 +115,16 @@ export function useFocusTrap(ref: RefObject<HTMLElement>, isActive: boolean): vo
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Capture ref value for cleanup
+    const element = ref.current;
+
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
       // Revert tabindex only if we added it
-      if (addedTabIndex && ref.current) {
-        ref.current.removeAttribute('tabindex');
+      if (addedTabIndex && element) {
+        element.removeAttribute("tabindex");
       }
     };
   }, [ref, isActive]);

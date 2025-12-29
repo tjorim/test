@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import { SettingsPanel } from './SettingsPanel';
+import { useState } from "react";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import { SettingsPanel } from "./SettingsPanel";
 
 interface HeaderProps {
   onShowAbout?: () => void;

@@ -1,50 +1,50 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import React from 'react';
-import { EventStoreProvider, useEventStore } from '../../src/contexts/EventStoreContext';
-import type { HdayEvent } from '../../src/lib/hday/types';
+import { describe, it, expect, beforeEach } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import React from "react";
+import { EventStoreProvider, useEventStore } from "../../src/contexts/EventStoreContext";
+import type { HdayEvent } from "../../src/lib/hday/types";
 
 // Wrapper component for testing
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <EventStoreProvider>{children}</EventStoreProvider>
 );
 
-describe('EventStoreContext', () => {
+describe("EventStoreContext", () => {
   beforeEach(() => {
     // Clear localStorage before each test
     localStorage.clear();
   });
 
-  describe('Initial State', () => {
-    it('should start with empty events', () => {
+  describe("Initial State", () => {
+    it("should start with empty events", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       expect(result.current.events).toEqual([]);
-      expect(result.current.rawText).toBe('');
+      expect(result.current.rawText).toBe("");
     });
 
-    it('should load events from localStorage if present', () => {
-      const testHday = '2025/01/15 # Test event\n';
-      localStorage.setItem('worktime_hday_raw', testHday);
+    it("should load events from localStorage if present", () => {
+      const testHday = "2025/01/15 # Test event\n";
+      localStorage.setItem("worktime_hday_raw", testHday);
 
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       expect(result.current.rawText).toBe(testHday);
       expect(result.current.events).toHaveLength(1);
-      expect(result.current.events[0].title).toBe('Test event');
+      expect(result.current.events[0].title).toBe("Test event");
     });
   });
 
-  describe('addEvent', () => {
-    it('should add a new event', () => {
+  describe("addEvent", () => {
+    it("should add a new event", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       const newEvent: HdayEvent = {
-        type: 'range',
-        start: '2025/01/15',
-        end: '2025/01/15',
-        flags: ['holiday'],
-        title: 'New event',
+        type: "range",
+        start: "2025/01/15",
+        end: "2025/01/15",
+        flags: ["holiday"],
+        title: "New event",
       };
 
       act(() => {
@@ -52,37 +52,37 @@ describe('EventStoreContext', () => {
       });
 
       expect(result.current.events).toHaveLength(1);
-      expect(result.current.events[0].title).toBe('New event');
+      expect(result.current.events[0].title).toBe("New event");
     });
 
-    it('should persist event to localStorage', () => {
+    it("should persist event to localStorage", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       const newEvent: HdayEvent = {
-        type: 'range',
-        start: '2025/01/15',
-        end: '2025/01/15',
-        flags: ['holiday'],
-        title: 'Persisted event',
+        type: "range",
+        start: "2025/01/15",
+        end: "2025/01/15",
+        flags: ["holiday"],
+        title: "Persisted event",
       };
 
       act(() => {
         result.current.addEvent(newEvent);
       });
 
-      const stored = localStorage.getItem('worktime_hday_raw');
-      expect(stored).toContain('Persisted event');
-      expect(stored).toContain('2025/01/15');
+      const stored = localStorage.getItem("worktime_hday_raw");
+      expect(stored).toContain("Persisted event");
+      expect(stored).toContain("2025/01/15");
     });
 
-    it('should add weekly event', () => {
+    it("should add weekly event", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       const weeklyEvent: HdayEvent = {
-        type: 'weekly',
+        type: "weekly",
         weekday: 1,
-        flags: ['in'],
-        title: 'Every Monday',
+        flags: ["in"],
+        title: "Every Monday",
       };
 
       act(() => {
@@ -90,21 +90,21 @@ describe('EventStoreContext', () => {
       });
 
       expect(result.current.events).toHaveLength(1);
-      expect(result.current.events[0].type).toBe('weekly');
+      expect(result.current.events[0].type).toBe("weekly");
       expect(result.current.events[0].weekday).toBe(1);
     });
   });
 
-  describe('updateEvent', () => {
-    it('should update an existing event', () => {
+  describe("updateEvent", () => {
+    it("should update an existing event", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       const initialEvent: HdayEvent = {
-        type: 'range',
-        start: '2025/01/15',
-        end: '2025/01/15',
-        flags: ['holiday'],
-        title: 'Original',
+        type: "range",
+        start: "2025/01/15",
+        end: "2025/01/15",
+        flags: ["holiday"],
+        title: "Original",
       };
 
       act(() => {
@@ -112,11 +112,11 @@ describe('EventStoreContext', () => {
       });
 
       const updatedEvent: HdayEvent = {
-        type: 'range',
-        start: '2025/01/15',
-        end: '2025/01/15',
-        flags: ['business'],
-        title: 'Updated',
+        type: "range",
+        start: "2025/01/15",
+        end: "2025/01/15",
+        flags: ["business"],
+        title: "Updated",
       };
 
       act(() => {
@@ -124,19 +124,19 @@ describe('EventStoreContext', () => {
       });
 
       expect(result.current.events).toHaveLength(1);
-      expect(result.current.events[0].title).toBe('Updated');
-      expect(result.current.events[0].flags).toEqual(['business']);
+      expect(result.current.events[0].title).toBe("Updated");
+      expect(result.current.events[0].flags).toEqual(["business"]);
     });
 
-    it('should persist update to localStorage', () => {
+    it("should persist update to localStorage", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       const initialEvent: HdayEvent = {
-        type: 'range',
-        start: '2025/01/15',
-        end: '2025/01/15',
-        flags: ['holiday'],
-        title: 'Original',
+        type: "range",
+        start: "2025/01/15",
+        end: "2025/01/15",
+        flags: ["holiday"],
+        title: "Original",
       };
 
       act(() => {
@@ -144,42 +144,42 @@ describe('EventStoreContext', () => {
       });
 
       const updatedEvent: HdayEvent = {
-        type: 'range',
-        start: '2025/01/20',
-        end: '2025/01/20',
-        flags: ['business'],
-        title: 'Updated',
+        type: "range",
+        start: "2025/01/20",
+        end: "2025/01/20",
+        flags: ["business"],
+        title: "Updated",
       };
 
       act(() => {
         result.current.updateEvent(0, updatedEvent);
       });
 
-      const stored = localStorage.getItem('worktime_hday_raw');
-      expect(stored).toContain('Updated');
-      expect(stored).toContain('2025/01/20');
-      expect(stored).not.toContain('Original');
+      const stored = localStorage.getItem("worktime_hday_raw");
+      expect(stored).toContain("Updated");
+      expect(stored).toContain("2025/01/20");
+      expect(stored).not.toContain("Original");
     });
   });
 
-  describe('deleteEvent', () => {
-    it('should delete an event by index', () => {
+  describe("deleteEvent", () => {
+    it("should delete an event by index", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       act(() => {
         result.current.addEvent({
-          type: 'range',
-          start: '2025/01/15',
-          end: '2025/01/15',
-          flags: ['holiday'],
-          title: 'Event 1',
+          type: "range",
+          start: "2025/01/15",
+          end: "2025/01/15",
+          flags: ["holiday"],
+          title: "Event 1",
         });
         result.current.addEvent({
-          type: 'range',
-          start: '2025/01/16',
-          end: '2025/01/16',
-          flags: ['holiday'],
-          title: 'Event 2',
+          type: "range",
+          start: "2025/01/16",
+          end: "2025/01/16",
+          flags: ["holiday"],
+          title: "Event 2",
         });
       });
 
@@ -190,19 +190,19 @@ describe('EventStoreContext', () => {
       });
 
       expect(result.current.events).toHaveLength(1);
-      expect(result.current.events[0].title).toBe('Event 2');
+      expect(result.current.events[0].title).toBe("Event 2");
     });
 
-    it('should persist deletion to localStorage', () => {
+    it("should persist deletion to localStorage", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       act(() => {
         result.current.addEvent({
-          type: 'range',
-          start: '2025/01/15',
-          end: '2025/01/15',
-          flags: ['holiday'],
-          title: 'To be deleted',
+          type: "range",
+          start: "2025/01/15",
+          end: "2025/01/15",
+          flags: ["holiday"],
+          title: "To be deleted",
         });
       });
 
@@ -210,90 +210,90 @@ describe('EventStoreContext', () => {
         result.current.deleteEvent(0);
       });
 
-      const stored = localStorage.getItem('worktime_hday_raw');
+      const stored = localStorage.getItem("worktime_hday_raw");
       // When all events are deleted, key is removed from localStorage
       expect(stored).toBeNull();
     });
   });
 
-  describe('getEventsInRange', () => {
-    it('should return events within the date range', () => {
+  describe("getEventsInRange", () => {
+    it("should return events within the date range", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       act(() => {
         result.current.addEvent({
-          type: 'range',
-          start: '2025/01/15',
-          end: '2025/01/15',
-          flags: ['holiday'],
-          title: 'Event in range',
+          type: "range",
+          start: "2025/01/15",
+          end: "2025/01/15",
+          flags: ["holiday"],
+          title: "Event in range",
         });
         result.current.addEvent({
-          type: 'range',
-          start: '2025/02/15',
-          end: '2025/02/15',
-          flags: ['holiday'],
-          title: 'Event out of range',
+          type: "range",
+          start: "2025/02/15",
+          end: "2025/02/15",
+          flags: ["holiday"],
+          title: "Event out of range",
         });
       });
 
       const rangeEvents = result.current.getEventsInRange(
-        new Date('2025-01-01'),
-        new Date('2025-01-31'),
+        new Date("2025-01-01"),
+        new Date("2025-01-31"),
       );
 
       expect(rangeEvents).toHaveLength(1);
-      expect(rangeEvents[0].label).toBe('Event in range');
+      expect(rangeEvents[0].label).toBe("Event in range");
     });
 
-    it('should expand weekly events within range', () => {
+    it("should expand weekly events within range", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       act(() => {
         result.current.addEvent({
-          type: 'weekly',
+          type: "weekly",
           weekday: 1, // Monday
-          flags: ['in'],
-          title: 'Every Monday',
+          flags: ["in"],
+          title: "Every Monday",
         });
       });
 
       // January 2025: Mondays are 6, 13, 20, 27
       const rangeEvents = result.current.getEventsInRange(
-        new Date('2025-01-01'),
-        new Date('2025-01-31'),
+        new Date("2025-01-01"),
+        new Date("2025-01-31"),
       );
 
       expect(rangeEvents).toHaveLength(4);
       rangeEvents.forEach((event) => {
-        expect(event.label).toBe('Every Monday');
+        expect(event.label).toBe("Every Monday");
       });
     });
 
-    it('should return empty array when no events in range', () => {
+    it("should return empty array when no events in range", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       act(() => {
         result.current.addEvent({
-          type: 'range',
-          start: '2025/12/25',
-          end: '2025/12/25',
-          flags: ['holiday'],
-          title: 'Christmas',
+          type: "range",
+          start: "2025/12/25",
+          end: "2025/12/25",
+          flags: ["holiday"],
+          title: "Christmas",
         });
       });
 
       const rangeEvents = result.current.getEventsInRange(
-        new Date('2025-01-01'),
-        new Date('2025-01-31'),
+        new Date("2025-01-01"),
+        new Date("2025-01-31"),
       );
 
       expect(rangeEvents).toHaveLength(0);
     });
   });
 
-  describe('importHday', () => {
-    it('should import valid .hday content', () => {
+  describe("importHday", () => {
+    it("should import valid .hday content", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       const hdayContent = `2025/01/15 # Event 1
@@ -305,77 +305,77 @@ d1 # Every Monday`;
       });
 
       expect(result.current.events).toHaveLength(3);
-      expect(result.current.events[0].title).toBe('Event 1');
-      expect(result.current.events[1].title).toBe('Event 2');
-      expect(result.current.events[2].type).toBe('weekly');
+      expect(result.current.events[0].title).toBe("Event 1");
+      expect(result.current.events[1].title).toBe("Event 2");
+      expect(result.current.events[2].type).toBe("weekly");
     });
 
-    it('should replace existing events on import', () => {
+    it("should replace existing events on import", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       act(() => {
         result.current.addEvent({
-          type: 'range',
-          start: '2025/01/01',
-          end: '2025/01/01',
-          flags: ['holiday'],
-          title: 'Old event',
+          type: "range",
+          start: "2025/01/01",
+          end: "2025/01/01",
+          flags: ["holiday"],
+          title: "Old event",
         });
       });
 
-      const hdayContent = '2025/01/15 # New event\n';
+      const hdayContent = "2025/01/15 # New event\n";
 
       act(() => {
         result.current.importHday(hdayContent);
       });
 
       expect(result.current.events).toHaveLength(1);
-      expect(result.current.events[0].title).toBe('New event');
+      expect(result.current.events[0].title).toBe("New event");
     });
 
-    it('should persist imported content to localStorage', () => {
+    it("should persist imported content to localStorage", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
-      const hdayContent = '2025/01/15 # Imported event\n';
+      const hdayContent = "2025/01/15 # Imported event\n";
 
       act(() => {
         result.current.importHday(hdayContent);
       });
 
-      const stored = localStorage.getItem('worktime_hday_raw');
+      const stored = localStorage.getItem("worktime_hday_raw");
       expect(stored).toBe(hdayContent);
     });
   });
 
-  describe('exportHday', () => {
-    it('should export events as .hday format', () => {
+  describe("exportHday", () => {
+    it("should export events as .hday format", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       act(() => {
         result.current.addEvent({
-          type: 'range',
-          start: '2025/01/15',
-          end: '2025/01/15',
-          flags: ['holiday'],
-          title: 'Export test',
+          type: "range",
+          start: "2025/01/15",
+          end: "2025/01/15",
+          flags: ["holiday"],
+          title: "Export test",
         });
       });
 
       const exported = result.current.exportHday();
 
-      expect(exported).toContain('2025/01/15');
-      expect(exported).toContain('Export test');
+      expect(exported).toContain("2025/01/15");
+      expect(exported).toContain("Export test");
     });
 
-    it('should export empty string when no events', () => {
+    it("should export empty string when no events", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       const exported = result.current.exportHday();
 
-      expect(exported).toBe('');
+      expect(exported).toBe("");
     });
 
-    it('should maintain round-trip fidelity', () => {
+    it("should maintain round-trip fidelity", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       const originalContent = `2025/01/15 # Event 1
@@ -388,21 +388,22 @@ d5 # Every Friday`;
 
       const exported = result.current.exportHday();
 
-      expect(exported).toBe(originalContent);
+      // Expect normalized format with trailing newline
+      expect(exported).toBe(originalContent + "\n");
     });
   });
 
-  describe('clearAll', () => {
-    it('should clear all events', () => {
+  describe("clearAll", () => {
+    it("should clear all events", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       act(() => {
         result.current.addEvent({
-          type: 'range',
-          start: '2025/01/15',
-          end: '2025/01/15',
-          flags: ['holiday'],
-          title: 'Event to clear',
+          type: "range",
+          start: "2025/01/15",
+          end: "2025/01/15",
+          flags: ["holiday"],
+          title: "Event to clear",
         });
       });
 
@@ -413,19 +414,19 @@ d5 # Every Friday`;
       });
 
       expect(result.current.events).toHaveLength(0);
-      expect(result.current.rawText).toBe('');
+      expect(result.current.rawText).toBe("");
     });
 
-    it('should remove data from localStorage', () => {
+    it("should remove data from localStorage", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });
 
       act(() => {
         result.current.addEvent({
-          type: 'range',
-          start: '2025/01/15',
-          end: '2025/01/15',
-          flags: ['holiday'],
-          title: 'Event to clear',
+          type: "range",
+          start: "2025/01/15",
+          end: "2025/01/15",
+          flags: ["holiday"],
+          title: "Event to clear",
         });
       });
 
@@ -433,7 +434,7 @@ d5 # Every Friday`;
         result.current.clearAll();
       });
 
-      const stored = localStorage.getItem('worktime_hday_raw');
+      const stored = localStorage.getItem("worktime_hday_raw");
       expect(stored).toBeNull();
     });
   });

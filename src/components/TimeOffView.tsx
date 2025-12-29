@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Table from 'react-bootstrap/Table';
-import type { EventFlag, HdayEvent, TimeLocationFlag, TypeFlag } from '../lib/hday/types';
+import { useRef, useState } from "react";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import Table from "react-bootstrap/Table";
+import type { EventFlag, HdayEvent, TimeLocationFlag, TypeFlag } from "../lib/hday/types";
 import {
   buildPreviewLine,
   getEventColor,
@@ -10,40 +10,40 @@ import {
   getTimeLocationSymbol,
   normalizeEventFlags,
   parseHday,
-} from '../lib/hday/parser';
-import { isValidDate } from '../lib/hday/validation';
-import { useEventStore } from '../contexts/EventStoreContext';
-import { useToast } from '../contexts/ToastContext';
-import { EventModal } from './EventModal';
-import { ConfirmationDialog } from './ConfirmationDialog';
+} from "../lib/hday/parser";
+import { isValidDate } from "../lib/hday/validation";
+import { useEventStore } from "../contexts/EventStoreContext";
+import { useToast } from "../contexts/ToastContext";
+import { EventModal } from "./EventModal";
+import { ConfirmationDialog } from "./ConfirmationDialog";
 
-const TYPE_FLAG_OPTIONS: Array<[TypeFlag | 'none', string]> = [
-  ['none', 'Holiday (default)'],
-  ['business', 'Business trip'],
-  ['course', 'Training/Course'],
-  ['in', 'In office'],
-  ['weekend', 'Weekend'],
-  ['birthday', 'Birthday'],
-  ['ill', 'Sick leave'],
-  ['other', 'Other'],
+const TYPE_FLAG_OPTIONS: Array<[TypeFlag | "none", string]> = [
+  ["none", "Holiday (default)"],
+  ["business", "Business trip"],
+  ["course", "Training/Course"],
+  ["in", "In office"],
+  ["weekend", "Weekend"],
+  ["birthday", "Birthday"],
+  ["ill", "Sick leave"],
+  ["other", "Other"],
 ];
 
-const TIME_LOCATION_FLAG_OPTIONS: Array<[TimeLocationFlag | 'none', string]> = [
-  ['none', 'Full day'],
-  ['half_am', 'AM (half day)'],
-  ['half_pm', 'PM (half day)'],
-  ['onsite', 'Onsite'],
-  ['no_fly', 'No fly'],
-  ['can_fly', 'Can fly'],
+const TIME_LOCATION_FLAG_OPTIONS: Array<[TimeLocationFlag | "none", string]> = [
+  ["none", "Full day"],
+  ["half_am", "AM (half day)"],
+  ["half_pm", "PM (half day)"],
+  ["onsite", "Onsite"],
+  ["no_fly", "No fly"],
+  ["can_fly", "Can fly"],
 ];
 
 const TYPE_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TYPE_FLAG_OPTIONS.map(
   ([flag]) => flag,
-).filter((f) => f !== 'none') as EventFlag[];
+).filter((f) => f !== "none") as EventFlag[];
 
 const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_FLAG_OPTIONS.map(
   ([flag]) => flag,
-).filter((f) => f !== 'none') as EventFlag[];
+).filter((f) => f !== "none") as EventFlag[];
 
 /**
  * Time Off View Component
@@ -69,16 +69,16 @@ export function TimeOffView() {
   const [editIndex, setEditIndex] = useState(-1);
 
   // Event form state
-  const [eventType, setEventType] = useState<'range' | 'weekly'>('range');
+  const [eventType, setEventType] = useState<"range" | "weekly">("range");
   const [eventWeekday, setEventWeekday] = useState(1);
-  const [eventStart, setEventStart] = useState('');
-  const [eventEnd, setEventEnd] = useState('');
-  const [eventTitle, setEventTitle] = useState('');
+  const [eventStart, setEventStart] = useState("");
+  const [eventEnd, setEventEnd] = useState("");
+  const [eventTitle, setEventTitle] = useState("");
   const [eventFlags, setEventFlags] = useState<EventFlag[]>([]);
 
   // Validation errors
-  const [startDateError, setStartDateError] = useState('');
-  const [endDateError, setEndDateError] = useState('');
+  const [startDateError, setStartDateError] = useState("");
+  const [endDateError, setEndDateError] = useState("");
 
   // Delete confirmation
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -89,40 +89,40 @@ export function TimeOffView() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const resetForm = () => {
-    setEventType('range');
+    setEventType("range");
     setEventWeekday(1);
-    setEventStart('');
-    setEventEnd('');
-    setEventTitle('');
+    setEventStart("");
+    setEventEnd("");
+    setEventTitle("");
     setEventFlags([]);
-    setStartDateError('');
-    setEndDateError('');
+    setStartDateError("");
+    setEndDateError("");
   };
 
   const validateForm = (): boolean => {
     let valid = true;
 
-    if (eventType === 'range') {
+    if (eventType === "range") {
       // Validate start date
       if (!eventStart) {
-        setStartDateError('Start date is required');
+        setStartDateError("Start date is required");
         valid = false;
       } else if (!isValidDate(eventStart)) {
-        setStartDateError('Invalid date (e.g., Feb 30 or April 31)');
+        setStartDateError("Invalid date (e.g., Feb 30 or April 31)");
         valid = false;
       } else {
-        setStartDateError('');
+        setStartDateError("");
       }
 
       // Validate end date
       if (eventEnd && !isValidDate(eventEnd)) {
-        setEndDateError('Invalid date (e.g., Feb 30 or April 31)');
+        setEndDateError("Invalid date (e.g., Feb 30 or April 31)");
         valid = false;
       } else if (eventEnd && eventStart && eventEnd < eventStart) {
-        setEndDateError('End date must be after start date');
+        setEndDateError("End date must be after start date");
         valid = false;
       } else {
-        setEndDateError('');
+        setEndDateError("");
       }
     }
 
@@ -141,23 +141,23 @@ export function TimeOffView() {
 
     setEditIndex(index);
 
-    if (event.type === 'range') {
-      setEventType('range');
-      setEventStart(event.start || '');
-      setEventEnd(event.end || '');
-    } else if (event.type === 'weekly') {
-      setEventType('weekly');
+    if (event.type === "range") {
+      setEventType("range");
+      setEventStart(event.start || "");
+      setEventEnd(event.end || "");
+    } else if (event.type === "weekly") {
+      setEventType("weekly");
       setEventWeekday(event.weekday || 1);
     }
 
-    setEventTitle(event.title || '');
+    setEventTitle(event.title || "");
     setEventFlags(event.flags || []);
     setShowEventModal(true);
   };
 
   const handleSubmitEvent = () => {
     if (!validateForm()) {
-      toast.showError('Please fix validation errors before saving');
+      toast.showError("Please fix validation errors before saving");
       return;
     }
 
@@ -165,9 +165,9 @@ export function TimeOffView() {
 
     let newEvent: HdayEvent;
 
-    if (eventType === 'range') {
+    if (eventType === "range") {
       newEvent = {
-        type: 'range',
+        type: "range",
         start: eventStart,
         end: eventEnd || eventStart,
         flags: normalizedFlags,
@@ -175,7 +175,7 @@ export function TimeOffView() {
       };
     } else {
       newEvent = {
-        type: 'weekly',
+        type: "weekly",
         weekday: eventWeekday,
         flags: normalizedFlags,
         title: eventTitle,
@@ -184,10 +184,10 @@ export function TimeOffView() {
 
     if (editIndex >= 0) {
       updateEvent(editIndex, newEvent);
-      toast.showSuccess(`Event updated successfully`, '✓');
+      toast.showSuccess(`Event updated successfully`, "✓");
     } else {
       addEvent(newEvent);
-      toast.showSuccess(`Event added successfully`, '✓');
+      toast.showSuccess(`Event added successfully`, "✓");
     }
 
     setShowEventModal(false);
@@ -202,7 +202,7 @@ export function TimeOffView() {
   const handleConfirmDelete = () => {
     if (deleteIndex >= 0) {
       deleteEvent(deleteIndex);
-      toast.showSuccess('Event deleted successfully', '🗑️');
+      toast.showSuccess("Event deleted successfully", "🗑️");
     }
     setShowDeleteConfirm(false);
     setDeleteIndex(-1);
@@ -222,15 +222,15 @@ export function TimeOffView() {
       parseHday(text);
       // Import if valid
       importHday(text);
-      toast.showSuccess(`Imported ${file.name}`, '📥');
+      toast.showSuccess(`Imported ${file.name}`, "📥");
     } catch (error) {
-      console.error('Failed to import .hday file:', error);
-      toast.showError('Failed to import file. Please check the format.');
+      console.error("Failed to import .hday file:", error);
+      toast.showError("Failed to import file. Please check the format.");
     }
 
     // Reset file input
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -238,21 +238,21 @@ export function TimeOffView() {
     const hdayContent = exportHday();
 
     if (!hdayContent.trim()) {
-      toast.showError('No events to export');
+      toast.showError("No events to export");
       return;
     }
 
-    const blob = new Blob([hdayContent], { type: 'text/plain' });
+    const blob = new Blob([hdayContent], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'timeoff.hday';
+    a.download = "timeoff.hday";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    toast.showSuccess('Exported timeoff.hday', '📤');
+    toast.showSuccess("Exported timeoff.hday", "📤");
   };
 
   const previewLine = buildPreviewLine({
@@ -264,8 +264,8 @@ export function TimeOffView() {
     flags: eventFlags,
   });
 
-  const handleTypeFlagChange = (flag: TypeFlag | 'none') => {
-    if (flag === 'none') {
+  const handleTypeFlagChange = (flag: TypeFlag | "none") => {
+    if (flag === "none") {
       setEventFlags((prev) => prev.filter((f) => !TYPE_FLAGS_AS_EVENT_FLAGS.includes(f)));
     } else {
       setEventFlags((prev) => {
@@ -275,8 +275,8 @@ export function TimeOffView() {
     }
   };
 
-  const handleTimeFlagChange = (flag: TimeLocationFlag | 'none') => {
-    if (flag === 'none') {
+  const handleTimeFlagChange = (flag: TimeLocationFlag | "none") => {
+    if (flag === "none") {
       setEventFlags((prev) => prev.filter((f) => !TIME_LOCATION_FLAGS_AS_EVENT_FLAGS.includes(f)));
     } else {
       setEventFlags((prev) => {
@@ -332,45 +332,45 @@ export function TimeOffView() {
               </thead>
               <tbody>
                 {events.map((event, index) => {
-                  const eventColor = event.type !== 'unknown' ? getEventColor(event.flags) : '#ccc';
+                  const eventColor = event.type !== "unknown" ? getEventColor(event.flags) : "#ccc";
                   const eventLabel =
-                    event.type !== 'unknown' ? getEventTypeLabel(event.flags) : 'Unknown';
-                  const symbol = event.type !== 'unknown' ? getTimeLocationSymbol(event.flags) : '';
+                    event.type !== "unknown" ? getEventTypeLabel(event.flags) : "Unknown";
+                  const symbol = event.type !== "unknown" ? getTimeLocationSymbol(event.flags) : "";
 
                   return (
                     <tr key={index}>
                       <td>
                         <span
                           className="badge"
-                          style={{ backgroundColor: eventColor, color: '#000' }}
+                          style={{ backgroundColor: eventColor, color: "#000" }}
                         >
                           {symbol && `${symbol} `}
                           {eventLabel}
                         </span>
                       </td>
                       <td>
-                        {event.type === 'range' && (
+                        {event.type === "range" && (
                           <>
                             {event.start}
                             {event.end && event.end !== event.start && ` → ${event.end}`}
                           </>
                         )}
-                        {event.type === 'weekly' &&
-                          `Every ${event.weekday ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][event.weekday - 1] : 'Unknown'}`}
-                        {event.type === 'unknown' && (
+                        {event.type === "weekly" &&
+                          `Every ${event.weekday ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][event.weekday - 1] : "Unknown"}`}
+                        {event.type === "unknown" && (
                           <span className="text-muted">Unknown format</span>
                         )}
                       </td>
                       <td>{event.title || <span className="text-muted">—</span>}</td>
                       <td>
                         {event.flags && event.flags.length > 0 ? (
-                          <span className="text-muted small">{event.flags.join(', ')}</span>
+                          <span className="text-muted small">{event.flags.join(", ")}</span>
                         ) : (
                           <span className="text-muted">—</span>
                         )}
                       </td>
                       <td>
-                        {event.type !== 'unknown' && (
+                        {event.type !== "unknown" && (
                           <>
                             <Button
                               variant="outline-secondary"
@@ -406,7 +406,7 @@ export function TimeOffView() {
         ref={fileInputRef}
         type="file"
         accept=".hday,text/plain"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={handleFileChange}
       />
 

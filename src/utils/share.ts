@@ -29,20 +29,20 @@ export async function share(
       // Fallback: manual copy to clipboard using temporary textarea
       const textToCopy = options.url || window.location.href;
       try {
-        const textArea = document.createElement('textarea');
+        const textArea = document.createElement("textarea");
         textArea.value = textToCopy;
-        textArea.style.position = 'fixed';
-        textArea.style.opacity = '0';
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        document.execCommand('copy');
+        document.execCommand("copy");
         document.body.removeChild(textArea);
         onSuccess?.();
       } catch {
         // Ultimate fallback: let the caller handle this through onError
         onError?.(
-          new Error('Sharing not supported in this browser. Please copy the URL manually.'),
+          new Error("Sharing not supported in this browser. Please copy the URL manually."),
         );
       }
     }
@@ -57,8 +57,8 @@ export async function share(
 export function shareApp(onSuccess?: () => void, onError?: (err: unknown) => void) {
   share(
     {
-      title: 'Worktime',
-      text: 'Check out Worktime for 24/7 shift tracking and time-off management!',
+      title: "Worktime",
+      text: "Check out Worktime for 24/7 shift tracking and time-off management!",
       url: `${window.location.origin}${window.location.pathname}`,
     },
     onSuccess,
@@ -90,7 +90,7 @@ export function shareAppWithContext(
 
   share(
     {
-      title: 'Worktime',
+      title: "Worktime",
       text: `Worktime: ${contextText}`,
       url: shareUrl,
     },
@@ -111,7 +111,7 @@ export function shareTeamSchedule(
   date?: string,
 ) {
   const queryParams: Record<string, string> = {
-    tab: 'schedule',
+    tab: "schedule",
     team: teamNumber.toString(),
   };
 
@@ -120,7 +120,7 @@ export function shareTeamSchedule(
   }
 
   shareAppWithContext(
-    `Team ${teamNumber} schedule${date ? ` for ${date}` : ''}`,
+    `Team ${teamNumber} schedule${date ? ` for ${date}` : ""}`,
     onSuccess,
     onError,
     queryParams,
@@ -132,7 +132,7 @@ export function shareTeamSchedule(
  */
 export function shareTodayView(onSuccess?: () => void, onError?: (err: unknown) => void) {
   shareAppWithContext("Today's shift schedule - see who's working now", onSuccess, onError, {
-    tab: 'today',
+    tab: "today",
   });
 }
 
@@ -146,7 +146,7 @@ export function shareTransferView(
   onError?: (err: unknown) => void,
 ) {
   shareAppWithContext(`Team ${teamNumber} transfer schedule`, onSuccess, onError, {
-    tab: 'transfer',
+    tab: "transfer",
     team: teamNumber.toString(),
   });
 }

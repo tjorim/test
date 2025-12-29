@@ -1,5 +1,5 @@
 // Bootstrap Icons
-@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import "bootstrap-icons/font/bootstrap-icons.css";
 
 /* Worktime Custom Styles */
 
@@ -347,13 +347,13 @@
   border-color: var(--bs-primary, #0d6efd) !important;
 }
 
-[data-bs-theme='dark'] .team-card-interactive:hover,
-[data-bs-theme='dark'] .team-card-interactive:focus {
+[data-bs-theme="dark"] .team-card-interactive:hover,
+[data-bs-theme="dark"] .team-card-interactive:focus {
   background-color: var(--bs-body-bg, #181a1b) !important;
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1) !important;
 }
 
-[data-bs-theme='dark'] {
+[data-bs-theme="dark"] {
   --shift-morning: #1565c0;
   --shift-morning-text: #e3f2fd;
   --shift-evening: #8d3200;
@@ -368,38 +368,38 @@
   color: #e0e0e0 !important;
 }
 
-[data-bs-theme='dark'] .card,
-[data-bs-theme='dark'] .modal-content,
-[data-bs-theme='dark'] .offcanvas,
-[data-bs-theme='dark'] .table,
-[data-bs-theme='dark'] .tab-content,
-[data-bs-theme='dark'] .nav,
-[data-bs-theme='dark'] .navbar,
-[data-bs-theme='dark'] .dropdown-menu {
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .modal-content,
+[data-bs-theme="dark"] .offcanvas,
+[data-bs-theme="dark"] .table,
+[data-bs-theme="dark"] .tab-content,
+[data-bs-theme="dark"] .nav,
+[data-bs-theme="dark"] .navbar,
+[data-bs-theme="dark"] .dropdown-menu {
   background-color: #23272b !important;
   color: #e0e0e0 !important;
 }
 
-[data-bs-theme='dark'] .nav-tabs .nav-link {
+[data-bs-theme="dark"] .nav-tabs .nav-link {
   background-color: transparent !important;
   color: #adb5bd !important;
   border-color: transparent transparent #343a40;
 }
 
-[data-bs-theme='dark'] .nav-tabs .nav-link.active {
+[data-bs-theme="dark"] .nav-tabs .nav-link.active {
   background-color: #23272b !important;
   color: #e0e0e0 !important;
   border-color: #495057 #495057 #23272b !important;
   font-weight: 600;
 }
 
-[data-bs-theme='dark'] .nav-tabs .nav-link:hover {
+[data-bs-theme="dark"] .nav-tabs .nav-link:hover {
   background-color: rgba(255, 255, 255, 0.05) !important;
   color: #e0e0e0 !important;
 }
 
-[data-bs-theme='dark'] .schedule-table th,
-[data-bs-theme='dark'] .schedule-table .team-header {
+[data-bs-theme="dark"] .schedule-table th,
+[data-bs-theme="dark"] .schedule-table .team-header {
   background-color: var(--bs-table-bg, #23272b);
   color: var(--bs-table-color, #e0e0e0);
 }
@@ -408,6 +408,6 @@
   background-color: var(--bs-table-bg, #f8f9fa);
 }
 
-[data-bs-theme='dark'] .schedule-table td:first-child {
+[data-bs-theme="dark"] .schedule-table td:first-child {
   background-color: var(--bs-table-bg, #23272b);
 }

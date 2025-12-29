@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: "20"
           cache: npm
 
       - name: Install dependencies
@@ -43,8 +43,22 @@ jobs:
         run: |
           echo "Running OXC linting and tests..."
           npm run lint
-          npm run test
+          npm run test | tee test-output.txt
           echo "✅ All quality checks passed"
+
+      - name: Extract test count
+        run: |
+          echo "Extracting test count from Vitest output..."
+          # Parse test count from Vitest output (format: "Tests  462 passed (462)")
+          TEST_COUNT=$(grep -oP 'Tests\s+\K\d+(?=\s+passed)' test-output.txt || echo "unknown")
+
+          if [ "$TEST_COUNT" = "unknown" ]; then
+            echo "⚠️  Could not extract test count, using fallback"
+          else
+            echo "✅ Found ${TEST_COUNT} tests"
+          fi
+
+          echo "TEST_COUNT=${TEST_COUNT}" >> $GITHUB_ENV
 
       - name: Build application
         run: |
@@ -153,7 +167,7 @@ jobs:
             echo ""
             echo "✅ All build requirements met"
             echo "✅ Code quality checks passed (OXC)"
-            echo "✅ Tests passed (Vitest - 460 tests)"
+            echo "✅ Tests passed (Vitest - ${TEST_COUNT} tests)"
             echo "✅ Build successful (Vite 8)"
             echo "✅ Core shift tracking present"
             echo "✅ Time-off management (.hday) present"
@@ -168,5 +182,5 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: ./.github/actions/upsert-comment
         with:
-          comment-identifier: '🚀 Build Validation Results'
+          comment-identifier: "🚀 Build Validation Results"
           comment-body: ${{ env.COMMENT_BODY }}

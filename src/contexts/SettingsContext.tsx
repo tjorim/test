@@ -13,13 +13,13 @@
 // - Export/import preferences
 // Keep all user state in SettingsContext or unified user state.
 
-import type { ReactNode } from 'react';
-import { createContext, useCallback, useContext, useMemo } from 'react';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import type { ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
-export type TimeFormat = '12h' | '24h';
-export type Theme = 'light' | 'dark' | 'auto';
-export type NotificationSetting = 'on' | 'off';
+export type TimeFormat = "12h" | "24h";
+export type Theme = "light" | "dark" | "auto";
+export type NotificationSetting = "on" | "off";
 
 interface UserSettings {
   timeFormat: TimeFormat;
@@ -43,9 +43,9 @@ interface SettingsContextType {
 }
 
 export const defaultSettings: UserSettings = {
-  timeFormat: '24h',
-  theme: 'auto',
-  notifications: 'off',
+  timeFormat: "24h",
+  theme: "auto",
+  notifications: "off",
 };
 
 interface WorktimeUserState {
@@ -79,21 +79,21 @@ interface SettingsProviderProps {
  */
 export function SettingsProvider({ children }: SettingsProviderProps) {
   function validateUserState(state: unknown): state is WorktimeUserState {
-    if (typeof state !== 'object' || state === null) return false;
+    if (typeof state !== "object" || state === null) return false;
     const s = state as Record<string, unknown>;
-    if (typeof s.hasCompletedOnboarding !== 'boolean') return false;
-    if (!(typeof s.myTeam === 'number' || s.myTeam === null)) return false;
-    if (typeof s.settings !== 'object' || s.settings === null) return false;
+    if (typeof s.hasCompletedOnboarding !== "boolean") return false;
+    if (!(typeof s.myTeam === "number" || s.myTeam === null)) return false;
+    if (typeof s.settings !== "object" || s.settings === null) return false;
     const settings = s.settings as Record<string, unknown>;
-    if (!['12h', '24h'].includes(settings.timeFormat as string)) return false;
-    if (!['light', 'dark', 'auto'].includes(settings.theme as string)) return false;
-    if (!['on', 'off'].includes(settings.notifications as string)) return false;
+    if (!["12h", "24h"].includes(settings.timeFormat as string)) return false;
+    if (!["light", "dark", "auto"].includes(settings.theme as string)) return false;
+    if (!["on", "off"].includes(settings.notifications as string)) return false;
     return true;
   }
 
   // Unified user state in a single localStorage key
   const [rawUserState, setUserState] = useLocalStorage<WorktimeUserState>(
-    'worktime_user_state',
+    "worktime_user_state",
     defaultUserState,
   );
 
@@ -201,7 +201,7 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
 export function useSettings(): SettingsContextType {
   const context = useContext(SettingsContext);
   if (context === undefined) {
-    throw new Error('useSettings must be used within a SettingsProvider');
+    throw new Error("useSettings must be used within a SettingsProvider");
   }
   return context;
 }

@@ -1,8 +1,8 @@
-import type { Dayjs } from 'dayjs';
-import { CONFIG } from './config';
-import { dayjs, formatYYWWD } from './dateTimeUtils';
+import type { Dayjs } from "dayjs";
+import { CONFIG } from "./config";
+import { dayjs, formatYYWWD } from "./dateTimeUtils";
 
-export type ShiftType = 'M' | 'E' | 'N' | 'O';
+export type ShiftType = "M" | "E" | "N" | "O";
 
 export interface Shift {
   code: ShiftType;
@@ -35,44 +35,44 @@ export interface OffDayProgress {
 // Shift definitions
 export const SHIFTS = Object.freeze({
   MORNING: Object.freeze({
-    code: 'M',
-    emoji: '🌅',
-    name: 'Morning',
-    hours: '07:00-15:00',
+    code: "M",
+    emoji: "🌅",
+    name: "Morning",
+    hours: "07:00-15:00",
     start: 7,
     end: 15,
     isWorking: true,
-    className: 'shift-morning',
+    className: "shift-morning",
   }),
   EVENING: Object.freeze({
-    code: 'E',
-    emoji: '🌆',
-    name: 'Evening',
-    hours: '15:00-23:00',
+    code: "E",
+    emoji: "🌆",
+    name: "Evening",
+    hours: "15:00-23:00",
     start: 15,
     end: 23,
     isWorking: true,
-    className: 'shift-evening',
+    className: "shift-evening",
   }),
   NIGHT: Object.freeze({
-    code: 'N',
-    emoji: '🌙',
-    name: 'Night',
-    hours: '23:00-07:00',
+    code: "N",
+    emoji: "🌙",
+    name: "Night",
+    hours: "23:00-07:00",
     start: 23,
     end: 7,
     isWorking: true,
-    className: 'shift-night',
+    className: "shift-night",
   }),
   OFF: Object.freeze({
-    code: 'O',
-    emoji: '🏠',
-    name: 'Off',
-    hours: 'Not working',
+    code: "O",
+    emoji: "🏠",
+    name: "Off",
+    hours: "Not working",
     start: null,
     end: null,
     isWorking: false,
-    className: 'shift-off',
+    className: "shift-off",
   }),
 });
 
@@ -90,14 +90,14 @@ export function getShiftByCode(code: string | null | undefined) {
   const shift = Object.values(SHIFTS).find((s) => s.code === code);
   return (
     shift || {
-      code: 'U',
-      emoji: '❓',
-      name: 'Unknown',
-      hours: 'Unknown hours',
+      code: "U",
+      emoji: "❓",
+      name: "Unknown",
+      hours: "Unknown hours",
       start: null,
       end: null,
       isWorking: false,
-      className: 'shift-off',
+      className: "shift-off",
     }
   );
 }
@@ -114,11 +114,11 @@ export function calculateShift(date: string | Date | Dayjs, teamNumber: number):
     throw new Error(`Invalid team number: ${teamNumber}. Expected 1-${CONFIG.TEAMS_COUNT}`);
   }
 
-  const targetDate = dayjs(date).startOf('day');
-  const referenceDate = dayjs(CONFIG.REFERENCE_DATE).startOf('day');
+  const targetDate = dayjs(date).startOf("day");
+  const referenceDate = dayjs(CONFIG.REFERENCE_DATE).startOf("day");
 
   // Calculate days since reference
-  const daysSinceReference = targetDate.diff(referenceDate, 'day');
+  const daysSinceReference = targetDate.diff(referenceDate, "day");
 
   // Calculate team offset (each team starts 2 days later)
   const teamOffset = (teamNumber - CONFIG.REFERENCE_TEAM) * 2;
@@ -152,7 +152,7 @@ export function getCurrentShiftDay(date: string | Date | Dayjs): Dayjs {
 
   // If it's before 7 AM, we're in the previous day's night shift
   if (hour < 7) {
-    return current.subtract(1, 'day');
+    return current.subtract(1, "day");
   }
 
   return current;
@@ -169,8 +169,8 @@ export function getShiftCode(date: string | Date | Dayjs, teamNumber: number): s
   let codeDate = dayjs(date);
 
   // For night shifts, use the previous day's date code
-  if (shift.code === 'N') {
-    codeDate = codeDate.subtract(1, 'day');
+  if (shift.code === "N") {
+    codeDate = codeDate.subtract(1, "day");
   }
 
   // Inline formatDateCode logic
@@ -193,7 +193,7 @@ export function getNextShift(
     return null;
   }
 
-  let checkDate = dayjs(fromDate).add(1, 'day');
+  let checkDate = dayjs(fromDate).add(1, "day");
 
   for (let i = 0; i < CONFIG.SHIFT_CYCLE_DAYS; i++) {
     const shift = calculateShift(checkDate, teamNumber);
@@ -204,7 +204,7 @@ export function getNextShift(
         code: getShiftCode(checkDate, teamNumber),
       };
     }
-    checkDate = checkDate.add(1, 'day');
+    checkDate = checkDate.add(1, "day");
   }
 
   return null;
@@ -268,7 +268,7 @@ export function getOffDayProgress(
       break; // Found the last working day
     }
     dayCount++;
-    checkDate = checkDate.subtract(1, 'day');
+    checkDate = checkDate.subtract(1, "day");
   }
 
   return dayCount > 0 ? { current: dayCount, total: 4 } : null;
@@ -291,7 +291,7 @@ export function isCurrentlyWorking(
   if (shift.start == null || shift.end == null) return false;
 
   const shiftDay = getCurrentShiftDay(currentTime);
-  if (!shiftDay.isSame(date, 'day')) return false;
+  if (!shiftDay.isSame(date, "day")) return false;
 
   const hour = currentTime.hour();
 

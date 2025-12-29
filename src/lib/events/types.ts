@@ -11,7 +11,7 @@
  * - holiday: Time-off event (from .hday files)
  * - assignment: Custom assignment/note (future expansion)
  */
-export type EventType = 'shift' | 'holiday' | 'assignment';
+export type EventType = "shift" | "holiday" | "assignment";
 
 /**
  * Unified calendar event interface
@@ -48,13 +48,13 @@ export type EventMetadata = ShiftMetadata | HolidayMetadata | AssignmentMetadata
  * Metadata for shift events
  */
 export interface ShiftMetadata {
-  type: 'shift';
+  type: "shift";
 
   /** Team number (1-5) */
   team: number;
 
   /** Shift code: M, E, N, or X (off day) */
-  shiftCode: 'M' | 'E' | 'N' | 'X';
+  shiftCode: "M" | "E" | "N" | "X";
 
   /** Start time in HH:mm format (e.g., "07:00", "15:00", "23:00") */
   startTime?: string;
@@ -70,7 +70,7 @@ export interface ShiftMetadata {
  * Metadata for holiday/time-off events
  */
 export interface HolidayMetadata {
-  type: 'holiday';
+  type: "holiday";
 
   /** Event color (WCAG AA compliant from EVENT_COLORS) */
   color: string;
@@ -92,7 +92,7 @@ export interface HolidayMetadata {
  * Metadata for assignment/custom events (future expansion)
  */
 export interface AssignmentMetadata {
-  type: 'assignment';
+  type: "assignment";
 
   /** Custom color for the assignment */
   color?: string;

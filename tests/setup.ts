@@ -1,24 +1,22 @@
-import { beforeEach } from 'vitest';
-import '@testing-library/jest-dom';
-import * as React from 'react';
+import { beforeEach } from "vitest";
+import "@testing-library/jest-dom";
+import * as React from "react";
 
 // Make React available globally for JSX in tests
 globalThis.React = React;
 
 // Type augmentation for jest-dom matchers
-import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
+import type { TestingLibraryMatchers } from "@testing-library/jest-dom/matchers";
 
-declare module 'vitest' {
-  // biome-ignore lint/suspicious/noExplicitAny: Required for generic type parameter defaults
-  interface Assertion<T = any> extends TestingLibraryMatchers<T, void> {}
-  // biome-ignore lint/suspicious/noExplicitAny: Required for generic type parameter defaults
-  interface AsymmetricMatchersContaining<T = any> extends TestingLibraryMatchers<T, void> {}
+declare module "vitest" {
+  interface Assertion<T = any> extends TestingLibraryMatchers<T, void> {} // oxlint-disable-line typescript/no-explicit-any -- Required for generic type parameter defaults
+  interface AsymmetricMatchersContaining<T = any> extends TestingLibraryMatchers<T, void> {} // oxlint-disable-line typescript/no-explicit-any -- Required for generic type parameter defaults
 }
 
 // Mock localStorage (force override for compatibility)
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   const storage: Record<string, string> = {};
-  Object.defineProperty(window, 'localStorage', {
+  Object.defineProperty(window, "localStorage", {
     writable: true,
     value: {
       getItem: (key: string) => storage[key] || null,
@@ -40,7 +38,7 @@ if (typeof window !== 'undefined') {
 }
 
 // Mock window.matchMedia (for responsive design components)
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: (query: string) => ({
     matches: false,
@@ -57,7 +55,7 @@ Object.defineProperty(window, 'matchMedia', {
 // Set up DOM environment
 beforeEach(() => {
   // Clear document body
-  document.body.innerHTML = '';
+  document.body.innerHTML = "";
 
   // Reset localStorage
   localStorage.clear();

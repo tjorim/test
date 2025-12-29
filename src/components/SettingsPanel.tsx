@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import Badge from 'react-bootstrap/Badge';
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Offcanvas from 'react-bootstrap/Offcanvas';
-import { useSettings } from '../contexts/SettingsContext';
-import { useToast } from '../contexts/ToastContext';
-import { CONFIG } from '../utils/config';
-import { shareApp, shareTodayView } from '../utils/share';
-import { ChangelogModal } from './ChangelogModal';
+import { useState } from "react";
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import ListGroup from "react-bootstrap/ListGroup";
+import Offcanvas from "react-bootstrap/Offcanvas";
+import { useSettings } from "../contexts/SettingsContext";
+import { useToast } from "../contexts/ToastContext";
+import { CONFIG } from "../utils/config";
+import { shareApp, shareTodayView } from "../utils/share";
+import { ChangelogModal } from "./ChangelogModal";
 
 interface SettingsPanelProps {
   show: boolean;
@@ -48,10 +48,10 @@ export function SettingsPanel({ show, onHide, onShowAbout }: SettingsPanelProps)
     try {
       resetSettings();
       onHide(); // Close the settings panel
-      toast.showSuccess('All data cleared', '🗑️');
+      toast.showSuccess("All data cleared", "🗑️");
     } catch (error) {
-      console.error('Failed to clear data:', error);
-      toast.showError('Could not clear all data. Please try again.', '⚠️');
+      console.error("Failed to clear data:", error);
+      toast.showError("Could not clear all data. Please try again.", "⚠️");
     }
   };
 
@@ -63,14 +63,14 @@ export function SettingsPanel({ show, onHide, onShowAbout }: SettingsPanelProps)
   // Share handlers
   const handleShareApp = () => {
     shareApp(
-      () => toast?.showSuccess('Share dialog opened or link copied!'),
-      () => toast?.showError('Could not share. Try copying the link manually.'),
+      () => toast?.showSuccess("Share dialog opened or link copied!"),
+      () => toast?.showError("Could not share. Try copying the link manually."),
     );
   };
   const handleShareWithContext = () => {
     shareTodayView(
-      () => toast?.showSuccess('Share dialog opened or link copied!'),
-      () => toast?.showError('Could not share. Try copying the link manually.'),
+      () => toast?.showSuccess("Share dialog opened or link copied!"),
+      () => toast?.showError("Could not share. Try copying the link manually."),
     );
   };
 
@@ -100,14 +100,14 @@ export function SettingsPanel({ show, onHide, onShowAbout }: SettingsPanelProps)
                     </div>
                     <ButtonGroup size="sm">
                       <Button
-                        variant={settings.timeFormat === '24h' ? 'primary' : 'outline-secondary'}
-                        onClick={() => updateTimeFormat('24h')}
+                        variant={settings.timeFormat === "24h" ? "primary" : "outline-secondary"}
+                        onClick={() => updateTimeFormat("24h")}
                       >
                         24h
                       </Button>
                       <Button
-                        variant={settings.timeFormat === '12h' ? 'primary' : 'outline-secondary'}
-                        onClick={() => updateTimeFormat('12h')}
+                        variant={settings.timeFormat === "12h" ? "primary" : "outline-secondary"}
+                        onClick={() => updateTimeFormat("12h")}
                       >
                         12h
                       </Button>
@@ -122,22 +122,22 @@ export function SettingsPanel({ show, onHide, onShowAbout }: SettingsPanelProps)
                     </div>
                     <ButtonGroup size="sm">
                       <Button
-                        variant={settings.theme === 'auto' ? 'primary' : 'outline-secondary'}
-                        onClick={() => updateTheme('auto')}
+                        variant={settings.theme === "auto" ? "primary" : "outline-secondary"}
+                        onClick={() => updateTheme("auto")}
                       >
                         <i className="bi bi-circle-half me-1"></i>
                         Auto
                       </Button>
                       <Button
-                        variant={settings.theme === 'light' ? 'primary' : 'outline-secondary'}
-                        onClick={() => updateTheme('light')}
+                        variant={settings.theme === "light" ? "primary" : "outline-secondary"}
+                        onClick={() => updateTheme("light")}
                       >
                         <i className="bi bi-sun me-1"></i>
                         Light
                       </Button>
                       <Button
-                        variant={settings.theme === 'dark' ? 'primary' : 'outline-secondary'}
-                        onClick={() => updateTheme('dark')}
+                        variant={settings.theme === "dark" ? "primary" : "outline-secondary"}
+                        onClick={() => updateTheme("dark")}
                       >
                         <i className="bi bi-moon me-1"></i>
                         Dark
@@ -221,7 +221,7 @@ export function SettingsPanel({ show, onHide, onShowAbout }: SettingsPanelProps)
                     <div>
                       <div className="fw-medium">
                         <i className="bi bi-calendar-event me-2"></i>
-                        Export Schedule{' '}
+                        Export Schedule{" "}
                         <Badge bg="secondary" className="ms-2">
                           Coming Soon
                         </Badge>

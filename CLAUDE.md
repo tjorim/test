@@ -13,11 +13,13 @@ Worktime is a Team Shift Tracker and Time-Off Manager for continuous (24/7) 5-te
 ## Developer Workflow Preferences
 
 **Git Workflow**:
+
 - **Do NOT commit automatically** - The user (Jorim) handles all git commits
 - Only create commits when explicitly requested by the user
 - Focus on implementation and testing, let the user control version control timing and commit messages
 
 **Language & Spelling**:
+
 - Use **American English** spelling throughout the codebase
 - Examples: "color" (not "colour"), "organization" (not "organisation"), "license" (not "licence"), "optimize" (not "optimise")
 - Aligns with programming conventions and React/TypeScript ecosystem standards

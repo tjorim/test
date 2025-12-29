@@ -1,16 +1,16 @@
-import Alert from 'react-bootstrap/Alert';
-import Badge from 'react-bootstrap/Badge';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Row from 'react-bootstrap/Row';
-import Tooltip from 'react-bootstrap/Tooltip';
-import { useEventStore } from '../contexts/EventStoreContext';
-import { useSettings } from '../contexts/SettingsContext';
-import { dayjs, getISOWeekYear2Digit, getLocalizedShiftTime } from '../utils/dateTimeUtils';
-import type { ShiftResult } from '../utils/shiftCalculations';
-import { getShiftByCode, isCurrentlyWorking } from '../utils/shiftCalculations';
+import Alert from "react-bootstrap/Alert";
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Row from "react-bootstrap/Row";
+import Tooltip from "react-bootstrap/Tooltip";
+import { useEventStore } from "../contexts/EventStoreContext";
+import { useSettings } from "../contexts/SettingsContext";
+import { dayjs, getISOWeekYear2Digit, getLocalizedShiftTime } from "../utils/dateTimeUtils";
+import type { ShiftResult } from "../utils/shiftCalculations";
+import { getShiftByCode, isCurrentlyWorking } from "../utils/shiftCalculations";
 
 interface TodayViewProps {
   todayShifts: ShiftResult[];
@@ -48,7 +48,7 @@ function TeamCard({
       )}
       <div
         className="d-flex justify-content-between align-items-center mb-2"
-        style={{ position: 'relative', zIndex: 2 }}
+        style={{ position: "relative", zIndex: 2 }}
       >
         <div className="d-flex align-items-center gap-2">
           <h6 className="mb-0">Team {shiftResult.teamNumber}</h6>
@@ -93,7 +93,7 @@ function TeamCard({
               shiftResult.shift.end,
               settings.timeFormat,
             )
-          : 'Not working today'}
+          : "Not working today"}
       </div>
       <div className="text-muted small mt-1">
         <OverlayTrigger
@@ -105,7 +105,7 @@ function TeamCard({
               Format: YYWW.D + Shift
               <br />
               <em>{shiftResult.code}</em> = ISO Year {getISOWeekYear2Digit(shiftResult.date)}, ISO
-              Week {shiftResult.date.isoWeek()}, {shiftResult.date.format('dddd')},{' '}
+              Week {shiftResult.date.isoWeek()}, {shiftResult.date.format("dddd")},{" "}
               {shiftResult.shift.name}
             </Tooltip>
           }
@@ -119,13 +119,13 @@ function TeamCard({
   if (onTeamClick) {
     return (
       <Card
-        className={`team-card-interactive w-100${isMyTeam ? ' my-team' : ''}`}
+        className={`team-card-interactive w-100${isMyTeam ? " my-team" : ""}`}
         onClick={() => onTeamClick(shiftResult.teamNumber)}
         title={`View details for Team ${shiftResult.teamNumber}`}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: "pointer" }}
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             onTeamClick(shiftResult.teamNumber);
           }
@@ -137,7 +137,7 @@ function TeamCard({
   }
 
   return (
-    <Card className={isMyTeam ? 'my-team' : ''}>
+    <Card className={isMyTeam ? "my-team" : ""}>
       <Card.Body className="p-3">{cardContent}</Card.Body>
     </Card>
   );
@@ -180,10 +180,10 @@ export function TodayView({ todayShifts, myTeam, onTodayClick, onTeamClick }: To
         {todayEvents.length > 0 && (
           <Alert variant="info" className="mb-3">
             <i className="bi bi-calendar-check me-2"></i>
-            <strong>Time-off event{todayEvents.length > 1 ? 's' : ''} today:</strong>
+            <strong>Time-off event{todayEvents.length > 1 ? "s" : ""} today:</strong>
             <ul className="mb-0 mt-2">
               {todayEvents.map((event) => (
-                <li key={event.id}>{event.label || 'Time off'}</li>
+                <li key={event.id}>{event.label || "Time off"}</li>
               ))}
             </ul>
           </Alert>

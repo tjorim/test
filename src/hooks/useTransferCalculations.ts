@@ -1,10 +1,10 @@
-import type { Dayjs } from 'dayjs';
-import { useEffect, useMemo, useState } from 'react';
-import { CONFIG } from '../utils/config';
-import { dayjs } from '../utils/dateTimeUtils';
-import { calculateShift, type ShiftType } from '../utils/shiftCalculations';
+import type { Dayjs } from "dayjs";
+import { useEffect, useMemo, useState } from "react";
+import { CONFIG } from "../utils/config";
+import { dayjs } from "../utils/dateTimeUtils";
+import { calculateShift, type ShiftType } from "../utils/shiftCalculations";
 
-export type TransferType = 'handover' | 'takeover';
+export type TransferType = "handover" | "takeover";
 
 export interface TransferInfo {
   date: Dayjs;
@@ -96,20 +96,20 @@ export function useTransferCalculations({
     const endDate = customEndDate ? dayjs(customEndDate) : null;
 
     // If we have a date range, scan within it; otherwise scan forward from today
-    const maxDaysToScan = endDate ? endDate.diff(startDate, 'day') + 1 : 365; // Default to scanning 1 year forward
+    const maxDaysToScan = endDate ? endDate.diff(startDate, "day") + 1 : 365; // Default to scanning 1 year forward
 
     // Add performance warning for large date ranges
-    if (endDate && endDate.diff(startDate, 'day') > 365) {
+    if (endDate && endDate.diff(startDate, "day") > 365) {
       console.warn(
-        'Large date range detected. Consider limiting the range for better performance.',
+        "Large date range detected. Consider limiting the range for better performance.",
       );
     }
 
     const currentDate = startDate;
 
     for (let day = 0; day < maxDaysToScan && foundTransfers.length < limit; day++) {
-      const scanDate = currentDate.add(day, 'day');
-      const nextDate = scanDate.add(1, 'day');
+      const scanDate = currentDate.add(day, "day");
+      const nextDate = scanDate.add(1, "day");
 
       // If we have an end date, don't scan beyond it
       if (endDate && scanDate.isAfter(endDate)) {
@@ -127,22 +127,22 @@ export function useTransferCalculations({
         checkTransfer(
           myTeamShift,
           otherTeamShift,
-          'M',
-          'E',
+          "M",
+          "E",
           scanDate,
           myTeam,
           otherTeam,
-          'handover',
+          "handover",
         ),
         checkTransfer(
           myTeamShift,
           otherTeamShift,
-          'E',
-          'N',
+          "E",
+          "N",
           scanDate,
           myTeam,
           otherTeam,
-          'handover',
+          "handover",
         ),
 
         // Handover: My team night shift to other team morning shift (next day)
@@ -150,12 +150,12 @@ export function useTransferCalculations({
           ? checkTransfer(
               myTeamShift,
               otherTeamNextShift,
-              'N',
-              'M',
+              "N",
+              "M",
               nextDate,
               myTeam,
               otherTeam,
-              'handover',
+              "handover",
             )
           : null,
 
@@ -163,22 +163,22 @@ export function useTransferCalculations({
         checkTransfer(
           otherTeamShift,
           myTeamShift,
-          'M',
-          'E',
+          "M",
+          "E",
           scanDate,
           otherTeam,
           myTeam,
-          'takeover',
+          "takeover",
         ),
         checkTransfer(
           otherTeamShift,
           myTeamShift,
-          'E',
-          'N',
+          "E",
+          "N",
           scanDate,
           otherTeam,
           myTeam,
-          'takeover',
+          "takeover",
         ),
 
         // Takeover: Other team night shift to my team morning shift (next day)
@@ -186,12 +186,12 @@ export function useTransferCalculations({
           ? checkTransfer(
               otherTeamShift,
               myTeamNextShift,
-              'N',
-              'M',
+              "N",
+              "M",
               nextDate,
               otherTeam,
               myTeam,
-              'takeover',
+              "takeover",
             )
           : null,
       ];
@@ -210,7 +210,7 @@ export function useTransferCalculations({
     // Check if there are more transfers available
     const hasMoreTransfers =
       foundTransfers.length === limit &&
-      (!endDate || currentDate.add(maxDaysToScan, 'day').isBefore(endDate));
+      (!endDate || currentDate.add(maxDaysToScan, "day").isBefore(endDate));
 
     return {
       transfers: foundTransfers,

@@ -1,7 +1,7 @@
 name: ❓ Question or Support
 description: Ask a question about using Worktime or get help
-title: '[QUESTION] '
-labels: ['question', 'support']
+title: "[QUESTION] "
+labels: ["question", "support"]
 assignees:
   - tjorim
 body:
@@ -90,7 +90,6 @@ body:
         - Date format questions
         - Team selection help
         - Offline functionality
-        - Terminal interface
         - General usage
         - Other (please describe below)
     validations:

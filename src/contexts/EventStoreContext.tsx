@@ -5,15 +5,25 @@
  * Provides a centralized store for holiday/time-off events across the application.
  */
 
-import type { ReactNode } from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import type { HdayEvent } from '../lib/hday/types';
-import { parseHday, sortEvents, toLine } from '../lib/hday/parser';
-import { hdayToCalendarEvents, filterEventsInRange } from '../lib/events/converters';
-import type { CalendarEvent } from '../lib/events/types';
-import { dayjs } from '../utils/dateTimeUtils';
+import type { ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
+import type { HdayEvent } from "../lib/hday/types";
+import { parseHday, sortEvents, toLine } from "../lib/hday/parser";
+import { hdayToCalendarEvents, filterEventsInRange } from "../lib/events/converters";
+import type { CalendarEvent } from "../lib/events/types";
+import { dayjs } from "../utils/dateTimeUtils";
 
-const STORAGE_KEY = 'worktime_hday_raw';
+const STORAGE_KEY = "worktime_hday_raw";
+
+/**
+ * Action types for event store reducer
+ */
+type EventStoreAction =
+  | { type: "ADD_EVENT"; payload: HdayEvent }
+  | { type: "UPDATE_EVENT"; payload: { index: number; event: HdayEvent } }
+  | { type: "DELETE_EVENT"; payload: number }
+  | { type: "IMPORT_HDAY"; payload: string }
+  | { type: "CLEAR_ALL" };
 
 interface EventStoreContextType {
   /** Raw .hday text content */
@@ -51,46 +61,95 @@ interface EventStoreProviderProps {
 }
 
 /**
+ * Event store reducer function
+ *
+ * Handles all state mutations for events array in a centralized, predictable way.
+ * All cases return a new array reference to trigger React re-renders.
+ */
+function eventsReducer(state: HdayEvent[], action: EventStoreAction): HdayEvent[] {
+  switch (action.type) {
+    case "ADD_EVENT": {
+      const newEvents = [...state, action.payload];
+      return sortEvents(newEvents);
+    }
+
+    case "UPDATE_EVENT": {
+      const { index, event } = action.payload;
+      if (index < 0 || index >= state.length) {
+        console.error(`Invalid event index: ${index}`);
+        return state;
+      }
+      const newEvents = [...state];
+      newEvents[index] = event;
+      return sortEvents(newEvents);
+    }
+
+    case "DELETE_EVENT": {
+      if (action.payload < 0 || action.payload >= state.length) {
+        console.error(`Invalid event index: ${action.payload}`);
+        return state;
+      }
+      const filtered = state.filter((_, i) => i !== action.payload);
+      return sortEvents(filtered);
+    }
+
+    case "IMPORT_HDAY": {
+      const parsed = action.payload.trim() ? parseHday(action.payload) : [];
+      return parsed;
+    }
+
+    case "CLEAR_ALL":
+      return [];
+
+    default:
+      return state;
+  }
+}
+
+/**
  * Event Store Provider
  *
  * Provides event storage and management for time-off events.
  * All data is persisted to localStorage with no consent checks (internal users only).
  */
 export function EventStoreProvider({ children }: EventStoreProviderProps) {
-  // Load raw text from localStorage on mount
-  const [rawText, setRawText] = useState<string>(() => {
-    if (typeof window === 'undefined') return '';
+  // Load and parse events from localStorage on mount (parse once, managed by reducer)
+  const [events, dispatch] = useReducer(eventsReducer, [], () => {
+    if (typeof window === "undefined") return [];
     try {
-      return localStorage.getItem(STORAGE_KEY) || '';
-    } catch {
-      return '';
+      const stored = localStorage.getItem(STORAGE_KEY) || "";
+      return stored.trim() ? parseHday(stored) : [];
+    } catch (error) {
+      console.error("Failed to load .hday content from localStorage:", error);
+      return [];
     }
   });
 
-  // Parse events from raw text
-  const events = useMemo(() => {
-    if (!rawText.trim()) return [];
+  // Derive raw text from events (for export and backward compatibility)
+  const rawText = useMemo(() => {
+    if (events.length === 0) return "";
     try {
-      return parseHday(rawText);
+      return events.map((e) => toLine(e)).join("\n") + "\n";
     } catch (error) {
-      console.error('Failed to parse .hday content:', error);
-      return [];
+      console.error("Failed to serialize events:", error);
+      return "";
     }
-  }, [rawText]);
+  }, [events]);
 
-  // Persist to localStorage whenever rawText changes
+  // Persist to localStorage whenever events change (serialize in background)
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     try {
-      if (rawText.trim()) {
-        localStorage.setItem(STORAGE_KEY, rawText);
+      if (events.length > 0) {
+        const serialized = events.map((e) => toLine(e)).join("\n") + "\n";
+        localStorage.setItem(STORAGE_KEY, serialized);
       } else {
         localStorage.removeItem(STORAGE_KEY);
       }
     } catch (error) {
-      console.error('Failed to save .hday content to localStorage:', error);
+      console.error("Failed to save .hday content to localStorage:", error);
     }
-  }, [rawText]);
+  }, [events]);
 
   /**
    * Get calendar events within a date range
@@ -105,8 +164,8 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
       });
 
       // Filter to only include events that overlap with the date range
-      const startStr = dayjs(startDate).format('YYYY-MM-DD');
-      const endStr = dayjs(endDate).format('YYYY-MM-DD');
+      const startStr = dayjs(startDate).format("YYYY-MM-DD");
+      const endStr = dayjs(endDate).format("YYYY-MM-DD");
       return filterEventsInRange(calendarEvents, startStr, endStr);
     },
     [events],
@@ -116,56 +175,28 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
    * Add a new event
    */
   const addEvent = useCallback((event: HdayEvent) => {
-    setRawText((prevRawText) => {
-      const prevEvents = prevRawText.trim() ? parseHday(prevRawText) : [];
-      const newEvents = [...prevEvents, event];
-      const sorted = sortEvents(newEvents);
-      return sorted.map((e) => toLine(e)).join('\n');
-    });
+    dispatch({ type: "ADD_EVENT", payload: event });
   }, []);
 
   /**
    * Update an existing event by index
    */
   const updateEvent = useCallback((index: number, event: HdayEvent) => {
-    setRawText((prevRawText) => {
-      const prevEvents = prevRawText.trim() ? parseHday(prevRawText) : [];
-
-      if (index < 0 || index >= prevEvents.length) {
-        console.error(`Invalid event index: ${index}`);
-        return prevRawText;
-      }
-
-      const newEvents = [...prevEvents];
-      newEvents[index] = event;
-      const sorted = sortEvents(newEvents);
-      return sorted.map((e) => toLine(e)).join('\n');
-    });
+    dispatch({ type: "UPDATE_EVENT", payload: { index, event } });
   }, []);
 
   /**
    * Delete an event by index
    */
   const deleteEvent = useCallback((index: number) => {
-    setRawText((prevRawText) => {
-      const prevEvents = prevRawText.trim() ? parseHday(prevRawText) : [];
-
-      if (index < 0 || index >= prevEvents.length) {
-        console.error(`Invalid event index: ${index}`);
-        return prevRawText;
-      }
-
-      const newEvents = prevEvents.filter((_, i) => i !== index);
-      const sorted = sortEvents(newEvents);
-      return sorted.map((e) => toLine(e)).join('\n');
-    });
+    dispatch({ type: "DELETE_EVENT", payload: index });
   }, []);
 
   /**
    * Import .hday text (replaces all events)
    */
   const importHday = useCallback((text: string) => {
-    setRawText(text);
+    dispatch({ type: "IMPORT_HDAY", payload: text });
   }, []);
 
   /**
@@ -179,7 +210,7 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
    * Clear all events
    */
   const clearAll = useCallback(() => {
-    setRawText('');
+    dispatch({ type: "CLEAR_ALL" });
   }, []);
 
   const contextValue: EventStoreContextType = useMemo(
@@ -217,7 +248,7 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
 export function useEventStore(): EventStoreContextType {
   const context = useContext(EventStoreContext);
   if (context === undefined) {
-    throw new Error('useEventStore must be used within an EventStoreProvider');
+    throw new Error("useEventStore must be used within an EventStoreProvider");
   }
   return context;
 }

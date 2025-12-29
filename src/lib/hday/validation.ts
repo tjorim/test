@@ -2,7 +2,7 @@
  * Date validation utilities for the .hday format (YYYY/MM/DD)
  */
 
-import { dayjs } from '../../utils/dateTimeUtils';
+import { dayjs } from "../../utils/dateTimeUtils";
 
 const DATE_FORMAT_REGEX = /^\d{4}\/\d{2}\/\d{2}$/;
 
@@ -25,8 +25,8 @@ export function isValidDate(dateString: string): boolean {
     return false;
   }
   // Parse using dayjs strict mode and verify it round-trips correctly
-  const parsed = dayjs(dateString, 'YYYY/MM/DD', true);
-  return parsed.isValid() && parsed.format('YYYY/MM/DD') === dateString;
+  const parsed = dayjs(dateString, "YYYY/MM/DD", true);
+  return parsed.isValid() && parsed.format("YYYY/MM/DD") === dateString;
 }
 
 /**
@@ -37,7 +37,7 @@ export function isValidDate(dateString: string): boolean {
  * @returns A Date representing the given date in the local timezone, or null if invalid.
  */
 export function parseHdayDate(dateString: string): Date | null {
-  const parsed = dayjs(dateString, 'YYYY/MM/DD', true);
+  const parsed = dayjs(dateString, "YYYY/MM/DD", true);
   if (!parsed.isValid()) {
     return null;
   }

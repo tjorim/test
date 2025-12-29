@@ -1,25 +1,25 @@
-import dayjs from 'dayjs';
-import isoWeek from 'dayjs/plugin/isoWeek';
-import 'dayjs/locale/en-gb';
+import dayjs from "dayjs";
+import isoWeek from "dayjs/plugin/isoWeek";
+import "dayjs/locale/en-gb";
 
 // Configure dayjs with plugins and locale
 dayjs.extend(isoWeek);
-dayjs.locale('en-gb');
+dayjs.locale("en-gb");
 
 // Export the configured dayjs instance
 export { dayjs };
 
 // Common date utility functions used across the app
 export const addDays = (date: Date, days: number): Date => {
-  return dayjs(date).add(days, 'day').toDate();
+  return dayjs(date).add(days, "day").toDate();
 };
 
 export const formatISODate = (date: Date): string => {
-  return dayjs(date).format('YYYY-MM-DD');
+  return dayjs(date).format("YYYY-MM-DD");
 };
 
 export const formatDisplayDate = (date: Date): string => {
-  return dayjs(date).format('ddd, MMM D');
+  return dayjs(date).format("ddd, MMM D");
 };
 
 /**
@@ -37,7 +37,7 @@ export const getISOWeekYear2Digit = (date: string | Date | dayjs.Dayjs): string 
  * @returns The 2-digit ISO week number
  */
 export const getISOWeek2Digit = (date: string | Date | dayjs.Dayjs): string => {
-  return dayjs(date).isoWeek().toString().padStart(2, '0');
+  return dayjs(date).isoWeek().toString().padStart(2, "0");
 };
 
 /**
@@ -68,8 +68,8 @@ export const formatYYWWD = (date: string | Date | dayjs.Dayjs): string => {
  * @param dayjsObj - The dayjs object to format
  * @param timeFormat - '12h' or '24h'
  */
-export function formatTimeByPreference(dayjsObj: dayjs.Dayjs, timeFormat: '12h' | '24h'): string {
-  return dayjsObj.format(timeFormat === '12h' ? 'hh:mm A' : 'HH:mm');
+export function formatTimeByPreference(dayjsObj: dayjs.Dayjs, timeFormat: "12h" | "24h"): string {
+  return dayjsObj.format(timeFormat === "12h" ? "hh:mm A" : "HH:mm");
 }
 
 /**
@@ -84,16 +84,18 @@ export function formatTimeByPreference(dayjsObj: dayjs.Dayjs, timeFormat: '12h' 
 export function getLocalizedShiftTime(
   start: number | null,
   end: number | null,
-  timeFormat: '12h' | '24h',
+  timeFormat: "12h" | "24h",
 ): string | null {
   if (start == null && end == null) return null;
   const format = (hour: number) =>
     formatTimeByPreference(dayjs().hour(hour).minute(0).second(0), timeFormat);
   if (start != null && end != null) {
-    return `${format(start)}–${format(end === 0 ? 24 : end)}`;
+    const startTime = format(start);
+    const endTime = end === 0 ? (timeFormat === "24h" ? "24:00" : "12:00 AM") : format(end);
+    return `${startTime}–${endTime}`;
   }
   if (start != null) return format(start);
-  if (end != null) return format(end === 0 ? 24 : end);
+  if (end != null) return end === 0 ? (timeFormat === "24h" ? "24:00" : "12:00 AM") : format(end);
   return null;
 }
 
@@ -101,13 +103,13 @@ export function getLocalizedShiftTime(
  * Weekday names mapping (ISO 8601: 1=Monday, 7=Sunday)
  */
 const WEEKDAY_NAMES: Record<number, string> = {
-  1: 'Mon',
-  2: 'Tue',
-  3: 'Wed',
-  4: 'Thu',
-  5: 'Fri',
-  6: 'Sat',
-  7: 'Sun',
+  1: "Mon",
+  2: "Tue",
+  3: "Wed",
+  4: "Thu",
+  5: "Fri",
+  6: "Sat",
+  7: "Sun",
 };
 
 /**

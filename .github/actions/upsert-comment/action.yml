@@ -1,14 +1,14 @@
-name: 'Upsert PR Comment'
-description: 'Create or update a PR comment with a unique identifier'
+name: "Upsert PR Comment"
+description: "Create or update a PR comment with a unique identifier"
 inputs:
   comment-identifier:
     description: 'Unique string to identify the comment (e.g., "🚀 Build Validation Results")'
     required: true
   comment-body:
-    description: 'The full body of the comment to create or update'
+    description: "The full body of the comment to create or update"
     required: true
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Upsert comment
       uses: actions/github-script@v8

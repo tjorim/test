@@ -1,18 +1,18 @@
-import { act, renderHook } from '@testing-library/react';
-import type { Dayjs } from 'dayjs';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useLiveTime } from '../../src/hooks/useLiveTime';
-import { dayjs } from '../../src/utils/dateTimeUtils';
+import { act, renderHook } from "@testing-library/react";
+import type { Dayjs } from "dayjs";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useLiveTime } from "../../src/hooks/useLiveTime";
+import { dayjs } from "../../src/utils/dateTimeUtils";
 
 // Mock our centralized dayjs setup
-vi.mock('../../src/utils/dateTimeUtils', () => {
+vi.mock("../../src/utils/dateTimeUtils", () => {
   const mockDayjs = vi.fn();
   return {
     dayjs: mockDayjs,
   };
 });
 
-describe('useLiveTime', () => {
+describe("useLiveTime", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
@@ -22,8 +22,8 @@ describe('useLiveTime', () => {
     vi.useRealTimers();
   });
 
-  it('returns current time', () => {
-    const mockTime = { format: vi.fn(() => '14:30') } as unknown as Dayjs;
+  it("returns current time", () => {
+    const mockTime = { format: vi.fn(() => "14:30") } as unknown as Dayjs;
     vi.mocked(dayjs).mockReturnValue(mockTime);
 
     const { result } = renderHook(() => useLiveTime());
@@ -32,12 +32,12 @@ describe('useLiveTime', () => {
     expect(dayjs).toHaveBeenCalled();
   });
 
-  it('updates time every minute by default for better performance', () => {
+  it("updates time every minute by default for better performance", () => {
     const mockTime1 = {
-      format: vi.fn(() => '14:30'),
+      format: vi.fn(() => "14:30"),
     } as unknown as Dayjs;
     const mockTime2 = {
-      format: vi.fn(() => '14:31'),
+      format: vi.fn(() => "14:31"),
     } as unknown as Dayjs;
 
     vi.mocked(dayjs).mockReturnValueOnce(mockTime1).mockReturnValue(mockTime2);
@@ -58,15 +58,15 @@ describe('useLiveTime', () => {
 
   it('updates every second when precision is set to "second"', () => {
     const mockTime1 = {
-      format: vi.fn(() => '14:30:00'),
+      format: vi.fn(() => "14:30:00"),
     } as unknown as Dayjs;
     const mockTime2 = {
-      format: vi.fn(() => '14:30:01'),
+      format: vi.fn(() => "14:30:01"),
     } as unknown as Dayjs;
 
     vi.mocked(dayjs).mockReturnValueOnce(mockTime1).mockReturnValue(mockTime2);
 
-    const { result } = renderHook(() => useLiveTime({ precision: 'second' }));
+    const { result } = renderHook(() => useLiveTime({ precision: "second" }));
 
     expect(result.current).toBe(mockTime1);
 
@@ -79,12 +79,12 @@ describe('useLiveTime', () => {
     expect(dayjs).toHaveBeenCalledTimes(3);
   });
 
-  it('uses custom update interval when specified', () => {
+  it("uses custom update interval when specified", () => {
     const mockTime1 = {
-      format: vi.fn(() => '14:30:00'),
+      format: vi.fn(() => "14:30:00"),
     } as unknown as Dayjs;
     const mockTime2 = {
-      format: vi.fn(() => '14:30:05'),
+      format: vi.fn(() => "14:30:05"),
     } as unknown as Dayjs;
 
     vi.mocked(dayjs).mockReturnValueOnce(mockTime1).mockReturnValue(mockTime2);
@@ -102,12 +102,12 @@ describe('useLiveTime', () => {
     expect(dayjs).toHaveBeenCalledTimes(3);
   });
 
-  it('updates multiple times as time progresses with second precision', () => {
+  it("updates multiple times as time progresses with second precision", () => {
     const times = [
-      { format: vi.fn(() => '14:30:00') } as unknown as Dayjs,
-      { format: vi.fn(() => '14:30:01') } as unknown as Dayjs,
-      { format: vi.fn(() => '14:30:02') } as unknown as Dayjs,
-      { format: vi.fn(() => '14:30:03') } as unknown as Dayjs,
+      { format: vi.fn(() => "14:30:00") } as unknown as Dayjs,
+      { format: vi.fn(() => "14:30:01") } as unknown as Dayjs,
+      { format: vi.fn(() => "14:30:02") } as unknown as Dayjs,
+      { format: vi.fn(() => "14:30:03") } as unknown as Dayjs,
     ];
 
     let callCount = 0;
@@ -117,7 +117,7 @@ describe('useLiveTime', () => {
       return result;
     });
 
-    const { result } = renderHook(() => useLiveTime({ precision: 'second' }));
+    const { result } = renderHook(() => useLiveTime({ precision: "second" }));
 
     expect(result.current).toBe(times[0]);
 
@@ -130,9 +130,9 @@ describe('useLiveTime', () => {
     expect(dayjs).toHaveBeenCalledTimes(5);
   });
 
-  it('cleans up interval on unmount', () => {
-    const clearIntervalSpy = vi.spyOn(globalThis, 'clearInterval');
-    const mockTime = { format: vi.fn(() => '14:30') } as unknown as Dayjs;
+  it("cleans up interval on unmount", () => {
+    const clearIntervalSpy = vi.spyOn(globalThis, "clearInterval");
+    const mockTime = { format: vi.fn(() => "14:30") } as unknown as Dayjs;
     vi.mocked(dayjs).mockReturnValue(mockTime);
 
     const { unmount } = renderHook(() => useLiveTime());
@@ -142,11 +142,11 @@ describe('useLiveTime', () => {
     expect(clearIntervalSpy).toHaveBeenCalled();
   });
 
-  it('continues updating after component re-renders', () => {
+  it("continues updating after component re-renders", () => {
     let callCount = 0;
     const times = [
-      { format: vi.fn(() => '14:30:00') } as unknown as Dayjs,
-      { format: vi.fn(() => '14:30:01') } as unknown as Dayjs,
+      { format: vi.fn(() => "14:30:00") } as unknown as Dayjs,
+      { format: vi.fn(() => "14:30:01") } as unknown as Dayjs,
     ];
 
     vi.mocked(dayjs).mockImplementation(() => {
@@ -155,7 +155,7 @@ describe('useLiveTime', () => {
       return result;
     });
 
-    const { result, rerender } = renderHook(() => useLiveTime({ precision: 'second' }));
+    const { result, rerender } = renderHook(() => useLiveTime({ precision: "second" }));
 
     expect(result.current).toBe(times[0]);
 
@@ -171,15 +171,15 @@ describe('useLiveTime', () => {
     expect(dayjs).toHaveBeenCalledTimes(4);
   });
 
-  it('starts fresh interval after re-mount', () => {
-    const mockTime = { format: vi.fn(() => '14:30') } as unknown as Dayjs;
+  it("starts fresh interval after re-mount", () => {
+    const mockTime = { format: vi.fn(() => "14:30") } as unknown as Dayjs;
     vi.mocked(dayjs).mockReturnValue(mockTime);
 
-    const { unmount } = renderHook(() => useLiveTime({ precision: 'second' }));
+    const { unmount } = renderHook(() => useLiveTime({ precision: "second" }));
     unmount();
 
     // Mount again
-    const { result } = renderHook(() => useLiveTime({ precision: 'second' }));
+    const { result } = renderHook(() => useLiveTime({ precision: "second" }));
 
     expect(result.current).toBe(mockTime);
 

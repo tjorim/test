@@ -1,17 +1,17 @@
-import { useEffect, useId, useState } from 'react';
-import Badge from 'react-bootstrap/Badge';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Row from 'react-bootstrap/Row';
-import Table from 'react-bootstrap/Table';
-import Tooltip from 'react-bootstrap/Tooltip';
-import { useTransferCalculations } from '../hooks/useTransferCalculations';
-import { CONFIG } from '../utils/config';
-import { formatDisplayDate } from '../utils/dateTimeUtils';
-import { getShiftByCode, getShiftDisplayName } from '../utils/shiftCalculations';
+import { useEffect, useId, useState } from "react";
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Row from "react-bootstrap/Row";
+import Table from "react-bootstrap/Table";
+import Tooltip from "react-bootstrap/Tooltip";
+import { useTransferCalculations } from "../hooks/useTransferCalculations";
+import { CONFIG } from "../utils/config";
+import { formatDisplayDate } from "../utils/dateTimeUtils";
+import { getShiftByCode, getShiftDisplayName } from "../utils/shiftCalculations";
 
 interface TransferViewProps {
   myTeam: number | null; // The user's team from onboarding
@@ -35,7 +35,7 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
   const endDateId = useId();
   // Validate and sanitize user's team prop
   let myTeam = inputMyTeam;
-  if (typeof myTeam === 'number' && (myTeam < 1 || myTeam > CONFIG.TEAMS_COUNT)) {
+  if (typeof myTeam === "number" && (myTeam < 1 || myTeam > CONFIG.TEAMS_COUNT)) {
     console.warn(`Invalid user team number: ${myTeam}. Expected 1-${CONFIG.TEAMS_COUNT}`);
     myTeam = null;
   }
@@ -43,8 +43,8 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
   // Local state
   const [transfersToShow, setTransfersToShow] = useState(10);
   const [useCustomRange, setUseCustomRange] = useState(false);
-  const [customStartDate, setCustomStartDate] = useState('');
-  const [customEndDate, setCustomEndDate] = useState('');
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
 
   // Use the transfer calculations hook
   const { transfers, availableOtherTeams, otherTeam, setOtherTeam, hasMoreTransfers } =
@@ -56,24 +56,22 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
     });
 
   // Reset pagination when filters change
-  // biome-ignore lint/correctness/useExhaustiveDependencies: This is intentional to reset on filter changes
   useEffect(() => {
     setTransfersToShow(10);
   }, [otherTeam, useCustomRange, customStartDate, customEndDate]);
 
   // Set initial other team if provided (e.g., when coming from Team Detail Modal)
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Intentionally omitting otherTeam to prevent infinite loop when user changes selection
   useEffect(() => {
     if (initialOtherTeam && initialOtherTeam !== otherTeam) {
       setOtherTeam(initialOtherTeam);
     }
-  }, [initialOtherTeam, setOtherTeam]);
+  }, [initialOtherTeam, setOtherTeam]); // oxlint-disable-line react/exhaustive-deps -- Intentionally omitting otherTeam to prevent infinite loop when user changes selection
 
   // Clear dates when custom range is disabled
   useEffect(() => {
     if (!useCustomRange) {
-      setCustomStartDate('');
-      setCustomEndDate('');
+      setCustomStartDate("");
+      setCustomEndDate("");
     }
   }, [useCustomRange]);
 
@@ -94,12 +92,12 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
       <Card.Body>
         {!myTeam ? (
           <div className="text-center py-4">
-            <i className="bi bi-person-plus-fill text-muted mb-3" style={{ fontSize: '2rem' }}></i>
+            <i className="bi bi-person-plus-fill text-muted mb-3" style={{ fontSize: "2rem" }}></i>
             <p className="text-muted mb-0">Please select your team to see transfer information.</p>
           </div>
         ) : availableOtherTeams.length === 0 ? (
           <div className="text-center py-4">
-            <i className="bi bi-people text-muted mb-3" style={{ fontSize: '2rem' }}></i>
+            <i className="bi bi-people text-muted mb-3" style={{ fontSize: "2rem" }}></i>
             <h6 className="text-muted">No Other Teams Available</h6>
             <p className="text-muted mb-0">No other teams available for transfer analysis.</p>
           </div>
@@ -166,10 +164,10 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
                     variant="outline-danger"
                     size="sm"
                     className="w-100"
-                    style={{ minHeight: '38px' }}
+                    style={{ minHeight: "38px" }}
                     onClick={() => {
-                      setCustomStartDate('');
-                      setCustomEndDate('');
+                      setCustomStartDate("");
+                      setCustomEndDate("");
                     }}
                     disabled={!customStartDate && !customEndDate}
                   >
@@ -186,8 +184,8 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
                   <i className="bi bi-info-circle me-1"></i>
                   Shows transfers between your team and the selected team
                   {useCustomRange
-                    ? ' within the specified date range'
-                    : '. Check the box above to filter by date range'}
+                    ? " within the specified date range"
+                    : ". Check the box above to filter by date range"}
                   .
                 </Form.Text>
               </Col>
@@ -196,13 +194,13 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
             {/* Transfer Results */}
             {transfers.length === 0 ? (
               <div className="text-center py-4">
-                <i className="bi bi-calendar-x text-muted mb-3" style={{ fontSize: '2rem' }}></i>
+                <i className="bi bi-calendar-x text-muted mb-3" style={{ fontSize: "2rem" }}></i>
                 <h6 className="text-muted">No Transfers Found</h6>
                 <p className="text-muted mb-0">
                   No transfers found between Team {myTeam} and Team {otherTeam}
                   {useCustomRange &&
                     (customStartDate || customEndDate) &&
-                    ' in the selected date range'}
+                    " in the selected date range"}
                   .
                 </p>
               </div>
@@ -210,8 +208,8 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
               <>
                 <div className="d-flex justify-content-end mb-2">
                   <small className="text-muted">
-                    Showing {transfers.length} {transfers.length === 1 ? 'transfer' : 'transfers'}
-                    {hasMoreTransfers && ' (more available)'}
+                    Showing {transfers.length} {transfers.length === 1 ? "transfer" : "transfers"}
+                    {hasMoreTransfers && " (more available)"}
                   </small>
                 </div>
 
@@ -234,9 +232,9 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
                             <div className="d-flex align-items-center">
                               <i
                                 className={`bi ${
-                                  transfer.type === 'handover'
-                                    ? 'bi-arrow-right-circle text-success'
-                                    : 'bi-arrow-left-circle text-info'
+                                  transfer.type === "handover"
+                                    ? "bi-arrow-right-circle text-success"
+                                    : "bi-arrow-left-circle text-info"
                                 } me-2`}
                               ></i>
                               <strong>{formatDisplayDate(transfer.date.toDate())}</strong>
@@ -245,18 +243,18 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
                           <td>
                             <div className="d-flex align-items-center gap-1">
                               <Badge
-                                bg={transfer.fromTeam === myTeam ? 'primary' : 'secondary'}
+                                bg={transfer.fromTeam === myTeam ? "primary" : "secondary"}
                                 className="text-nowrap"
                               >
-                                {transfer.fromTeam === myTeam ? 'Your ' : ''}
+                                {transfer.fromTeam === myTeam ? "Your " : ""}
                                 Team {transfer.fromTeam}
                               </Badge>
                               <i className="bi bi-arrow-right text-muted"></i>
                               <Badge
-                                bg={transfer.toTeam === myTeam ? 'primary' : 'secondary'}
+                                bg={transfer.toTeam === myTeam ? "primary" : "secondary"}
                                 className="text-nowrap"
                               >
-                                {transfer.toTeam === myTeam ? 'Your ' : ''}
+                                {transfer.toTeam === myTeam ? "Your " : ""}
                                 Team {transfer.toTeam}
                               </Badge>
                             </div>
@@ -268,20 +266,20 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
                                 <Tooltip
                                   id={`tooltip-${transfer.date.toISOString()}-${transfer.fromTeam}-${transfer.toTeam}`}
                                 >
-                                  {transfer.type === 'handover'
-                                    ? 'Your team transfers to them'
-                                    : 'They transfer to your team'}
+                                  {transfer.type === "handover"
+                                    ? "Your team transfers to them"
+                                    : "They transfer to your team"}
                                 </Tooltip>
                               }
                             >
                               <Badge
-                                bg={transfer.type === 'handover' ? 'success' : 'info'}
+                                bg={transfer.type === "handover" ? "success" : "info"}
                                 pill
                                 style={{
-                                  cursor: 'help',
+                                  cursor: "help",
                                 }}
                               >
-                                {transfer.type === 'handover' ? 'Handover' : 'Takeover'}
+                                {transfer.type === "handover" ? "Handover" : "Takeover"}
                               </Badge>
                             </OverlayTrigger>
                           </td>

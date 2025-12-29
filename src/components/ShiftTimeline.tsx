@@ -1,12 +1,12 @@
-import type { Dayjs } from 'dayjs';
-import { useId } from 'react';
-import Badge from 'react-bootstrap/Badge';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
-import { useSettings } from '../contexts/SettingsContext';
-import { getLocalizedShiftTime } from '../utils/dateTimeUtils';
-import type { ShiftResult } from '../utils/shiftCalculations';
-import { getAllTeamsShifts, getShiftByCode } from '../utils/shiftCalculations';
+import type { Dayjs } from "dayjs";
+import { useId } from "react";
+import Badge from "react-bootstrap/Badge";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+import { useSettings } from "../contexts/SettingsContext";
+import { getLocalizedShiftTime } from "../utils/dateTimeUtils";
+import type { ShiftResult } from "../utils/shiftCalculations";
+import { getAllTeamsShifts, getShiftByCode } from "../utils/shiftCalculations";
 
 interface TimelineData {
   prevShift: ShiftResult | null;
@@ -46,7 +46,7 @@ function computeShiftTimeline(today: Dayjs, currentWorkingTeam: ShiftResult): Ti
     prevShift = timeline[currentIndex - 1] ?? null;
   } else {
     // Current shift is the first of the day, look at yesterday's last shift
-    const yesterday = today.subtract(1, 'day');
+    const yesterday = today.subtract(1, "day");
     const allTeamsYesterday = getAllTeamsShifts(yesterday);
     const workingTeamsYesterday = allTeamsYesterday.filter((team) => team.shift.isWorking);
 
@@ -68,7 +68,7 @@ function computeShiftTimeline(today: Dayjs, currentWorkingTeam: ShiftResult): Ti
     nextShift = timeline[currentIndex + 1] ?? null;
   } else {
     // Current shift is the last of the day, look at tomorrow's first shift
-    const tomorrow = today.add(1, 'day');
+    const tomorrow = today.add(1, "day");
     const allTeamsTomorrow = getAllTeamsShifts(tomorrow);
     const workingTeamsTomorrow = allTeamsTomorrow.filter((team) => team.shift.isWorking);
 

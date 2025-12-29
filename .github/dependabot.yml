@@ -1,87 +1,87 @@
 version: 2
 updates:
   # Monitor npm dependencies for the main Worktime project
-  - package-ecosystem: 'npm'
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'friday'
-      time: '18:00'
-      timezone: 'Etc/UTC'
+      interval: "weekly"
+      day: "friday"
+      time: "18:00"
+      timezone: "Etc/UTC"
     assignees:
-      - 'tjorim'
+      - "tjorim"
     commit-message:
-      prefix: 'deps'
-      include: 'scope'
+      prefix: "deps"
+      include: "scope"
     labels:
-      - 'dependencies'
-      - 'npm'
-    versioning-strategy: 'increase'
+      - "dependencies"
+      - "npm"
+    versioning-strategy: "increase"
     groups:
       # Group React core with its types (tightly coupled)
       react:
         patterns:
-          - 'react'
-          - 'react-dom'
-          - '@types/react'
-          - '@types/react-dom'
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
       # Group React Bootstrap with Bootstrap (UI framework)
       bootstrap:
         patterns:
-          - 'bootstrap'
-          - 'bootstrap-icons'
-          - 'react-bootstrap'
+          - "bootstrap"
+          - "bootstrap-icons"
+          - "react-bootstrap"
       # Group Vite with its React plugin (build tool + framework plugin)
       vite:
         patterns:
-          - 'vite'
-          - '@vitejs/plugin-react'
+          - "vite"
+          - "@vitejs/plugin-react"
       # Group testing tools together (all dev dependencies)
       testing:
         patterns:
-          - '@testing-library/*'
-          - '@vitest/*'
-          - 'vitest'
+          - "@testing-library/*"
+          - "@vitest/*"
+          - "vitest"
       # Group Day.js with plugins (date handling)
       dayjs:
         patterns:
-          - 'dayjs'
+          - "dayjs"
       # Group OXC toolchain (Rust-based linting and formatting)
       oxc:
         patterns:
-          - 'oxlint'
-          - 'oxfmt'
+          - "oxlint"
+          - "oxfmt"
 
   # Monitor git submodules (HdayPlanner and NextShift)
-  - package-ecosystem: 'gitsubmodule'
-    directory: '/'
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'friday'
-      time: '18:00'
-      timezone: 'Etc/UTC'
+      interval: "weekly"
+      day: "friday"
+      time: "18:00"
+      timezone: "Etc/UTC"
     assignees:
-      - 'tjorim'
+      - "tjorim"
     commit-message:
-      prefix: 'deps(submodules)'
-      include: 'scope'
+      prefix: "deps(submodules)"
+      include: "scope"
     labels:
-      - 'dependencies'
-      - 'submodules'
+      - "dependencies"
+      - "submodules"
 
   # Monitor GitHub Actions
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'friday'
-      time: '18:00'
-      timezone: 'Etc/UTC'
+      interval: "weekly"
+      day: "friday"
+      time: "18:00"
+      timezone: "Etc/UTC"
     assignees:
-      - 'tjorim'
+      - "tjorim"
     commit-message:
-      prefix: 'ci'
-      include: 'scope'
+      prefix: "ci"
+      include: "scope"
     labels:
-      - 'dependencies'
-      - 'github-actions'
+      - "dependencies"
+      - "github-actions"

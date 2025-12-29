@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * Simple localStorage hook for persisting state.
@@ -24,7 +24,7 @@ export function useLocalStorage<T>(
 ): [T, (value: T | ((prev: T) => T)) => void] {
   // State to store our value
   const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return initialValue;
     }
 
@@ -39,7 +39,7 @@ export function useLocalStorage<T>(
 
   // Listen for changes to this key in other tabs
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === key && e.newValue !== null) {
@@ -51,10 +51,10 @@ export function useLocalStorage<T>(
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, [key]);
 
@@ -66,7 +66,7 @@ export function useLocalStorage<T>(
       setStoredValue(valueToStore);
 
       // Persist to localStorage
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         try {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         } catch {

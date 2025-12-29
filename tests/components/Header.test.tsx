@@ -1,12 +1,12 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import App from '../../src/App';
-import { Header } from '../../src/components/Header';
-import { EventStoreProvider } from '../../src/contexts/EventStoreContext';
-import { SettingsProvider } from '../../src/contexts/SettingsContext';
-import { ToastProvider } from '../../src/contexts/ToastContext';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import "@testing-library/jest-dom";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import App from "../../src/App";
+import { Header } from "../../src/components/Header";
+import { EventStoreProvider } from "../../src/contexts/EventStoreContext";
+import { SettingsProvider } from "../../src/contexts/SettingsContext";
+import { ToastProvider } from "../../src/contexts/ToastContext";
 
 function renderWithProviders(ui: React.ReactElement) {
   return render(
@@ -18,133 +18,133 @@ function renderWithProviders(ui: React.ReactElement) {
   );
 }
 
-describe('Header', () => {
-  describe('Basic rendering', () => {
-    it('renders Worktime title', () => {
+describe("Header", () => {
+  describe("Basic rendering", () => {
+    it("renders Worktime title", () => {
       renderWithProviders(<Header />);
-      expect(screen.getByText('Worktime')).toBeInTheDocument();
+      expect(screen.getByText("Worktime")).toBeInTheDocument();
     });
 
-    it('renders About button', () => {
+    it("renders About button", () => {
       renderWithProviders(<Header />);
-      expect(screen.getByLabelText('About Worktime')).toBeInTheDocument();
+      expect(screen.getByLabelText("About Worktime")).toBeInTheDocument();
     });
   });
 
-  describe('About modal', () => {
-    it('calls onShowAbout callback when about button is clicked', async () => {
+  describe("About modal", () => {
+    it("calls onShowAbout callback when about button is clicked", async () => {
       const user = userEvent.setup();
       const mockOnShowAbout = vi.fn();
       renderWithProviders(<Header onShowAbout={mockOnShowAbout} />);
 
-      const aboutButton = screen.getByLabelText('About Worktime');
+      const aboutButton = screen.getByLabelText("About Worktime");
       await user.click(aboutButton);
 
       expect(mockOnShowAbout).toHaveBeenCalledTimes(1);
     });
 
-    it('opens About modal when About button is clicked in full App', async () => {
+    it("opens About modal when About button is clicked in full App", async () => {
       const user = userEvent.setup();
       renderWithProviders(<App />);
 
-      const aboutButton = screen.getByLabelText('About Worktime');
+      const aboutButton = screen.getByLabelText("About Worktime");
       await user.click(aboutButton);
 
       // Modal should be open
-      expect(screen.getByText('About Worktime')).toBeInTheDocument();
+      expect(screen.getByText("About Worktime")).toBeInTheDocument();
     });
 
-    it('opens About modal when accessed from Settings panel in full App', async () => {
+    it("opens About modal when accessed from Settings panel in full App", async () => {
       const user = userEvent.setup();
       renderWithProviders(<App />);
 
       // Open Settings panel first
-      const settingsButton = screen.getByLabelText('Settings');
+      const settingsButton = screen.getByLabelText("Settings");
       await user.click(settingsButton);
 
       // Click About & Help in settings panel
-      const aboutHelpButton = screen.getByText('About & Help');
+      const aboutHelpButton = screen.getByText("About & Help");
       await user.click(aboutHelpButton);
 
       // Modal should be open
-      expect(screen.getByText('About Worktime')).toBeInTheDocument();
+      expect(screen.getByText("About Worktime")).toBeInTheDocument();
     });
 
-    it('closes About modal when Close button is clicked', async () => {
+    it("closes About modal when Close button is clicked", async () => {
       const user = userEvent.setup();
       renderWithProviders(<App />);
 
       // Open About modal
-      const aboutButton = screen.getByLabelText('About Worktime');
+      const aboutButton = screen.getByLabelText("About Worktime");
       await user.click(aboutButton);
 
       // Modal should be open
-      expect(screen.getByText('About Worktime')).toBeInTheDocument();
+      expect(screen.getByText("About Worktime")).toBeInTheDocument();
 
       // Close modal
-      const closeButton = screen.getByText('Close');
+      const closeButton = screen.getByText("Close");
       await user.click(closeButton);
 
       // Modal should be closed
-      expect(screen.queryByText('About Worktime')).not.toBeInTheDocument();
+      expect(screen.queryByText("About Worktime")).not.toBeInTheDocument();
     });
   });
 
-  describe('Theme Integration', () => {
+  describe("Theme Integration", () => {
     beforeEach(() => {
       // Clear any existing theme attribute
-      document.documentElement.removeAttribute('data-bs-theme');
+      document.documentElement.removeAttribute("data-bs-theme");
     });
 
     afterEach(() => {
       // Clean up theme attribute after each test
-      document.documentElement.removeAttribute('data-bs-theme');
+      document.documentElement.removeAttribute("data-bs-theme");
     });
 
-    it('applies dark theme to document.documentElement when theme is set to dark', async () => {
+    it("applies dark theme to document.documentElement when theme is set to dark", async () => {
       const user = userEvent.setup();
       renderWithProviders(<App />);
 
       // Open Settings panel
-      const settingsButton = screen.getByLabelText('Settings');
+      const settingsButton = screen.getByLabelText("Settings");
       await user.click(settingsButton);
 
       // Find and click the dark theme button
-      const darkThemeButton = screen.getByRole('button', {
+      const darkThemeButton = screen.getByRole("button", {
         name: /Dark/i,
       });
       await user.click(darkThemeButton);
 
       // Check that the theme is applied to the document element
-      expect(document.documentElement.getAttribute('data-bs-theme')).toBe('dark');
+      expect(document.documentElement.getAttribute("data-bs-theme")).toBe("dark");
     });
 
-    it('applies light theme to document.documentElement when theme is set to light', async () => {
+    it("applies light theme to document.documentElement when theme is set to light", async () => {
       const user = userEvent.setup();
       renderWithProviders(<App />);
 
       // Open Settings panel
-      const settingsButton = screen.getByLabelText('Settings');
+      const settingsButton = screen.getByLabelText("Settings");
       await user.click(settingsButton);
 
       // Find and click the light theme button
-      const lightThemeButton = screen.getByRole('button', {
+      const lightThemeButton = screen.getByRole("button", {
         name: /Light/i,
       });
       await user.click(lightThemeButton);
 
       // Check that the theme is applied to the document element
-      expect(document.documentElement.getAttribute('data-bs-theme')).toBe('light');
+      expect(document.documentElement.getAttribute("data-bs-theme")).toBe("light");
     });
 
-    it('resolves auto theme to system preference and applies to document.documentElement', async () => {
+    it("resolves auto theme to system preference and applies to document.documentElement", async () => {
       const user = userEvent.setup();
 
       // Mock system preference to dark
-      Object.defineProperty(window, 'matchMedia', {
+      Object.defineProperty(window, "matchMedia", {
         writable: true,
         value: vi.fn().mockImplementation((query) => ({
-          matches: query === '(prefers-color-scheme: dark)',
+          matches: query === "(prefers-color-scheme: dark)",
           media: query,
           onchange: null,
           addListener: vi.fn(),
@@ -158,26 +158,26 @@ describe('Header', () => {
       renderWithProviders(<App />);
 
       // Open Settings panel
-      const settingsButton = screen.getByLabelText('Settings');
+      const settingsButton = screen.getByLabelText("Settings");
       await user.click(settingsButton);
 
       // Find and click the auto theme button (should be default)
-      const autoThemeButton = screen.getByRole('button', {
+      const autoThemeButton = screen.getByRole("button", {
         name: /Auto/i,
       });
       await user.click(autoThemeButton);
 
       // Check that the resolved theme is applied to the document element
-      expect(document.documentElement.getAttribute('data-bs-theme')).toBe('dark');
+      expect(document.documentElement.getAttribute("data-bs-theme")).toBe("dark");
     });
 
-    it('updates theme when system preference changes in auto mode', async () => {
+    it("updates theme when system preference changes in auto mode", async () => {
       const user = userEvent.setup();
 
       let mediaQueryChangeHandler: (event: { matches: boolean }) => void = () => {};
 
       // Mock system preference initially to light
-      Object.defineProperty(window, 'matchMedia', {
+      Object.defineProperty(window, "matchMedia", {
         writable: true,
         value: vi.fn().mockImplementation((query) => ({
           matches: false, // Initially light
@@ -196,22 +196,22 @@ describe('Header', () => {
       renderWithProviders(<App />);
 
       // Open Settings panel and ensure auto theme is selected (default)
-      const settingsButton = screen.getByLabelText('Settings');
+      const settingsButton = screen.getByLabelText("Settings");
       await user.click(settingsButton);
 
-      const autoThemeButton = screen.getByRole('button', {
+      const autoThemeButton = screen.getByRole("button", {
         name: /Auto/i,
       });
       await user.click(autoThemeButton);
 
       // Check initial theme (light)
-      expect(document.documentElement.getAttribute('data-bs-theme')).toBe('light');
+      expect(document.documentElement.getAttribute("data-bs-theme")).toBe("light");
 
       // Simulate system preference change to dark
-      Object.defineProperty(window, 'matchMedia', {
+      Object.defineProperty(window, "matchMedia", {
         writable: true,
         value: vi.fn().mockImplementation((query) => ({
-          matches: query === '(prefers-color-scheme: dark)',
+          matches: query === "(prefers-color-scheme: dark)",
           media: query,
           onchange: null,
           addListener: vi.fn(),
@@ -226,7 +226,7 @@ describe('Header', () => {
       mediaQueryChangeHandler({ matches: true });
 
       // Check that theme updated to dark
-      expect(document.documentElement.getAttribute('data-bs-theme')).toBe('dark');
+      expect(document.documentElement.getAttribute("data-bs-theme")).toBe("dark");
     });
   });
 });

@@ -4,12 +4,12 @@
  * Converts between shift calculations, .hday events, and the unified CalendarEvent model.
  */
 
-import { v4 as uuidv4 } from 'uuid';
-import type { ShiftResult } from '../../utils/shiftCalculations';
-import { dayjs } from '../../utils/dateTimeUtils';
-import type { HdayEvent } from '../hday/types';
-import { getEventColor, getEventTypeLabel, getTimeLocationSymbol } from '../hday/parser';
-import type { CalendarEvent, HolidayMetadata, ShiftMetadata } from './types';
+import { v4 as uuidv4 } from "uuid";
+import type { ShiftResult } from "../../utils/shiftCalculations";
+import { dayjs } from "../../utils/dateTimeUtils";
+import type { HdayEvent } from "../hday/types";
+import { getEventColor, getEventTypeLabel, getTimeLocationSymbol } from "../hday/parser";
+import type { CalendarEvent, HolidayMetadata, ShiftMetadata } from "./types";
 
 /**
  * Convert a ShiftResult to a CalendarEvent
@@ -18,22 +18,22 @@ import type { CalendarEvent, HolidayMetadata, ShiftMetadata } from './types';
  * @returns CalendarEvent representing the shift
  */
 export function shiftToCalendarEvent(shift: ShiftResult): CalendarEvent {
-  const dateStr = shift.date.format('YYYY-MM-DD');
+  const dateStr = shift.date.format("YYYY-MM-DD");
 
   const meta: ShiftMetadata = {
-    type: 'shift',
+    type: "shift",
     team: shift.teamNumber,
-    shiftCode: shift.shift.code as 'M' | 'E' | 'N' | 'X',
+    shiftCode: shift.shift.code as "M" | "E" | "N" | "X",
     startTime:
-      shift.shift.start !== null ? `${String(shift.shift.start).padStart(2, '0')}:00` : undefined,
+      shift.shift.start !== null ? `${String(shift.shift.start).padStart(2, "0")}:00` : undefined,
     endTime:
-      shift.shift.end !== null ? `${String(shift.shift.end).padStart(2, '0')}:00` : undefined,
+      shift.shift.end !== null ? `${String(shift.shift.end).padStart(2, "0")}:00` : undefined,
     className: shift.shift.className,
   };
 
   return {
     id: uuidv4(),
-    type: 'shift',
+    type: "shift",
     start: dateStr,
     end: dateStr,
     label: `${shift.shift.name} (T${shift.teamNumber})`,
@@ -59,11 +59,11 @@ export function hdayToCalendarEvents(
   endDate: Date,
   sourceIndex?: number,
 ): CalendarEvent[] {
-  if (event.type === 'range') {
+  if (event.type === "range") {
     return [hdayRangeToCalendarEvent(event, sourceIndex)];
   }
 
-  if (event.type === 'weekly') {
+  if (event.type === "weekly") {
     return hdayWeeklyToCalendarEvents(event, startDate, endDate, sourceIndex);
   }
 
@@ -76,12 +76,12 @@ export function hdayToCalendarEvents(
  */
 function hdayRangeToCalendarEvent(event: HdayEvent, sourceIndex?: number): CalendarEvent {
   if (!event.start || !event.end) {
-    throw new Error('Range event missing start or end date');
+    throw new Error("Range event missing start or end date");
   }
 
   // Convert YYYY/MM/DD to YYYY-MM-DD (ISO format)
-  const start = event.start.replace(/\//g, '-');
-  const end = event.end.replace(/\//g, '-');
+  const start = event.start.replace(/\//g, "-");
+  const end = event.end.replace(/\//g, "-");
 
   const flags = event.flags || [];
   const color = getEventColor(flags);
@@ -89,7 +89,7 @@ function hdayRangeToCalendarEvent(event: HdayEvent, sourceIndex?: number): Calen
   const symbol = getTimeLocationSymbol(flags);
 
   const meta: HolidayMetadata = {
-    type: 'holiday',
+    type: "holiday",
     color,
     flags,
     typeLabel,
@@ -99,7 +99,7 @@ function hdayRangeToCalendarEvent(event: HdayEvent, sourceIndex?: number): Calen
 
   return {
     id: uuidv4(),
-    type: 'holiday',
+    type: "holiday",
     start,
     end,
     label: event.title || typeLabel,
@@ -117,7 +117,7 @@ function hdayWeeklyToCalendarEvents(
   sourceIndex?: number,
 ): CalendarEvent[] {
   if (event.weekday === undefined) {
-    throw new Error('Weekly event missing weekday');
+    throw new Error("Weekly event missing weekday");
   }
 
   const events: CalendarEvent[] = [];
@@ -131,16 +131,16 @@ function hdayWeeklyToCalendarEvents(
   const end = dayjs(endDate);
 
   // Find first occurrence of the target weekday
-  while (current.isoWeekday() !== event.weekday && current.isBefore(end, 'day')) {
-    current = current.add(1, 'day');
+  while (current.isoWeekday() !== event.weekday && current.isBefore(end, "day")) {
+    current = current.add(1, "day");
   }
 
   // Generate events for all occurrences
-  while (current.isBefore(end, 'day') || current.isSame(end, 'day')) {
-    const dateStr = current.format('YYYY-MM-DD');
+  while (current.isBefore(end, "day") || current.isSame(end, "day")) {
+    const dateStr = current.format("YYYY-MM-DD");
 
     const meta: HolidayMetadata = {
-      type: 'holiday',
+      type: "holiday",
       color,
       flags,
       typeLabel,
@@ -150,14 +150,14 @@ function hdayWeeklyToCalendarEvents(
 
     events.push({
       id: uuidv4(),
-      type: 'holiday',
+      type: "holiday",
       start: dateStr,
       end: dateStr,
       label: event.title || typeLabel,
       meta,
     });
 
-    current = current.add(7, 'days'); // Next week
+    current = current.add(7, "days"); // Next week
   }
 
   return events;
@@ -187,8 +187,8 @@ export function filterEventsInRange(
     // - Event starts before or on range end AND
     // - Event ends after or on range start
     return (
-      (eventStart.isBefore(end, 'day') || eventStart.isSame(end, 'day')) &&
-      (eventEnd.isAfter(start, 'day') || eventEnd.isSame(start, 'day'))
+      (eventStart.isBefore(end, "day") || eventStart.isSame(end, "day")) &&
+      (eventEnd.isAfter(start, "day") || eventEnd.isSame(start, "day"))
     );
   });
 }

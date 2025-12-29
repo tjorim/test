@@ -1,7 +1,7 @@
 name: 💡 Feature Request
 description: Suggest a new feature or improvement for Worktime
-title: '[FEATURE] '
-labels: ['enhancement', 'feature-request']
+title: "[FEATURE] "
+labels: ["enhancement", "feature-request"]
 assignees:
   - tjorim
 body:
@@ -55,7 +55,6 @@ body:
         - Shift Tracking
         - Time-Off Management (.hday)
         - Calendar/Schedule View
-        - Terminal Interface
         - Settings/Preferences
         - .hday File Format
         - Documentation

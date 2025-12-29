@@ -1,23 +1,23 @@
-import type { Dayjs } from 'dayjs';
-import { useId } from 'react';
-import Badge from 'react-bootstrap/Badge';
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Table from 'react-bootstrap/Table';
-import Tooltip from 'react-bootstrap/Tooltip';
-import { useSettings } from '../contexts/SettingsContext';
-import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
-import { CONFIG } from '../utils/config';
+import type { Dayjs } from "dayjs";
+import { useId } from "react";
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Table from "react-bootstrap/Table";
+import Tooltip from "react-bootstrap/Tooltip";
+import { useSettings } from "../contexts/SettingsContext";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { CONFIG } from "../utils/config";
 import {
   dayjs,
   formatYYWWD,
   getISOWeekYear2Digit,
   getLocalizedShiftTime,
-} from '../utils/dateTimeUtils';
-import { calculateShift, getShiftByCode } from '../utils/shiftCalculations';
+} from "../utils/dateTimeUtils";
+import { calculateShift, getShiftByCode } from "../utils/shiftCalculations";
 
 interface ScheduleViewProps {
   myTeam: number | null; // The user's team from onboarding
@@ -42,20 +42,20 @@ export function ScheduleView({
   const datePickerId = useId();
   // Validate and sanitize myTeam prop
   let myTeam = inputMyTeam;
-  if (typeof myTeam === 'number' && (myTeam < 1 || myTeam > CONFIG.TEAMS_COUNT)) {
+  if (typeof myTeam === "number" && (myTeam < 1 || myTeam > CONFIG.TEAMS_COUNT)) {
     console.warn(`Invalid team number: ${myTeam}. Expected 1-${CONFIG.TEAMS_COUNT}`);
     myTeam = null;
   }
   const isMyTeam = (teamNumber: number) => {
-    return myTeam === teamNumber ? 'my-team' : '';
+    return myTeam === teamNumber ? "my-team" : "";
   };
 
   const handlePrevious = () => {
-    setCurrentDate(currentDate.subtract(7, 'day'));
+    setCurrentDate(currentDate.subtract(7, "day"));
   };
 
   const handleNext = () => {
-    setCurrentDate(currentDate.add(7, 'day'));
+    setCurrentDate(currentDate.add(7, "day"));
   };
 
   const handleCurrent = () => {
@@ -69,8 +69,8 @@ export function ScheduleView({
   };
 
   // Generate Monday-Sunday week containing the current date
-  const startOfWeek = currentDate.startOf('isoWeek'); // Monday (ISO week)
-  const weekDays = Array.from({ length: 7 }, (_, i) => startOfWeek.add(i, 'day'));
+  const startOfWeek = currentDate.startOf("isoWeek"); // Monday (ISO week)
+  const weekDays = Array.from({ length: 7 }, (_, i) => startOfWeek.add(i, "day"));
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
@@ -125,12 +125,12 @@ export function ScheduleView({
               type="date"
               id={datePickerId}
               size="sm"
-              value={currentDate.format('YYYY-MM-DD')}
+              value={currentDate.format("YYYY-MM-DD")}
               onChange={(e) => handleDateChange(e.target.value)}
               className="date-picker-auto"
             />
           </div>
-          <div className="small text-muted text-end" style={{ minWidth: '180px' }}>
+          <div className="small text-muted text-end" style={{ minWidth: "180px" }}>
             ⌨️ Keyboard: ← → arrows, Ctrl+H (this week)
           </div>
         </div>
@@ -140,8 +140,8 @@ export function ScheduleView({
           <div className="mb-3">
             <strong>👥 Team {myTeam} Schedule:</strong>
             <div className="text-muted small">
-              Week of {startOfWeek.format('MMM D')} -{' '}
-              {startOfWeek.add(6, 'day').format('MMM D, YYYY')}
+              Week of {startOfWeek.format("MMM D")} -{" "}
+              {startOfWeek.add(6, "day").format("MMM D, YYYY")}
             </div>
           </div>
         )}
@@ -149,25 +149,25 @@ export function ScheduleView({
         <div className="table-responsive">
           <Table
             className="schedule-table table-sm"
-            aria-label={`Schedule for week of ${startOfWeek.format('MMM D')} - ${startOfWeek.add(6, 'day').format('MMM D, YYYY')}`}
+            aria-label={`Schedule for week of ${startOfWeek.format("MMM D")} - ${startOfWeek.add(6, "day").format("MMM D, YYYY")}`}
           >
             <thead>
               <tr>
                 <th className="team-header">Team</th>
                 {weekDays.map((day) => {
-                  const isToday = day.isSame(dayjs(), 'day');
+                  const isToday = day.isSame(dayjs(), "day");
                   return (
                     <th
-                      key={day.format('YYYY-MM-DD')}
-                      className={`text-center ${isToday ? 'today-column' : ''}`}
-                      aria-label={`${day.format('dddd, MMM D')}${isToday ? ' (today)' : ''}`}
+                      key={day.format("YYYY-MM-DD")}
+                      className={`text-center ${isToday ? "today-column" : ""}`}
+                      aria-label={`${day.format("dddd, MMM D")}${isToday ? " (today)" : ""}`}
                     >
-                      <div className="fw-semibold">{day.format('ddd')}</div>
+                      <div className="fw-semibold">{day.format("ddd")}</div>
                       <div className="small text-muted">
                         <OverlayTrigger
                           placement="bottom"
                           overlay={
-                            <Tooltip id={`date-tooltip-${day.format('YYYY-MM-DD')}`}>
+                            <Tooltip id={`date-tooltip-${day.format("YYYY-MM-DD")}`}>
                               <strong>Date Code: {formatYYWWD(day)}</strong>
                               <br />
                               Format: YYWW.D
@@ -175,7 +175,7 @@ export function ScheduleView({
                               YY = ISO Year {getISOWeekYear2Digit(day)}
                               <br />
                               WW = ISO Week {day.isoWeek()}
-                              <br />D = ISO Day {day.isoWeekday()} ({day.format('ddd')})
+                              <br />D = ISO Day {day.isoWeekday()} ({day.format("ddd")})
                             </Tooltip>
                           }
                         >
@@ -192,36 +192,36 @@ export function ScheduleView({
                 <tr
                   key={teamNumber}
                   className={isMyTeam(teamNumber)}
-                  aria-label={`Team ${teamNumber}${myTeam === teamNumber ? ' (your team)' : ''}`}
+                  aria-label={`Team ${teamNumber}${myTeam === teamNumber ? " (your team)" : ""}`}
                 >
                   <td className="team-header">
                     <strong>Team {teamNumber}</strong>
                   </td>
                   {weekDays.map((day) => {
                     const shift = calculateShift(day, teamNumber);
-                    const isToday = day.isSame(dayjs(), 'day');
+                    const isToday = day.isSame(dayjs(), "day");
 
                     return (
                       <td
-                        key={day.format('YYYY-MM-DD')}
-                        className={`text-center ${isToday ? 'today-column' : ''}`}
-                        aria-label={`Team ${teamNumber} on ${day.format('dddd')}: ${shift.isWorking ? shift.name : 'Off'}`}
+                        key={day.format("YYYY-MM-DD")}
+                        className={`text-center ${isToday ? "today-column" : ""}`}
+                        aria-label={`Team ${teamNumber} on ${day.format("dddd")}: ${shift.isWorking ? shift.name : "Off"}`}
                       >
                         {shift.isWorking && (
                           <OverlayTrigger
                             placement="bottom"
                             overlay={
                               <Tooltip
-                                id={`schedule-tooltip-${teamNumber}-${day.format('YYYY-MM-DD')}`}
+                                id={`schedule-tooltip-${teamNumber}-${day.format("YYYY-MM-DD")}`}
                               >
                                 <strong>Shift: {shift.code}</strong>
                                 <br />
-                                {shift.code === 'M' && 'Morning shift'}
-                                {shift.code === 'E' && 'Evening shift'}
-                                {shift.code === 'N' && 'Night shift'}
+                                {shift.code === "M" && "Morning shift"}
+                                {shift.code === "E" && "Evening shift"}
+                                {shift.code === "N" && "Night shift"}
                                 <br />
                                 <em>
-                                  {shift.name} -{' '}
+                                  {shift.name} -{" "}
                                   {getLocalizedShiftTime(
                                     shift.start,
                                     shift.end,

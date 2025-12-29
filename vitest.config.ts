@@ -1,8 +1,8 @@
-import reactPlugin from '@vitejs/plugin-react';
-import { defineConfig } from 'vitest/config';
+import reactPlugin from "@vitejs/plugin-react";
+import { defineConfig } from "vitest/config";
 
 // Read version from package.json for injection in tests
-import * as packageJson from './package.json';
+import * as packageJson from "./package.json";
 
 export default defineConfig({
   define: {
@@ -10,22 +10,22 @@ export default defineConfig({
   },
   plugins: [reactPlugin()] as any,
   test: {
-    environment: 'happy-dom',
+    environment: "happy-dom",
     globals: true,
-    setupFiles: ['./tests/setup.ts'],
+    setupFiles: ["./tests/setup.ts"],
     exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/build/**',
-      '**/coverage/**',
-      '**/NextShift/**',
-      '**/HdayPlanner/**',
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/coverage/**",
+      "**/NextShift/**",
+      "**/HdayPlanner/**",
     ],
     typecheck: {
-      tsconfig: './tsconfig.test.json',
+      tsconfig: "./tsconfig.test.json",
     },
     coverage: {
-      reporter: ['text', 'lcov'],
+      reporter: ["text", "lcov"],
     },
   },
 });

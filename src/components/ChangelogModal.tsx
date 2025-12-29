@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import Accordion from 'react-bootstrap/Accordion';
-import Badge from 'react-bootstrap/Badge';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Modal from 'react-bootstrap/Modal';
-import { type ChangelogVersion, changelogData, futurePlans } from '../data/changelog';
+import { useState } from "react";
+import Accordion from "react-bootstrap/Accordion";
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import Modal from "react-bootstrap/Modal";
+import { type ChangelogVersion, changelogData, futurePlans } from "../data/changelog";
 
 interface ChangelogModalProps {
   show: boolean;
@@ -12,15 +12,15 @@ interface ChangelogModalProps {
 }
 
 export function ChangelogModal({ show, onHide }: ChangelogModalProps) {
-  const [activeKey, setActiveKey] = useState<string>('0');
+  const [activeKey, setActiveKey] = useState<string>("0");
 
-  const getStatusBadge = (status: ChangelogVersion['status']) => {
+  const getStatusBadge = (status: ChangelogVersion["status"]) => {
     switch (status) {
-      case 'current':
+      case "current":
         return <Badge bg="primary">Current</Badge>;
-      case 'planned':
+      case "planned":
         return <Badge bg="secondary">Planned</Badge>;
-      case 'released':
+      case "released":
         return <Badge bg="success">Released</Badge>;
       default:
         return null;
@@ -49,16 +49,16 @@ export function ChangelogModal({ show, onHide }: ChangelogModalProps) {
 
   const getIconForSection = (title: string): string => {
     switch (title) {
-      case 'Added':
-        return 'plus-circle';
-      case 'Changed':
-        return 'arrow-repeat';
-      case 'Fixed':
-        return 'bug';
-      case 'Planned':
-        return 'calendar-event';
+      case "Added":
+        return "plus-circle";
+      case "Changed":
+        return "arrow-repeat";
+      case "Fixed":
+        return "bug";
+      case "Planned":
+        return "calendar-event";
       default:
-        return 'info-circle';
+        return "info-circle";
     }
   };
 
@@ -91,17 +91,17 @@ export function ChangelogModal({ show, onHide }: ChangelogModalProps) {
                 </div>
               </Accordion.Header>
               <Accordion.Body>
-                {renderChangeSection('Added', version.added, 'success')}
-                {renderChangeSection('Changed', version.changed, 'info')}
-                {renderChangeSection('Fixed', version.fixed, 'warning')}
-                {version.planned && renderChangeSection('Planned', version.planned, 'secondary')}
+                {renderChangeSection("Added", version.added, "success")}
+                {renderChangeSection("Changed", version.changed, "info")}
+                {renderChangeSection("Fixed", version.fixed, "warning")}
+                {version.planned && renderChangeSection("Planned", version.planned, "secondary")}
 
                 {version.technicalDetails && (
                   <Card className="mt-3 border-0 bg-body-secondary">
                     <Card.Body className="py-2">
                       <small className="text-muted">
                         <i className="bi bi-info-circle me-1"></i>
-                        <strong>{version.technicalDetails.title}:</strong>{' '}
+                        <strong>{version.technicalDetails.title}:</strong>{" "}
                         {version.technicalDetails.description}
                       </small>
                     </Card.Body>
@@ -121,17 +121,17 @@ export function ChangelogModal({ show, onHide }: ChangelogModalProps) {
             <p
               key={version}
               className={
-                index === array.length - 1 ? 'mb-0 small text-muted' : 'mb-1 small text-muted'
+                index === array.length - 1 ? "mb-0 small text-muted" : "mb-1 small text-muted"
               }
             >
-              <strong>{version}:</strong> {plan.features.join(', ')}
+              <strong>{version}:</strong> {plan.features.join(", ")}
             </p>
           ))}
         </div>
       </Modal.Body>
       <Modal.Footer>
         <small className="text-muted me-auto">
-          Worktime follows{' '}
+          Worktime follows{" "}
           <a href="https://semver.org/" target="_blank" rel="noopener noreferrer">
             Semantic Versioning
           </a>

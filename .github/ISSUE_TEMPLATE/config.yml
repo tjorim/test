@@ -4,8 +4,8 @@ contact_links:
     url: https://github.com/tjorim/worktime#readme
     about: Read the README for setup guides and feature documentation
   - name: 📄 .hday Format Specification
-    url: https://github.com/tjorim/HdayPlanner/blob/main/docs/hday-format-spec.md
-    about: Learn about the .hday file format syntax and features (from HdayPlanner)
+    url: docs/hday-format-spec.md
+    about: Learn about the .hday file format syntax and features
   - name: 🔍 Browse Existing Issues
     url: https://github.com/tjorim/worktime/issues
     about: Check if your question or issue has already been reported

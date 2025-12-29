@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Modal from 'react-bootstrap/Modal';
-import ProgressBar from 'react-bootstrap/ProgressBar';
-import Row from 'react-bootstrap/Row';
-import Spinner from 'react-bootstrap/Spinner';
-import { CONFIG } from '../utils/config';
+import { useEffect, useRef, useState } from "react";
+import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Modal from "react-bootstrap/Modal";
+import ProgressBar from "react-bootstrap/ProgressBar";
+import Row from "react-bootstrap/Row";
+import Spinner from "react-bootstrap/Spinner";
+import { CONFIG } from "../utils/config";
 
-type WizardStep = 'welcome' | 'features' | 'team-selection';
+type WizardStep = "welcome" | "features" | "team-selection";
 
 interface WelcomeWizardProps {
   show: boolean;
@@ -42,7 +42,7 @@ export function WelcomeWizard({
   onSkip,
   onHide,
   isLoading = false,
-  startStep = 'welcome',
+  startStep = "welcome",
 }: WelcomeWizardProps) {
   const [currentStep, setCurrentStep] = useState<WizardStep>(startStep);
   const initialStepRef = useRef(startStep);
@@ -58,18 +58,18 @@ export function WelcomeWizard({
 
   const teams = Array.from({ length: CONFIG.TEAMS_COUNT }, (_, i) => i + 1);
 
-  const SETTINGS_LOCATION_TEXT = 'Settings panel (⚙️ in the top right)';
+  const SETTINGS_LOCATION_TEXT = "Settings panel (⚙️ in the top right)";
 
   const getStepNumber = () => {
     switch (currentStep) {
-      case 'welcome':
-        return '1';
-      case 'features':
-        return '2';
-      case 'team-selection':
-        return '3';
+      case "welcome":
+        return "1";
+      case "features":
+        return "2";
+      case "team-selection":
+        return "3";
       default:
-        return '1';
+        return "1";
     }
   };
 
@@ -95,28 +95,28 @@ export function WelcomeWizard({
   };
 
   const nextStep = () => {
-    if (currentStep === 'welcome') {
-      setCurrentStep('features');
-    } else if (currentStep === 'features') {
-      setCurrentStep('team-selection');
+    if (currentStep === "welcome") {
+      setCurrentStep("features");
+    } else if (currentStep === "features") {
+      setCurrentStep("team-selection");
     }
   };
 
   const prevStep = () => {
-    if (currentStep === 'team-selection') {
-      setCurrentStep('features');
-    } else if (currentStep === 'features') {
-      setCurrentStep('welcome');
+    if (currentStep === "team-selection") {
+      setCurrentStep("features");
+    } else if (currentStep === "features") {
+      setCurrentStep("welcome");
     }
   };
 
   const getProgressPercentage = () => {
     switch (currentStep) {
-      case 'welcome':
+      case "welcome":
         return 33;
-      case 'features':
+      case "features":
         return 66;
-      case 'team-selection':
+      case "team-selection":
         return 100;
       default:
         return 0;
@@ -125,14 +125,14 @@ export function WelcomeWizard({
 
   const getStepTitle = () => {
     switch (currentStep) {
-      case 'welcome':
-        return 'Welcome to Worktime! 👋';
-      case 'features':
-        return 'What can Worktime do? ✨';
-      case 'team-selection':
-        return 'Choose Your Experience 🎯';
+      case "welcome":
+        return "Welcome to Worktime! 👋";
+      case "features":
+        return "What can Worktime do? ✨";
+      case "team-selection":
+        return "Choose Your Experience 🎯";
       default:
-        return 'Welcome to Worktime';
+        return "Welcome to Worktime";
     }
   };
 
@@ -140,7 +140,7 @@ export function WelcomeWizard({
     <>
       <div className="text-center mb-4">
         <div className="mb-3">
-          <i className="bi bi-clock-history text-primary" style={{ fontSize: '3rem' }}></i>
+          <i className="bi bi-clock-history text-primary" style={{ fontSize: "3rem" }}></i>
         </div>
         <h4 className="text-primary mb-3">Welcome to Worktime!</h4>
         <p className="lead mb-3">
@@ -156,7 +156,7 @@ export function WelcomeWizard({
           variant="outline-secondary"
           onClick={onHide}
           disabled={isLoading}
-          ref={currentStep === 'welcome' ? firstButtonRef : undefined}
+          ref={currentStep === "welcome" ? firstButtonRef : undefined}
         >
           Maybe Later
         </Button>
@@ -176,7 +176,7 @@ export function WelcomeWizard({
             <div className="d-flex align-items-start">
               <i
                 className="bi bi-stopwatch text-success me-3 mt-1"
-                style={{ fontSize: '1.5rem' }}
+                style={{ fontSize: "1.5rem" }}
               ></i>
               <div>
                 <h6 className="mb-1">Live Countdown Timers</h6>
@@ -186,7 +186,7 @@ export function WelcomeWizard({
           </Col>
           <Col xs={12} md={6}>
             <div className="d-flex align-items-start">
-              <i className="bi bi-wifi-off text-info me-3 mt-1" style={{ fontSize: '1.5rem' }}></i>
+              <i className="bi bi-wifi-off text-info me-3 mt-1" style={{ fontSize: "1.5rem" }}></i>
               <div>
                 <h6 className="mb-1">Works Offline</h6>
                 <small className="text-muted">
@@ -197,7 +197,7 @@ export function WelcomeWizard({
           </Col>
           <Col xs={12} md={6}>
             <div className="d-flex align-items-start">
-              <i className="bi bi-people text-warning me-3 mt-1" style={{ fontSize: '1.5rem' }}></i>
+              <i className="bi bi-people text-warning me-3 mt-1" style={{ fontSize: "1.5rem" }}></i>
               <div>
                 <h6 className="mb-1">Team Overview</h6>
                 <small className="text-muted">See who's working across all 5 teams</small>
@@ -208,7 +208,7 @@ export function WelcomeWizard({
             <div className="d-flex align-items-start">
               <i
                 className="bi bi-calendar-check text-primary me-3 mt-1"
-                style={{ fontSize: '1.5rem' }}
+                style={{ fontSize: "1.5rem" }}
               ></i>
               <div>
                 <h6 className="mb-1">Time-Off Planning</h6>
@@ -219,7 +219,7 @@ export function WelcomeWizard({
         </Row>
         <Alert variant="info" className="mt-4">
           <i className="bi bi-gear me-2"></i>
-          <strong>Tip:</strong> You can customize your experience anytime in the{' '}
+          <strong>Tip:</strong> You can customize your experience anytime in the{" "}
           <b>{SETTINGS_LOCATION_TEXT}</b>.
         </Alert>
       </div>
@@ -228,7 +228,7 @@ export function WelcomeWizard({
           variant="outline-secondary"
           onClick={prevStep}
           disabled={isLoading}
-          ref={currentStep === 'features' ? firstButtonRef : undefined}
+          ref={currentStep === "features" ? firstButtonRef : undefined}
         >
           <i className="bi bi-arrow-left me-1"></i> Back
         </Button>
@@ -260,7 +260,7 @@ export function WelcomeWizard({
                 onClick={() => handleTeamSelect(team)}
                 disabled={isLoading}
                 aria-label={`Select Team ${team}`}
-                ref={currentStep === 'team-selection' && team === 1 ? firstButtonRef : undefined}
+                ref={currentStep === "team-selection" && team === 1 ? firstButtonRef : undefined}
               >
                 Team {team}
               </Button>
@@ -309,7 +309,7 @@ export function WelcomeWizard({
           <ProgressBar
             now={getProgressPercentage()}
             variant="primary"
-            style={{ height: '4px' }}
+            style={{ height: "4px" }}
             className="mb-2"
           />
           <div className="d-flex justify-content-between small text-muted">
@@ -324,9 +324,9 @@ export function WelcomeWizard({
           </div>
         ) : (
           <>
-            {currentStep === 'welcome' && renderWelcomeStep()}
-            {currentStep === 'features' && renderFeaturesStep()}
-            {currentStep === 'team-selection' && renderTeamSelectionStep()}
+            {currentStep === "welcome" && renderWelcomeStep()}
+            {currentStep === "features" && renderFeaturesStep()}
+            {currentStep === "team-selection" && renderTeamSelectionStep()}
           </>
         )}
       </Modal.Body>

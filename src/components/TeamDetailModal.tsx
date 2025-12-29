@@ -1,19 +1,19 @@
-import { useId, useMemo } from 'react';
-import Badge from 'react-bootstrap/Badge';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Modal from 'react-bootstrap/Modal';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Row from 'react-bootstrap/Row';
-import Table from 'react-bootstrap/Table';
-import Tooltip from 'react-bootstrap/Tooltip';
-import { useSettings } from '../contexts/SettingsContext';
-import { useToast } from '../contexts/ToastContext';
-import { dayjs, getLocalizedShiftTime } from '../utils/dateTimeUtils';
-import { shareTeamSchedule } from '../utils/share';
-import { calculateShift, getCurrentShiftDay, getShiftByCode } from '../utils/shiftCalculations';
+import { useId, useMemo } from "react";
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
+import ListGroup from "react-bootstrap/ListGroup";
+import Modal from "react-bootstrap/Modal";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Row from "react-bootstrap/Row";
+import Table from "react-bootstrap/Table";
+import Tooltip from "react-bootstrap/Tooltip";
+import { useSettings } from "../contexts/SettingsContext";
+import { useToast } from "../contexts/ToastContext";
+import { dayjs, getLocalizedShiftTime } from "../utils/dateTimeUtils";
+import { shareTeamSchedule } from "../utils/share";
+import { calculateShift, getCurrentShiftDay, getShiftByCode } from "../utils/shiftCalculations";
 
 interface TeamDetailModalProps {
   show: boolean;
@@ -46,8 +46,8 @@ export function TeamDetailModal({
   const transfersDisabledTooltipId = useId();
   const transfersTooltipId = useId();
 
-  // Current date string (updates daily at midnight)
-  const currentDateKey = dayjs().format('YYYY-MM-DD');
+  // Current date key for daily recalculation
+  const currentDateKey = dayjs().format("YYYY-MM-DD");
 
   // Generate 7-day schedule for the team
   const weekSchedule = useMemo(() => {
@@ -55,7 +55,7 @@ export function TeamDetailModal({
     const schedule = [];
 
     for (let i = 0; i < 7; i++) {
-      const date = today.add(i, 'day');
+      const date = today.add(i, "day");
       const shiftDay = getCurrentShiftDay(date);
       const shift = calculateShift(shiftDay, teamNumber);
 
@@ -68,15 +68,15 @@ export function TeamDetailModal({
     }
 
     return schedule;
-  }, [teamNumber, currentDateKey]);
+  }, [teamNumber, currentDateKey]); // oxlint-disable-line react/exhaustive-deps -- currentDateKey forces daily recalculation even if modal stays open past midnight
 
   // Calculate team statistics
   const stats = useMemo(() => {
-    const workingDays = weekSchedule.filter((day) => day.shift.code !== 'O').length;
+    const workingDays = weekSchedule.filter((day) => day.shift.code !== "O").length;
     const offDays = 7 - workingDays;
-    const morningShifts = weekSchedule.filter((day) => day.shift.code === 'M').length;
-    const eveningShifts = weekSchedule.filter((day) => day.shift.code === 'E').length;
-    const nightShifts = weekSchedule.filter((day) => day.shift.code === 'N').length;
+    const morningShifts = weekSchedule.filter((day) => day.shift.code === "M").length;
+    const eveningShifts = weekSchedule.filter((day) => day.shift.code === "E").length;
+    const nightShifts = weekSchedule.filter((day) => day.shift.code === "N").length;
 
     return {
       workingDays,
@@ -89,18 +89,18 @@ export function TeamDetailModal({
 
   // Find current status
   const currentStatus = weekSchedule[0];
-  const nextShift = weekSchedule.find((day) => day.shift.code !== 'O' && !day.isToday);
+  const nextShift = weekSchedule.find((day) => day.shift.code !== "O" && !day.isToday);
 
   const toast = useToast();
   const { settings, myTeam } = useSettings();
 
   // Share handler for this team
   const handleShareSchedule = async () => {
-    const today = dayjs().format('YYYY-MM-DD');
+    const today = dayjs().format("YYYY-MM-DD");
     await shareTeamSchedule(
       teamNumber,
-      () => toast?.showSuccess('Share dialog opened or link copied!'),
-      () => toast?.showError('Could not share. Try copying the link manually.'),
+      () => toast?.showSuccess("Share dialog opened or link copied!"),
+      () => toast?.showError("Could not share. Try copying the link manually."),
       today,
     );
   };
@@ -128,7 +128,7 @@ export function TeamDetailModal({
                   Current Status
                 </h6>
                 <div className="d-flex align-items-center gap-2">
-                  {currentStatus?.shift.code === 'O' ? (
+                  {currentStatus?.shift.code === "O" ? (
                     <Badge bg="secondary" pill>
                       <i className="bi bi-house me-1"></i>
                       Off Duty
@@ -136,11 +136,11 @@ export function TeamDetailModal({
                   ) : (
                     <Badge className={getShiftByCode(currentStatus?.shift.code).className} pill>
                       <i className="bi bi-briefcase me-1"></i>
-                      {currentStatus?.shift.name || 'Unknown'}
+                      {currentStatus?.shift.name || "Unknown"}
                     </Badge>
                   )}
                   <small className="text-muted">
-                    {currentStatus?.date.format('dddd, MMM D') || 'Unknown date'}
+                    {currentStatus?.date.format("dddd, MMM D") || "Unknown date"}
                   </small>
                 </div>
               </div>
@@ -150,7 +150,7 @@ export function TeamDetailModal({
                   <Badge className={getShiftByCode(nextShift.shift.code).className} pill>
                     {nextShift.shift.name}
                   </Badge>
-                  <small className="text-muted d-block">{nextShift.date.format('MMM D')}</small>
+                  <small className="text-muted d-block">{nextShift.date.format("MMM D")}</small>
                 </div>
               )}
             </div>
@@ -177,11 +177,11 @@ export function TeamDetailModal({
               <tbody>
                 {weekSchedule.map((day) => (
                   <tr
-                    key={day.date.format('YYYY-MM-DD')}
-                    className={day.isToday ? 'today-row' : ''}
+                    key={day.date.format("YYYY-MM-DD")}
+                    className={day.isToday ? "today-row" : ""}
                   >
                     <td>
-                      <strong>{day.date.format('MMM D')}</strong>
+                      <strong>{day.date.format("MMM D")}</strong>
                       {day.isToday && (
                         <Badge bg="primary" className="ms-2">
                           Today
@@ -193,9 +193,9 @@ export function TeamDetailModal({
                         </Badge>
                       )}
                     </td>
-                    <td>{day.date.format('ddd')}</td>
+                    <td>{day.date.format("ddd")}</td>
                     <td>
-                      {day.shift.code === 'O' ? (
+                      {day.shift.code === "O" ? (
                         <Badge bg="secondary" pill>
                           Off
                         </Badge>
@@ -207,8 +207,8 @@ export function TeamDetailModal({
                     </td>
                     <td>
                       <small className="text-muted">
-                        {day.shift.code === 'O'
-                          ? '—'
+                        {day.shift.code === "O"
+                          ? "—"
                           : getLocalizedShiftTime(
                               day.shift.start,
                               day.shift.end,
@@ -217,7 +217,7 @@ export function TeamDetailModal({
                       </small>
                     </td>
                     <td>
-                      {day.shift.code === 'O' ? (
+                      {day.shift.code === "O" ? (
                         <small className="text-muted">
                           <i className="bi bi-house me-1"></i>
                           Rest Day
@@ -310,7 +310,7 @@ export function TeamDetailModal({
                     variant="outline-primary"
                     size="sm"
                     disabled
-                    style={{ pointerEvents: 'none' }}
+                    style={{ pointerEvents: "none" }}
                   >
                     <i className="bi bi-calendar-plus me-1"></i>
                     Add to Calendar
@@ -342,7 +342,7 @@ export function TeamDetailModal({
                     size="sm"
                     onClick={() => onViewTransfers?.(teamNumber)}
                     disabled={!canViewTransfers}
-                    style={isViewingOwnTeam ? { pointerEvents: 'none' } : {}}
+                    style={isViewingOwnTeam ? { pointerEvents: "none" } : {}}
                   >
                     <i className="bi bi-arrow-left-right me-1"></i>
                     View Transfers

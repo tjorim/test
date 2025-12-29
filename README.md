@@ -2,7 +2,7 @@
 
 **Created by [Jorim Tielemans](https://github.com/tjorim)**
 
-A lightweight, offline-capable Progressive Web App (PWA) for tracking 5-team continuous (24/7) shift schedules and managing time-off with .hday files.
+A lightweight web application for tracking 5-team continuous (24/7) shift schedules and managing time-off with .hday files.
 
 ## Overview
 
@@ -34,12 +34,11 @@ Worktime helps teams working in a 5-team rotating shift system to quickly check:
 - **Transfers**: Find handover/takeover points between teams
 - **Time Off**: Import/export .hday files for vacation and time-off tracking
 
-### 📱 PWA Features
+### 📱 Web App Features
 
-- **Offline Support**: Works without internet connection
-- **Installable**: Add to home screen on mobile devices
 - **Responsive**: Mobile-first design with Bootstrap 5
-- **Fast**: Cached for instant loading
+- **Fast**: Optimized build with Vite
+- **Local Storage**: All data stored in browser localStorage
 
 ### 📝 .hday File Format
 
@@ -132,12 +131,6 @@ npm run preview
 
 The built files will be in the `dist/` directory, ready for deployment to any static hosting service.
 
-### PWA Installation
-
-- **Desktop**: Click the installation button in your browser's address bar
-- **Mobile**: Use "Add to Home Screen" from your browser menu
-- **Offline**: Once installed, the app works completely offline
-
 ## Configuration
 
 ### Environment Variables
@@ -158,7 +151,7 @@ VITE_REFERENCE_DATE=2025-01-13 VITE_REFERENCE_TEAM=3 npm run build
 Alternatively, configure at runtime by adding to your HTML before the main script:
 
 ```javascript
-window.NEXTSHIFT_CONFIG = {
+window.WORKTIME_CONFIG = {
     REFERENCE_DATE: '2025-01-06',
     REFERENCE_TEAM: 1
 };
@@ -185,7 +178,7 @@ npm run test         # Run test suite
 ### Core Framework
 
 - **Frontend**: React 19 + TypeScript
-- **Build Tool**: Vite 8 beta with PWA plugin
+- **Build Tool**: Vite 8 beta
 - **UI Framework**: React Bootstrap (Bootstrap 5 components)
 - **Styling**: CSS3 with Bootstrap 5 design system
 
@@ -196,9 +189,8 @@ npm run test         # Run test suite
 - **Type Checking**: TypeScript with strict configuration
 - **Hot Reload**: Vite development server with HMR
 
-### PWA & Data
+### Data & State
 
-- **PWA**: Vite PWA plugin with Workbox
 - **Date Handling**: Day.js with timezone and week plugins
 - **Storage**: Custom localStorage hook with error handling
 - **State Management**: React hooks + custom hooks
@@ -208,7 +200,6 @@ npm run test         # Run test suite
 
 - **CI/CD**: GitHub Actions with comprehensive workflows
 - **Static Hosting**: Deployable to any static hosting service
-- **Caching**: Optimized service worker with asset caching
 - **Performance**: Lighthouse monitoring and optimization
 
 ## What's New in v3.1+

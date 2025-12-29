@@ -1,9 +1,9 @@
-import Badge from 'react-bootstrap/Badge';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Modal from 'react-bootstrap/Modal';
-import Row from 'react-bootstrap/Row';
-import { CONFIG } from '../utils/config';
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Modal from "react-bootstrap/Modal";
+import Row from "react-bootstrap/Row";
+import { CONFIG } from "../utils/config";
 
 interface AboutModalProps {
   show: boolean;
@@ -26,7 +26,7 @@ export function AboutModal({ show, onHide }: AboutModalProps) {
         {/* App Title & Version */}
         <div className="text-center mb-4">
           <div className="mb-2">
-            <i className="bi bi-clock-history text-primary" style={{ fontSize: '2rem' }}></i>
+            <i className="bi bi-clock-history text-primary" style={{ fontSize: "2rem" }}></i>
           </div>
           <h5 className="mb-2">Worktime - Shift Tracker & Time Off</h5>
           <div className="mb-2">
@@ -133,7 +133,7 @@ export function AboutModal({ show, onHide }: AboutModalProps) {
             <Row className="g-2">
               <Col xs={6}>
                 <a
-                  href="https://github.com/tjorim/worktime/issues/new?template=bug_report.md"
+                  href="https://github.com/tjorim/worktime/issues/new?template=bug_report.yml"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline-danger btn-sm w-100"
@@ -143,7 +143,7 @@ export function AboutModal({ show, onHide }: AboutModalProps) {
               </Col>
               <Col xs={6}>
                 <a
-                  href="https://github.com/tjorim/worktime/issues/new?template=feature_request.md"
+                  href="https://github.com/tjorim/worktime/issues/new?template=feature_request.yml"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline-success btn-sm w-100"

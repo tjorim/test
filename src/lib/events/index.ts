@@ -13,7 +13,7 @@ export type {
   EventType,
   HolidayMetadata,
   ShiftMetadata,
-} from './types';
+} from "./types";
 
 // Re-export converters
-export { filterEventsInRange, hdayToCalendarEvents, shiftToCalendarEvent } from './converters';
+export { filterEventsInRange, hdayToCalendarEvents, shiftToCalendarEvent } from "./converters";

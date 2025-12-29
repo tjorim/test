@@ -1,14 +1,14 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import App from '../../src/App';
-import { SettingsProvider } from '../../src/contexts/SettingsContext';
-import { dayjs } from '../../src/utils/dateTimeUtils';
-import type { ShiftResult } from '../../src/utils/shiftCalculations';
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import App from "../../src/App";
+import { SettingsProvider } from "../../src/contexts/SettingsContext";
+import { dayjs } from "../../src/utils/dateTimeUtils";
+import type { ShiftResult } from "../../src/utils/shiftCalculations";
 
 // Mock our dayjs setup to avoid loading real dayjs configuration in tests
-vi.mock('../../src/utils/dateTimeUtils', () => {
+vi.mock("../../src/utils/dateTimeUtils", () => {
   const mockDayjs = vi.fn(() => ({
-    format: vi.fn(() => '2025-01-15'),
+    format: vi.fn(() => "2025-01-15"),
     startOf: vi.fn(() => mockDayjs()),
     add: vi.fn(() => mockDayjs()),
   }));
@@ -16,36 +16,36 @@ vi.mock('../../src/utils/dateTimeUtils', () => {
 });
 
 // Mock all the child components to focus on App structure
-vi.mock('../../src/components/Header', () => ({
+vi.mock("../../src/components/Header", () => ({
   Header: () => <div data-testid="header">Header</div>,
 }));
 
-vi.mock('../../src/components/CurrentStatus', () => ({
+vi.mock("../../src/components/CurrentStatus", () => ({
   CurrentStatus: () => <div data-testid="current-status">CurrentStatus</div>,
 }));
 
-vi.mock('../../src/components/MainTabs', () => ({
+vi.mock("../../src/components/MainTabs", () => ({
   MainTabs: () => <div data-testid="main-tabs">MainTabs</div>,
 }));
 
-vi.mock('../../src/components/WelcomeWizard', () => ({
+vi.mock("../../src/components/WelcomeWizard", () => ({
   WelcomeWizard: () => <div data-testid="welcome-wizard">WelcomeWizard</div>,
 }));
 
-vi.mock('../../src/components/ErrorBoundary', () => ({
+vi.mock("../../src/components/ErrorBoundary", () => ({
   ErrorBoundary: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="error-boundary">{children}</div>
   ),
 }));
 
-vi.mock('../../src/components/AboutModal', () => ({
+vi.mock("../../src/components/AboutModal", () => ({
   AboutModal: () => <div data-testid="about-modal">AboutModal</div>,
 }));
 
 // Mock dayjs first to avoid reference issues
-vi.mock('dayjs', () => ({
+vi.mock("dayjs", () => ({
   default: vi.fn(() => ({
-    format: () => '2025-01-15',
+    format: () => "2025-01-15",
     year: () => 2025,
     month: () => 0, // January
     date: () => 15,
@@ -53,16 +53,16 @@ vi.mock('dayjs', () => ({
 }));
 
 // Create realistic mock data
-const createMockDate = () => dayjs('2025-01-15');
+const createMockDate = () => dayjs("2025-01-15");
 const mockTodayShifts: ShiftResult[] = [
   {
     teamNumber: 1,
     date: createMockDate(),
-    code: '2503.3M',
+    code: "2503.3M",
     shift: {
-      code: 'M',
-      name: '🌅 Morning Shift',
-      hours: '7:00 - 15:00',
+      code: "M",
+      name: "🌅 Morning Shift",
+      hours: "7:00 - 15:00",
       start: 7,
       end: 15,
       isWorking: true,
@@ -71,11 +71,11 @@ const mockTodayShifts: ShiftResult[] = [
   {
     teamNumber: 2,
     date: createMockDate(),
-    code: '2503.3E',
+    code: "2503.3E",
     shift: {
-      code: 'E',
-      name: '🌆 Evening Shift',
-      hours: '15:00 - 23:00',
+      code: "E",
+      name: "🌆 Evening Shift",
+      hours: "15:00 - 23:00",
       start: 15,
       end: 23,
       isWorking: true,
@@ -84,7 +84,7 @@ const mockTodayShifts: ShiftResult[] = [
 ];
 
 // Mock the shift calculation hook with realistic data
-vi.mock('../../src/hooks/useShiftCalculation', () => ({
+vi.mock("../../src/hooks/useShiftCalculation", () => ({
   useShiftCalculation: () => ({
     myTeam: 1,
     setMyTeam: vi.fn(),
@@ -94,33 +94,33 @@ vi.mock('../../src/hooks/useShiftCalculation', () => ({
   }),
 }));
 
-describe('App', () => {
-  describe('Component Structure', () => {
-    it('renders all main components', () => {
+describe("App", () => {
+  describe("Component Structure", () => {
+    it("renders all main components", () => {
       render(
         <SettingsProvider>
           <App />
         </SettingsProvider>,
       );
 
-      expect(screen.getByTestId('header')).toBeInTheDocument();
-      expect(screen.getByTestId('current-status')).toBeInTheDocument();
-      expect(screen.getByTestId('main-tabs')).toBeInTheDocument();
-      expect(screen.getByTestId('welcome-wizard')).toBeInTheDocument();
+      expect(screen.getByTestId("header")).toBeInTheDocument();
+      expect(screen.getByTestId("current-status")).toBeInTheDocument();
+      expect(screen.getByTestId("main-tabs")).toBeInTheDocument();
+      expect(screen.getByTestId("welcome-wizard")).toBeInTheDocument();
     });
 
-    it('wraps components in error boundaries', () => {
+    it("wraps components in error boundaries", () => {
       render(
         <SettingsProvider>
           <App />
         </SettingsProvider>,
       );
 
-      const errorBoundaries = screen.getAllByTestId('error-boundary');
+      const errorBoundaries = screen.getAllByTestId("error-boundary");
       expect(errorBoundaries.length).toBeGreaterThan(0);
     });
 
-    it('has proper layout structure', () => {
+    it("has proper layout structure", () => {
       render(
         <SettingsProvider>
           <App />
@@ -128,19 +128,19 @@ describe('App', () => {
       );
 
       // Should have Bootstrap container structure
-      const container = document.querySelector('.container-fluid');
+      const container = document.querySelector(".container-fluid");
       expect(container).toBeInTheDocument();
 
       // Should have React Bootstrap components rendered
       // Note: Row components are rendered conditionally based on state
       // so we check for the overall layout structure instead
-      const appContainer = document.querySelector('.min-vh-100');
+      const appContainer = document.querySelector(".min-vh-100");
       expect(appContainer).toBeInTheDocument();
     });
   });
 
-  describe('Toast Provider Integration', () => {
-    it('provides toast context to child components without errors', () => {
+  describe("Toast Provider Integration", () => {
+    it("provides toast context to child components without errors", () => {
       // Test that the app renders without errors - indicates toast context is working
       const { container } = render(
         <SettingsProvider>
@@ -150,12 +150,12 @@ describe('App', () => {
       expect(container).toBeInTheDocument();
 
       // Verify all major components receive toast context successfully
-      expect(screen.getByTestId('header')).toBeInTheDocument();
-      expect(screen.getByTestId('current-status')).toBeInTheDocument();
-      expect(screen.getByTestId('main-tabs')).toBeInTheDocument();
+      expect(screen.getByTestId("header")).toBeInTheDocument();
+      expect(screen.getByTestId("current-status")).toBeInTheDocument();
+      expect(screen.getByTestId("main-tabs")).toBeInTheDocument();
     });
 
-    it('renders toast container in DOM structure', () => {
+    it("renders toast container in DOM structure", () => {
       render(
         <SettingsProvider>
           <App />
@@ -165,7 +165,7 @@ describe('App', () => {
       // The ToastProvider should create the necessary DOM structure
       // Even though we can't directly test toast context value without accessing internals,
       // successful rendering indicates the provider is working correctly
-      expect(screen.getByTestId('current-status')).toBeInTheDocument();
+      expect(screen.getByTestId("current-status")).toBeInTheDocument();
       expect(() =>
         render(
           <SettingsProvider>
@@ -176,8 +176,8 @@ describe('App', () => {
     });
   });
 
-  describe('App Architecture', () => {
-    it('separates AppContent from App wrapper', () => {
+  describe("App Architecture", () => {
+    it("separates AppContent from App wrapper", () => {
       render(
         <SettingsProvider>
           <App />
@@ -185,10 +185,10 @@ describe('App', () => {
       );
 
       // Both App and AppContent should render successfully
-      expect(screen.getByTestId('current-status')).toBeInTheDocument();
+      expect(screen.getByTestId("current-status")).toBeInTheDocument();
     });
 
-    it('integrates with realistic shift calculation data', () => {
+    it("integrates with realistic shift calculation data", () => {
       render(
         <SettingsProvider>
           <App />
@@ -197,11 +197,11 @@ describe('App', () => {
 
       // Test that app handles realistic shift data without errors
       // Mock data includes proper ShiftResult structure with dates, codes, and shift details
-      expect(screen.getByTestId('current-status')).toBeInTheDocument();
-      expect(screen.getByTestId('main-tabs')).toBeInTheDocument();
+      expect(screen.getByTestId("current-status")).toBeInTheDocument();
+      expect(screen.getByTestId("main-tabs")).toBeInTheDocument();
     });
 
-    it('imports and uses required dependencies', () => {
+    it("imports and uses required dependencies", () => {
       // Test that all required CSS and dependencies are imported correctly
       expect(() =>
         render(

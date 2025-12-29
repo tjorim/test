@@ -40,11 +40,11 @@ export const CONFIG = {
       } catch {
         // Fall through to warning
       }
-      console.warn('Invalid VITE_REFERENCE_DATE format, using default');
+      console.warn("Invalid VITE_REFERENCE_DATE format, using default");
     }
 
     // Try to load from window config (for runtime configuration)
-    if (typeof window !== 'undefined' && window.WORKTIME_CONFIG?.REFERENCE_DATE) {
+    if (typeof window !== "undefined" && window.WORKTIME_CONFIG?.REFERENCE_DATE) {
       try {
         const windowDate = parseUTCDate(window.WORKTIME_CONFIG.REFERENCE_DATE);
         if (!Number.isNaN(windowDate.getTime())) {
@@ -53,11 +53,11 @@ export const CONFIG = {
       } catch {
         // Fall through to warning
       }
-      console.warn('Invalid window.WORKTIME_CONFIG.REFERENCE_DATE format, using default');
+      console.warn("Invalid window.WORKTIME_CONFIG.REFERENCE_DATE format, using default");
     }
 
     // Fallback to default date (aligned with Team 1 starting August 1, 2022)
-    return parseUTCDate('2025-07-16');
+    return parseUTCDate("2025-07-16");
   })(),
   REFERENCE_TEAM: (() => {
     // Try to load from environment variable first
@@ -66,16 +66,16 @@ export const CONFIG = {
       if (envTeam >= 1 && envTeam <= TEAMS_COUNT) {
         return envTeam;
       }
-      console.warn('Invalid VITE_REFERENCE_TEAM value, using default');
+      console.warn("Invalid VITE_REFERENCE_TEAM value, using default");
     }
 
     // Try to load from window config (for runtime configuration)
-    if (typeof window !== 'undefined' && window.WORKTIME_CONFIG?.REFERENCE_TEAM) {
+    if (typeof window !== "undefined" && window.WORKTIME_CONFIG?.REFERENCE_TEAM) {
       const windowTeam = parseInt(String(window.WORKTIME_CONFIG.REFERENCE_TEAM), 10);
       if (windowTeam >= 1 && windowTeam <= TEAMS_COUNT) {
         return windowTeam;
       }
-      console.warn('Invalid window.WORKTIME_CONFIG.REFERENCE_TEAM value, using default');
+      console.warn("Invalid window.WORKTIME_CONFIG.REFERENCE_TEAM value, using default");
     }
 
     // Fallback to default team

@@ -1,7 +1,7 @@
-import type { Dayjs } from 'dayjs';
-import { useMemo, useState } from 'react';
-import { useSettings } from '../contexts/SettingsContext';
-import { dayjs } from '../utils/dateTimeUtils';
+import type { Dayjs } from "dayjs";
+import { useMemo, useState } from "react";
+import { useSettings } from "../contexts/SettingsContext";
+import { dayjs } from "../utils/dateTimeUtils";
 import {
   calculateShift,
   getAllTeamsShifts,
@@ -10,7 +10,7 @@ import {
   getShiftCode,
   type UpcomingShiftResult,
   type ShiftResult,
-} from '../utils/shiftCalculations';
+} from "../utils/shiftCalculations";
 
 export interface UseShiftCalculationReturn {
   myTeam: number | null; // The user's team from onboarding

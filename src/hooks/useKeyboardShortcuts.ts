@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 interface KeyboardShortcuts {
   onToday?: () => void;
@@ -23,12 +23,12 @@ export function useKeyboardShortcuts(shortcuts: KeyboardShortcuts) {
         target instanceof HTMLInputElement ||
         target instanceof HTMLTextAreaElement ||
         target instanceof HTMLSelectElement ||
-        (target instanceof HTMLElement && target.contentEditable === 'true') ||
+        (target instanceof HTMLElement && target.contentEditable === "true") ||
         // Support mock elements in tests
-        target?.tagName === 'INPUT' ||
-        target?.tagName === 'TEXTAREA' ||
-        target?.tagName === 'SELECT' ||
-        target?.contentEditable === 'true'
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.tagName === "SELECT" ||
+        target?.contentEditable === "true"
       ) {
         return;
       }
@@ -41,36 +41,36 @@ export function useKeyboardShortcuts(shortcuts: KeyboardShortcuts) {
       // Handle key combinations
       if (event.ctrlKey || event.metaKey) {
         switch (event.key.toLowerCase()) {
-          case 'h':
+          case "h":
             event.preventDefault?.();
             try {
               shortcuts.onToday?.();
             } catch (error) {
-              console.error('Error in onToday callback:', error);
+              console.error("Error in onToday callback:", error);
             }
             break;
-          case 'k':
+          case "k":
             event.preventDefault?.();
             try {
               shortcuts.onPrevious?.();
             } catch (error) {
-              console.error('Error in onPrevious callback:', error);
+              console.error("Error in onPrevious callback:", error);
             }
             break;
-          case 'j':
+          case "j":
             event.preventDefault?.();
             try {
               shortcuts.onNext?.();
             } catch (error) {
-              console.error('Error in onNext callback:', error);
+              console.error("Error in onNext callback:", error);
             }
             break;
-          case 't':
+          case "t":
             event.preventDefault?.();
             try {
               shortcuts.onTeamSelect?.();
             } catch (error) {
-              console.error('Error in onTeamSelect callback:', error);
+              console.error("Error in onTeamSelect callback:", error);
             }
             break;
         }
@@ -78,33 +78,33 @@ export function useKeyboardShortcuts(shortcuts: KeyboardShortcuts) {
 
       // Handle single keys
       switch (event.key) {
-        case 'ArrowLeft':
+        case "ArrowLeft":
           if (!event.ctrlKey && !event.metaKey && !event.altKey) {
             event.preventDefault?.();
             try {
               shortcuts.onPrevious?.();
             } catch (error) {
-              console.error('Error in onPrevious callback:', error);
+              console.error("Error in onPrevious callback:", error);
             }
           }
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           if (!event.ctrlKey && !event.metaKey && !event.altKey) {
             event.preventDefault?.();
             try {
               shortcuts.onNext?.();
             } catch (error) {
-              console.error('Error in onNext callback:', error);
+              console.error("Error in onNext callback:", error);
             }
           }
           break;
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [shortcuts]);
 }

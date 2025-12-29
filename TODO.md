@@ -61,6 +61,7 @@ Critical features and improvements that significantly impact user experience.
 **CRITICAL**: Features from HdayPlanner that were NOT merged into Worktime during the v4.0 rebrand/integration. These features are essential for users migrating from HdayPlanner.
 
 **Integration Status:**
+
 - ✅ **Successfully Merged**: .hday parser (139 tests), import/export files, event modal (create/edit/delete), all event flags/types (holiday, business, sick, training, etc.)
 - ❌ **Missing Core UI**: Month calendar grid view, vacation statistics dashboard
 - ❌ **Missing UX Features**: View/edit raw .hday content, undo/redo, bulk operations, event duplication
@@ -69,6 +70,7 @@ Critical features and improvements that significantly impact user experience.
 ---
 
 **4.1 Month Calendar Grid View** 🌟 **[CRITICAL]**
+
 - **Component**: Visual calendar with event overlays
 - **Source**: `HdayPlanner/frontend/src/components/MonthGrid.tsx`, `MonthViewCard.tsx`
 - **Use Cases**:
@@ -88,6 +90,7 @@ Critical features and improvements that significantly impact user experience.
 - **Status**: 🔲 Planned (High Priority)
 
 **4.2 Vacation Statistics Dashboard** 🌟
+
 - **Component**: Vacation allowance tracking and analytics
 - **Source**: `HdayPlanner/frontend/src/components/StatisticsCard.tsx`
 - **Use Cases**:
@@ -108,6 +111,7 @@ Critical features and improvements that significantly impact user experience.
 - **Status**: 🔲 Planned (High Priority)
 
 **4.3 Event Bulk Operations + Undo/Redo** 🔴 **[CRITICAL - User Request]**
+
 - **Component**: Multi-event management with history tracking
 - **Source**: `HdayPlanner/frontend/src/components/EventsCard.tsx`
 - **Current Gap**:
@@ -129,10 +133,17 @@ Critical features and improvements that significantly impact user experience.
   - History stack for undo/redo (store previous states)
   - Keyboard shortcuts (Ctrl+Z for undo, Ctrl+Y/Ctrl+Shift+Z for redo)
   - Visual indication of undo/redo availability (disabled buttons when stack empty)
-- **Estimated Effort**: 5–6 hours (increased due to undo/redo complexity)
+- **Performance Foundation**: ✅ **EventStoreContext Optimized (v4.0)** - Events array is now the primary state instead of rawText, making undo/redo instant:
+  - **Before optimization**: Would need to parse rawText on every undo/redo (~50ms lag with 100 events)
+  - **After optimization**: Simple array restoration via setEvents(previousState) (<1ms, instant)
+  - Implementation can use simple array history stack (no complex parsing/serialization)
+  - Can leverage libraries like [immer](https://immerjs.github.io/immer/) for efficient structural sharing
+  - Enables potential for partial undo (individual event changes, not whole-document)
+- **Estimated Effort**: 5–6 hours (undo/redo complexity, but optimized foundation reduces implementation time)
 - **Status**: 🔲 Planned (High Priority - User Request)
 
 **4.4 Raw .hday Content Editor/Viewer** 🔴 **[CRITICAL - User Request]**
+
 - **Component**: View and edit raw .hday file content
 - **Source**: `HdayPlanner/frontend/src/components/RawContentAccordion.tsx`
 - **Current Gap**:
@@ -157,6 +168,7 @@ Critical features and improvements that significantly impact user experience.
 - **Status**: 🔲 Planned (High Priority - User Request)
 
 **4.5 Missing Utility Functions**
+
 - **Component**: Helper functions from HdayPlanner
 - **Source**: `HdayPlanner/frontend/src/lib/hday.ts`
 - **Functions**:
@@ -171,6 +183,7 @@ Critical features and improvements that significantly impact user experience.
 - **Status**: 🔲 Planned
 
 **4.6 Enhanced Keyboard Navigation**
+
 - **Component**: Calendar-specific keyboard shortcuts
 - **Source**: `HdayPlanner/frontend/src/components/MonthGrid.tsx` (roving tabindex)
 - **Use Cases**:
@@ -185,6 +198,7 @@ Critical features and improvements that significantly impact user experience.
 - **Status**: 🔲 Future (depends on calendar view)
 
 **Summary of HdayPlanner Integration Gaps:**
+
 - ✅ **Successfully Merged**: .hday parser (139 tests), import/export files, event modal (create/edit/delete), all flags/types
 - 🔴 **CRITICAL Missing Features** (User Requests):
   - ❌ **MonthGrid Calendar View** - Visual month calendar with event overlays (only table view exists)
@@ -515,7 +529,7 @@ Advanced features for future development phases.
 
 ### Version Tracking
 
-- Semantic versioning (3.x.x)
+- Semantic versioning (4.x.x)
 - Git tags for releases
 - Automated changelog generation
 - Release notes in GitHub
@@ -571,5 +585,5 @@ Advanced features for future development phases.
 
 ---
 
-**Last Updated**: 2025-07-25  
+**Last Updated**: 2025-12-29  
 **Next Review**: After Phase 1 completion

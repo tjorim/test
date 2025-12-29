@@ -1,14 +1,14 @@
-import type { Dayjs } from 'dayjs';
-import { useEffect, useId, useState } from 'react';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import { dayjs } from '../utils/dateTimeUtils';
-import type { ShiftResult } from '../utils/shiftCalculations';
-import { ScheduleView } from './ScheduleView';
-import { TeamDetailModal } from './TeamDetailModal';
-import { TimeOffView } from './TimeOffView';
-import { TodayView } from './TodayView';
-import { TransferView } from './TransferView';
+import type { Dayjs } from "dayjs";
+import { useEffect, useId, useState } from "react";
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+import { dayjs } from "../utils/dateTimeUtils";
+import type { ShiftResult } from "../utils/shiftCalculations";
+import { ScheduleView } from "./ScheduleView";
+import { TeamDetailModal } from "./TeamDetailModal";
+import { TimeOffView } from "./TimeOffView";
+import { TodayView } from "./TodayView";
+import { TransferView } from "./TransferView";
 
 interface MainTabsProps {
   myTeam: number | null; // The user's team from onboarding
@@ -37,7 +37,7 @@ export function MainTabs({
   currentDate,
   setCurrentDate,
   todayShifts,
-  activeTab = 'today',
+  activeTab = "today",
   onTabChange,
 }: MainTabsProps) {
   const tabsId = useId();
@@ -69,7 +69,7 @@ export function MainTabs({
       <Tabs
         activeKey={activeKey}
         onSelect={(k) => {
-          const newKey = k || 'today';
+          const newKey = k || "today";
           setActiveKey(newKey);
           onTabChange?.(newKey);
         }}
@@ -135,8 +135,8 @@ export function MainTabs({
         onHide={handleCloseTeamDetail}
         teamNumber={selectedTeamForDetail}
         onViewTransfers={(team) => {
-          setActiveKey('transfer');
-          onTabChange?.('transfer');
+          setActiveKey("transfer");
+          onTabChange?.("transfer");
           // Only set initial other team if it's different from user's team
           if (team !== myTeam) {
             setTransferTargetTeam(team);

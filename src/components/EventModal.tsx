@@ -1,8 +1,8 @@
-import type { RefObject } from 'react';
-import { Button, Card, Col, Form, Modal, Row } from 'react-bootstrap';
-import type { EventFlag, TimeLocationFlag, TypeFlag } from '../lib/hday/types';
-import { getEventTypeLabel } from '../lib/hday/parser';
-import { getWeekdayName } from '../utils/dateTimeUtils';
+import type { RefObject } from "react";
+import { Button, Card, Col, Form, Modal, Row } from "react-bootstrap";
+import type { EventFlag, TimeLocationFlag, TypeFlag } from "../lib/hday/types";
+import { getEventTypeLabel } from "../lib/hday/parser";
+import { getWeekdayName } from "../utils/dateTimeUtils";
 
 type FlagCheckboxProps = {
   id: string;
@@ -10,7 +10,7 @@ type FlagCheckboxProps = {
   checked: boolean;
   onChange: () => void;
   name: string;
-  type?: 'checkbox' | 'radio';
+  type?: "checkbox" | "radio";
 };
 
 function FlagCheckbox({
@@ -19,7 +19,7 @@ function FlagCheckbox({
   checked,
   onChange,
   name,
-  type = 'checkbox',
+  type = "checkbox",
 }: FlagCheckboxProps) {
   return (
     <Form.Check
@@ -37,7 +37,7 @@ type EventModalProps = {
   show: boolean;
   editIndex: number;
   formRef: RefObject<HTMLDivElement | null>;
-  eventType: 'range' | 'weekly';
+  eventType: "range" | "weekly";
   eventWeekday: number;
   eventStart: string;
   eventEnd: string;
@@ -46,19 +46,19 @@ type EventModalProps = {
   startDateError: string;
   endDateError: string;
   previewLine: string;
-  typeFlagOptions: Array<[TypeFlag | 'none', string]>;
-  timeLocationFlagOptions: Array<[TimeLocationFlag | 'none', string]>;
+  typeFlagOptions: Array<[TypeFlag | "none", string]>;
+  timeLocationFlagOptions: Array<[TimeLocationFlag | "none", string]>;
   typeFlagsAsEventFlags: ReadonlyArray<EventFlag>;
   timeLocationFlagsAsEventFlags: ReadonlyArray<EventFlag>;
   onHide: () => void;
   onEntered: () => void;
-  onEventTypeChange: (value: 'range' | 'weekly') => void;
+  onEventTypeChange: (value: "range" | "weekly") => void;
   onEventTitleChange: (value: string) => void;
   onEventWeekdayChange: (value: number) => void;
   onStartDateChange: (value: string) => void;
   onEndDateChange: (value: string) => void;
-  onTypeFlagChange: (flag: TypeFlag | 'none') => void;
-  onTimeFlagChange: (flag: TimeLocationFlag | 'none') => void;
+  onTypeFlagChange: (flag: TypeFlag | "none") => void;
+  onTimeFlagChange: (flag: TimeLocationFlag | "none") => void;
   onResetForm: () => void;
   onSubmit: () => void;
 };
@@ -109,7 +109,7 @@ export function EventModal({
   return (
     <Modal show={show} onHide={onHide} onEntered={onEntered} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title>{editIndex >= 0 ? 'Edit event' : 'New event'}</Modal.Title>
+        <Modal.Title>{editIndex >= 0 ? "Edit event" : "New event"}</Modal.Title>
       </Modal.Header>
       <Modal.Body ref={formRef}>
         <Form>
@@ -119,25 +119,25 @@ export function EventModal({
                 <Card.Body className="py-2">
                   <div className="small text-uppercase text-muted">Preview</div>
                   <div className="fw-semibold">
-                    {getEventTypeLabel(eventFlags)}{' '}
-                    {eventType === 'weekly'
+                    {getEventTypeLabel(eventFlags)}{" "}
+                    {eventType === "weekly"
                       ? eventWeekday
                         ? `· ${getWeekdayName(eventWeekday)}`
-                        : ''
+                        : ""
                       : eventStart
                         ? eventEnd && eventEnd !== eventStart
                           ? `· ${eventStart} → ${eventEnd}`
                           : `· ${eventStart}`
-                        : '· Select a date'}
+                        : "· Select a date"}
                   </div>
                   {eventTitle && <div className="text-muted">{eventTitle}</div>}
                   {eventFlags.length > 0 && (
-                    <div className="text-muted small">Flags: {eventFlags.join(', ')}</div>
+                    <div className="text-muted small">Flags: {eventFlags.join(", ")}</div>
                   )}
                   <div className="mt-2">
                     <div className="small text-uppercase text-muted">Raw line</div>
                     <div className="font-monospace">
-                      {previewLine || 'Fill in the required fields to preview the .hday line.'}
+                      {previewLine || "Fill in the required fields to preview the .hday line."}
                     </div>
                   </div>
                 </Card.Body>
@@ -148,7 +148,7 @@ export function EventModal({
                 <Form.Label>Event type</Form.Label>
                 <Form.Select
                   value={eventType}
-                  onChange={(event) => onEventTypeChange(event.target.value as 'range' | 'weekly')}
+                  onChange={(event) => onEventTypeChange(event.target.value as "range" | "weekly")}
                 >
                   <option value="range">Range (start-end)</option>
                   <option value="weekly">Weekly (weekday)</option>
@@ -168,7 +168,7 @@ export function EventModal({
               </Form.Group>
             </Col>
 
-            {eventType === 'range' ? (
+            {eventType === "range" ? (
               <>
                 <Col md={6}>
                   <Form.Group controlId="eventStart">
@@ -177,15 +177,15 @@ export function EventModal({
                     </Form.Label>
                     <Form.Control
                       type="date"
-                      value={eventStart ? eventStart.replace(/\//g, '-') : ''}
+                      value={eventStart ? eventStart.replace(/\//g, "-") : ""}
                       onChange={(event) =>
                         onStartDateChange(
-                          event.target.value ? event.target.value.replace(/-/g, '/') : '',
+                          event.target.value ? event.target.value.replace(/-/g, "/") : "",
                         )
                       }
                       isInvalid={!!startDateError}
                       aria-required="true"
-                      aria-describedby={startDateError ? 'eventStart-error' : undefined}
+                      aria-describedby={startDateError ? "eventStart-error" : undefined}
                     />
                     {startDateError && (
                       <Form.Control.Feedback type="invalid" id="eventStart-error">
@@ -199,14 +199,14 @@ export function EventModal({
                     <Form.Label>End (YYYY/MM/DD)</Form.Label>
                     <Form.Control
                       type="date"
-                      value={eventEnd ? eventEnd.replace(/\//g, '-') : ''}
+                      value={eventEnd ? eventEnd.replace(/\//g, "-") : ""}
                       onChange={(event) =>
                         onEndDateChange(
-                          event.target.value ? event.target.value.replace(/-/g, '/') : '',
+                          event.target.value ? event.target.value.replace(/-/g, "/") : "",
                         )
                       }
                       isInvalid={!!endDateError}
-                      aria-describedby={endDateError ? 'eventEnd-error' : undefined}
+                      aria-describedby={endDateError ? "eventEnd-error" : undefined}
                     />
                     {endDateError && (
                       <Form.Control.Feedback type="invalid" id="eventEnd-error">
@@ -248,7 +248,7 @@ export function EventModal({
                         type="radio"
                         label={label}
                         checked={
-                          flag === 'none'
+                          flag === "none"
                             ? !eventFlags.some((flagValue) =>
                                 typeFlagsAsEventFlags.includes(flagValue),
                               )
@@ -274,7 +274,7 @@ export function EventModal({
                         type="radio"
                         label={label}
                         checked={
-                          flag === 'none'
+                          flag === "none"
                             ? !eventFlags.some((flagValue) =>
                                 timeLocationFlagsAsEventFlags.includes(flagValue),
                               )
@@ -295,7 +295,7 @@ export function EventModal({
           Reset form
         </Button>
         <Button variant="primary" onClick={onSubmit}>
-          {editIndex >= 0 ? 'Update' : 'Add'}
+          {editIndex >= 0 ? "Update" : "Add"}
         </Button>
       </Modal.Footer>
     </Modal>

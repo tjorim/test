@@ -1,10 +1,10 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
-import type React from 'react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import App from '../../src/App';
-import { WelcomeWizard } from '../../src/components/WelcomeWizard';
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import "@testing-library/jest-dom";
+import type React from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import App from "../../src/App";
+import { WelcomeWizard } from "../../src/components/WelcomeWizard";
 
 const defaultProps = {
   show: true,
@@ -21,7 +21,7 @@ function renderWithProviders(ui: React.ReactElement) {
 // Test helper functions
 const findModalTitle = async (text: RegExp) => {
   const headings = await screen.findAllByText(text);
-  const modalHeading = headings.find((el) => el.className.includes('modal-title'));
+  const modalHeading = headings.find((el) => el.className.includes("modal-title"));
   expect(modalHeading).toBeInTheDocument();
   return modalHeading;
 };
@@ -29,7 +29,7 @@ const findModalTitle = async (text: RegExp) => {
 const waitForStep = async (stepNumber: number, timeout = 3000) => {
   await waitFor(
     () => {
-      expect(screen.getByText(new RegExp(`Step ${stepNumber} of 3`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(`Step ${stepNumber} of 3`, "i"))).toBeInTheDocument();
     },
     { timeout },
   );
@@ -37,37 +37,37 @@ const waitForStep = async (stepNumber: number, timeout = 3000) => {
 
 const navigateToTeamSelection = async (user: ReturnType<typeof userEvent.setup>) => {
   // Step 1 (welcome) -> Step 2 (features)
-  const getStartedButton = screen.getByRole('button', {
+  const getStartedButton = screen.getByRole("button", {
     name: /Let's Get Started/i,
   });
   await user.click(getStartedButton);
   await waitForStep(2);
 
   // Step 2 (features) -> Step 3 (team selection)
-  const chooseTeamButton = screen.getByRole('button', {
+  const chooseTeamButton = screen.getByRole("button", {
     name: /Choose My Team/i,
   });
   await user.click(chooseTeamButton);
   await waitForStep(3);
 };
 
-describe('WelcomeWizard', () => {
-  describe('Basic rendering', () => {
-    it('renders modal when show is true', () => {
+describe("WelcomeWizard", () => {
+  describe("Basic rendering", () => {
+    it("renders modal when show is true", () => {
       renderWithProviders(<WelcomeWizard {...defaultProps} />);
-      expect(screen.getByRole('heading', { name: /Welcome to Worktime!/i })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /Welcome to Worktime!/i })).toBeInTheDocument();
     });
 
-    it('does not render modal when show is false', () => {
+    it("does not render modal when show is false", () => {
       renderWithProviders(<WelcomeWizard {...defaultProps} show={false} />);
       expect(
-        screen.queryByRole('heading', {
+        screen.queryByRole("heading", {
           name: /Welcome to Worktime!/i,
         }),
       ).not.toBeInTheDocument();
     });
 
-    it('renders all team buttons on team selection step', async () => {
+    it("renders all team buttons on team selection step", async () => {
       const user = userEvent.setup();
       renderWithProviders(<WelcomeWizard {...defaultProps} />);
 
@@ -80,8 +80,8 @@ describe('WelcomeWizard', () => {
     });
   });
 
-  describe('Team selection', () => {
-    it('calls onTeamSelect when team button is clicked', async () => {
+  describe("Team selection", () => {
+    it("calls onTeamSelect when team button is clicked", async () => {
       const user = userEvent.setup();
       const mockOnTeamSelect = vi.fn();
 
@@ -90,20 +90,20 @@ describe('WelcomeWizard', () => {
       // Navigate to team selection step
       await navigateToTeamSelection(user);
 
-      const team3Button = screen.getByText('Team 3');
+      const team3Button = screen.getByText("Team 3");
       await user.click(team3Button);
 
       expect(mockOnTeamSelect).toHaveBeenCalledWith(3);
     });
   });
 
-  describe('Loading state', () => {
-    it('shows loading spinner when isLoading is true', () => {
+  describe("Loading state", () => {
+    it("shows loading spinner when isLoading is true", () => {
       renderWithProviders(<WelcomeWizard {...defaultProps} isLoading={true} />);
-      expect(screen.getByText('Setting up your experience...')).toBeInTheDocument();
+      expect(screen.getByText("Setting up your experience...")).toBeInTheDocument();
     });
 
-    it('hides wizard content when loading', () => {
+    it("hides wizard content when loading", () => {
       renderWithProviders(<WelcomeWizard {...defaultProps} isLoading={true} />);
 
       // Wizard content should not be present when loading
@@ -111,18 +111,18 @@ describe('WelcomeWizard', () => {
     });
   });
 
-  describe('Modal behavior', () => {
-    it('accepts onHide callback prop', () => {
+  describe("Modal behavior", () => {
+    it("accepts onHide callback prop", () => {
       const mockOnHide = vi.fn();
       renderWithProviders(<WelcomeWizard {...defaultProps} onHide={mockOnHide} />);
 
       // Modal renders without errors and accepts the callback
-      expect(screen.getByText('Welcome to Worktime! 👋')).toBeInTheDocument();
+      expect(screen.getByText("Welcome to Worktime! 👋")).toBeInTheDocument();
       expect(mockOnHide).toBeDefined();
     });
   });
 
-  describe('Integration tests', () => {
+  describe("Integration tests", () => {
     let originalLocalStorage: Storage;
 
     beforeEach(() => {
@@ -131,12 +131,12 @@ describe('WelcomeWizard', () => {
 
       // Mock localStorage to ensure clean state
       originalLocalStorage = window.localStorage;
-      Object.defineProperty(window, 'localStorage', {
+      Object.defineProperty(window, "localStorage", {
         value: {
           clear: vi.fn(),
           getItem: vi.fn((key) => {
             // Return null for user state key to trigger WelcomeWizard
-            if (key === 'nextshift_user_state') {
+            if (key === "worktime_user_state") {
               return null;
             }
             return null;
@@ -152,18 +152,18 @@ describe('WelcomeWizard', () => {
 
     afterEach(() => {
       // Restore original localStorage to prevent cross-test leakage
-      Object.defineProperty(window, 'localStorage', {
+      Object.defineProperty(window, "localStorage", {
         value: originalLocalStorage,
         writable: true,
       });
       window.localStorage.clear?.();
       vi.clearAllMocks();
       // Clean up any DOM modifications
-      document.body.className = '';
-      document.documentElement.removeAttribute('data-bs-theme');
+      document.body.className = "";
+      document.documentElement.removeAttribute("data-bs-theme");
     });
 
-    it('shows WelcomeWizard on first load and after reset', async () => {
+    it("shows WelcomeWizard on first load and after reset", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -186,12 +186,12 @@ describe('WelcomeWizard', () => {
 
       const welcomeHeadingsAfterReset = await screen.findAllByText(/Welcome to Worktime/i);
       const modalHeadingAfterReset = welcomeHeadingsAfterReset.find((el) =>
-        el.className.includes('modal-title'),
+        el.className.includes("modal-title"),
       );
       expect(modalHeadingAfterReset).toBeInTheDocument();
     });
 
-    it('lets user skip team selection and browse all teams', async () => {
+    it("lets user skip team selection and browse all teams", async () => {
       const user = userEvent.setup();
       render(<App />);
 
@@ -202,7 +202,7 @@ describe('WelcomeWizard', () => {
       await navigateToTeamSelection(user);
 
       // Skip team selection
-      const browseButton = screen.getByRole('button', {
+      const browseButton = screen.getByRole("button", {
         name: /Browse All Teams/i,
       });
       await user.click(browseButton);
@@ -218,12 +218,12 @@ describe('WelcomeWizard', () => {
 
       const welcomeHeadingsAfterReset = await screen.findAllByText(/Welcome to Worktime/i);
       const modalHeadingAfterReset = welcomeHeadingsAfterReset.find((el) =>
-        el.className.includes('modal-title'),
+        el.className.includes("modal-title"),
       );
       expect(modalHeadingAfterReset).toBeInTheDocument();
     });
 
-    it('shows correct progress and disables buttons when loading', async () => {
+    it("shows correct progress and disables buttons when loading", async () => {
       const user = userEvent.setup();
       render(<App />);
 

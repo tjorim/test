@@ -1,50 +1,50 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { TransferView } from '../../src/components/TransferView';
-import { useTransferCalculations } from '../../src/hooks/useTransferCalculations';
-import { dayjs } from '../../src/utils/dateTimeUtils';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import "@testing-library/jest-dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { TransferView } from "../../src/components/TransferView";
+import { useTransferCalculations } from "../../src/hooks/useTransferCalculations";
+import { dayjs } from "../../src/utils/dateTimeUtils";
 
 // Mock the useTransferCalculations hook
-vi.mock('../../src/hooks/useTransferCalculations', () => ({
+vi.mock("../../src/hooks/useTransferCalculations", () => ({
   useTransferCalculations: vi.fn(),
 }));
 
 const mockUseTransferCalculations = vi.mocked(useTransferCalculations);
 
-vi.mock('../../src/utils/shiftCalculations', () => ({
+vi.mock("../../src/utils/shiftCalculations", () => ({
   getShiftByCode: vi.fn((code) => {
     const shifts = {
       M: {
-        code: 'M',
-        emoji: '🌅',
-        name: 'Morning',
-        hours: '07:00-15:00',
+        code: "M",
+        emoji: "🌅",
+        name: "Morning",
+        hours: "07:00-15:00",
         start: 7,
         end: 15,
         isWorking: true,
-        className: 'shift-morning',
+        className: "shift-morning",
       },
       E: {
-        code: 'E',
-        emoji: '🌆',
-        name: 'Evening',
-        hours: '15:00-23:00',
+        code: "E",
+        emoji: "🌆",
+        name: "Evening",
+        hours: "15:00-23:00",
         start: 15,
         end: 23,
         isWorking: true,
-        className: 'shift-evening',
+        className: "shift-evening",
       },
       N: {
-        code: 'N',
-        emoji: '🌙',
-        name: 'Night',
-        hours: '23:00-07:00',
+        code: "N",
+        emoji: "🌙",
+        name: "Night",
+        hours: "23:00-07:00",
         start: 23,
         end: 7,
         isWorking: true,
-        className: 'shift-night',
+        className: "shift-night",
       },
     };
     return shifts[code] || shifts.M;
@@ -52,14 +52,14 @@ vi.mock('../../src/utils/shiftCalculations', () => ({
   getShiftDisplayName: vi.fn((shift) => `${shift.emoji} ${shift.name}`),
 }));
 
-vi.mock('../../src/utils/config', () => ({
+vi.mock("../../src/utils/config", () => ({
   CONFIG: {
     TEAMS_COUNT: 5,
   },
 }));
 
 // Mock console.warn to test validation
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+const mockConsoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
 
 // Default hook return value
 const defaultHookReturn = {
@@ -74,25 +74,25 @@ const defaultProps = {
   myTeam: 1,
 };
 
-describe('TransferView', () => {
+describe("TransferView", () => {
   beforeEach(() => {
     mockUseTransferCalculations.mockReturnValue(defaultHookReturn);
     mockConsoleWarn.mockClear();
   });
 
-  describe('Basic rendering', () => {
-    it('renders transfer view header', () => {
+  describe("Basic rendering", () => {
+    it("renders transfer view header", () => {
       render(<TransferView {...defaultProps} />);
-      expect(screen.getByText('Team Transfers')).toBeInTheDocument();
+      expect(screen.getByText("Team Transfers")).toBeInTheDocument();
     });
 
-    it('shows team comparison controls when team is selected', () => {
+    it("shows team comparison controls when team is selected", () => {
       render(<TransferView {...defaultProps} myTeam={1} />);
       expect(screen.getByText(/View transfers with Team/i)).toBeInTheDocument();
       expect(screen.getByText(/Filter by custom date range/i)).toBeInTheDocument();
     });
 
-    it('shows team selection prompt when no team selected', () => {
+    it("shows team selection prompt when no team selected", () => {
       mockUseTransferCalculations.mockReturnValue({
         ...defaultHookReturn,
         transfers: [],
@@ -103,13 +103,13 @@ describe('TransferView', () => {
     });
   });
 
-  describe('Team comparison UI', () => {
-    it('displays team comparison dropdown with available teams', () => {
+  describe("Team comparison UI", () => {
+    it("displays team comparison dropdown with available teams", () => {
       render(<TransferView {...defaultProps} />);
 
       const otherTeamSelect = screen.getByLabelText(/View transfers with Team/i);
       expect(otherTeamSelect).toBeInTheDocument();
-      expect(otherTeamSelect).toHaveValue('2'); // From mock hook
+      expect(otherTeamSelect).toHaveValue("2"); // From mock hook
 
       // Check that available teams are rendered
       expect(screen.getAllByText(/Team 2/).length).toBeGreaterThan(0);
@@ -118,7 +118,7 @@ describe('TransferView', () => {
       expect(screen.getAllByText(/Team 5/).length).toBeGreaterThan(0);
     });
 
-    it('calls setOtherTeam when user selects different team', async () => {
+    it("calls setOtherTeam when user selects different team", async () => {
       const mockSetOtherTeam = vi.fn();
       mockUseTransferCalculations.mockReturnValue({
         ...defaultHookReturn,
@@ -128,15 +128,15 @@ describe('TransferView', () => {
       const user = userEvent.setup();
       render(<TransferView {...defaultProps} />);
 
-      const otherTeamSelect = screen.getByLabelText('View transfers with Team:');
-      await user.selectOptions(otherTeamSelect, '3');
+      const otherTeamSelect = screen.getByLabelText("View transfers with Team:");
+      await user.selectOptions(otherTeamSelect, "3");
 
       expect(mockSetOtherTeam).toHaveBeenCalledWith(3);
     });
   });
 
-  describe('Date range selection UI', () => {
-    it('displays date range dropdown with options', () => {
+  describe("Date range selection UI", () => {
+    it("displays date range dropdown with options", () => {
       render(<TransferView {...defaultProps} />);
 
       const filterCheckbox = screen.getByLabelText(/Filter by custom date range/i);
@@ -144,7 +144,7 @@ describe('TransferView', () => {
       expect(filterCheckbox).not.toBeChecked();
     });
 
-    it('toggles custom date range when checkbox is clicked', async () => {
+    it("toggles custom date range when checkbox is clicked", async () => {
       const user = userEvent.setup();
       render(<TransferView {...defaultProps} />);
 
@@ -162,7 +162,7 @@ describe('TransferView', () => {
       expect(screen.getByLabelText(/End Date/i)).toBeInTheDocument();
     });
 
-    it('updates date inputs when user changes custom dates', async () => {
+    it("updates date inputs when user changes custom dates", async () => {
       const user = userEvent.setup();
       render(<TransferView {...defaultProps} />);
 
@@ -172,16 +172,16 @@ describe('TransferView', () => {
 
       // Test start date input
       const startDateInput = screen.getByLabelText(/Start Date/i);
-      await user.type(startDateInput, '2025-01-01');
-      expect(startDateInput).toHaveValue('2025-01-01');
+      await user.type(startDateInput, "2025-01-01");
+      expect(startDateInput).toHaveValue("2025-01-01");
 
       // Test end date input
       const endDateInput = screen.getByLabelText(/End Date/i);
-      await user.type(endDateInput, '2025-01-31');
-      expect(endDateInput).toHaveValue('2025-01-31');
+      await user.type(endDateInput, "2025-01-31");
+      expect(endDateInput).toHaveValue("2025-01-31");
     });
 
-    it('clears date inputs when clear button is clicked', async () => {
+    it("clears date inputs when clear button is clicked", async () => {
       const user = userEvent.setup();
       render(<TransferView {...defaultProps} />);
 
@@ -192,21 +192,21 @@ describe('TransferView', () => {
       // Set some dates
       const startDateInput = screen.getByLabelText(/Start Date/i);
       const endDateInput = screen.getByLabelText(/End Date/i);
-      await user.type(startDateInput, '2025-01-01');
-      await user.type(endDateInput, '2025-01-31');
+      await user.type(startDateInput, "2025-01-01");
+      await user.type(endDateInput, "2025-01-31");
 
       // Click clear button
-      const clearButton = screen.getByRole('button', { name: /Clear/i });
+      const clearButton = screen.getByRole("button", { name: /Clear/i });
       await user.click(clearButton);
 
       // Dates should be cleared
-      expect(startDateInput).toHaveValue('');
-      expect(endDateInput).toHaveValue('');
+      expect(startDateInput).toHaveValue("");
+      expect(endDateInput).toHaveValue("");
     });
   });
 
-  describe('Transfer results display', () => {
-    it('shows no transfers message when transfers array is empty', () => {
+  describe("Transfer results display", () => {
+    it("shows no transfers message when transfers array is empty", () => {
       mockUseTransferCalculations.mockReturnValue({
         ...defaultHookReturn,
         transfers: [],
@@ -218,15 +218,15 @@ describe('TransferView', () => {
       expect(screen.getByText(/No transfers found between Team 1 and Team 2/)).toBeInTheDocument();
     });
 
-    it('displays transfers when provided by hook', () => {
+    it("displays transfers when provided by hook", () => {
       const mockTransfers = [
         {
-          date: dayjs('2025-01-15'),
+          date: dayjs("2025-01-15"),
           fromTeam: 1,
           toTeam: 2,
-          fromShiftType: 'M' as const,
-          toShiftType: 'E' as const,
-          type: 'handover',
+          fromShiftType: "M" as const,
+          toShiftType: "E" as const,
+          type: "handover",
         },
       ];
 
@@ -247,56 +247,56 @@ describe('TransferView', () => {
       expect(screen.getAllByText(/Handover/).length).toBeGreaterThan(0);
     });
 
-    it('shows team selection prompt when no team selected', () => {
+    it("shows team selection prompt when no team selected", () => {
       render(<TransferView {...defaultProps} myTeam={null} />);
 
       expect(screen.getByText(/Please select your team/)).toBeInTheDocument();
     });
   });
 
-  describe('Prop validation', () => {
-    it('handles invalid team selection and shows warning', () => {
+  describe("Prop validation", () => {
+    it("handles invalid team selection and shows warning", () => {
       render(<TransferView {...defaultProps} myTeam={999} />);
 
       // Should render without crashing
-      expect(screen.getByText('Team Transfers')).toBeInTheDocument();
+      expect(screen.getByText("Team Transfers")).toBeInTheDocument();
       // Should have called console.warn
-      expect(mockConsoleWarn).toHaveBeenCalledWith('Invalid user team number: 999. Expected 1-5');
+      expect(mockConsoleWarn).toHaveBeenCalledWith("Invalid user team number: 999. Expected 1-5");
     });
 
-    it('handles negative team numbers', () => {
+    it("handles negative team numbers", () => {
       render(<TransferView {...defaultProps} myTeam={-1} />);
 
-      expect(screen.getByText('Team Transfers')).toBeInTheDocument();
-      expect(mockConsoleWarn).toHaveBeenCalledWith('Invalid user team number: -1. Expected 1-5');
+      expect(screen.getByText("Team Transfers")).toBeInTheDocument();
+      expect(mockConsoleWarn).toHaveBeenCalledWith("Invalid user team number: -1. Expected 1-5");
     });
 
-    it('handles null team selection without warning', () => {
+    it("handles null team selection without warning", () => {
       render(<TransferView {...defaultProps} myTeam={null} />);
 
-      expect(screen.getByText('Team Transfers')).toBeInTheDocument();
+      expect(screen.getByText("Team Transfers")).toBeInTheDocument();
       expect(mockConsoleWarn).not.toHaveBeenCalled();
     });
   });
 
-  describe('Transfer data display', () => {
-    it('displays transfer data with proper formatting', () => {
+  describe("Transfer data display", () => {
+    it("displays transfer data with proper formatting", () => {
       const mockTransfers = [
         {
-          date: dayjs('2025-01-15'),
+          date: dayjs("2025-01-15"),
           fromTeam: 1,
           toTeam: 2,
-          fromShiftType: 'M' as const,
-          toShiftType: 'E' as const,
-          type: 'handover',
+          fromShiftType: "M" as const,
+          toShiftType: "E" as const,
+          type: "handover",
         },
         {
-          date: dayjs('2025-01-16'),
+          date: dayjs("2025-01-16"),
           fromTeam: 2,
           toTeam: 1,
-          fromShiftType: 'E' as const,
-          toShiftType: 'N' as const,
-          type: 'takeover',
+          fromShiftType: "E" as const,
+          toShiftType: "N" as const,
+          type: "takeover",
         },
       ];
 
@@ -326,15 +326,15 @@ describe('TransferView', () => {
       expect(screen.getAllByText(/Takeover/).length).toBeGreaterThan(0);
     });
 
-    it('renders team badges when displaying limited transfers', () => {
+    it("renders team badges when displaying limited transfers", () => {
       // Create 21 mock transfers to test the limit
       const mockTransfers = Array.from({ length: 21 }, (_, i) => ({
-        date: dayjs('2025-01-15').add(i, 'day'),
+        date: dayjs("2025-01-15").add(i, "day"),
         fromTeam: 1,
         toTeam: 2,
-        fromShiftType: 'M' as const,
-        toShiftType: 'E' as const,
-        type: 'handover',
+        fromShiftType: "M" as const,
+        toShiftType: "E" as const,
+        type: "handover",
       }));
 
       mockUseTransferCalculations.mockReturnValue({
@@ -351,8 +351,8 @@ describe('TransferView', () => {
     });
   });
 
-  describe('Advanced interactions', () => {
-    it('handles rapid team selection changes', async () => {
+  describe("Advanced interactions", () => {
+    it("handles rapid team selection changes", async () => {
       const mockSetOtherTeam = vi.fn();
       mockUseTransferCalculations.mockReturnValue({
         ...defaultHookReturn,
@@ -362,12 +362,12 @@ describe('TransferView', () => {
       const user = userEvent.setup();
       render(<TransferView {...defaultProps} />);
 
-      const otherTeamSelect = screen.getByLabelText('View transfers with Team:');
+      const otherTeamSelect = screen.getByLabelText("View transfers with Team:");
 
       // Rapid changes
-      await user.selectOptions(otherTeamSelect, '3');
-      await user.selectOptions(otherTeamSelect, '4');
-      await user.selectOptions(otherTeamSelect, '5');
+      await user.selectOptions(otherTeamSelect, "3");
+      await user.selectOptions(otherTeamSelect, "4");
+      await user.selectOptions(otherTeamSelect, "5");
 
       expect(mockSetOtherTeam).toHaveBeenCalledTimes(3);
       expect(mockSetOtherTeam).toHaveBeenNthCalledWith(1, 3);

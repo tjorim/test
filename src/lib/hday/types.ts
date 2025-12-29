@@ -5,20 +5,20 @@
 /**
  * Time and location flags for events
  */
-export type TimeLocationFlag = 'half_am' | 'half_pm' | 'onsite' | 'no_fly' | 'can_fly';
+export type TimeLocationFlag = "half_am" | "half_pm" | "onsite" | "no_fly" | "can_fly";
 
 /**
  * Type flags that categorize the event
  */
 export type TypeFlag =
-  | 'business'
-  | 'weekend'
-  | 'birthday'
-  | 'ill'
-  | 'in'
-  | 'course'
-  | 'other'
-  | 'holiday';
+  | "business"
+  | "weekend"
+  | "birthday"
+  | "ill"
+  | "in"
+  | "course"
+  | "other"
+  | "holiday";
 
 /**
  * All possible event flags
@@ -30,7 +30,7 @@ export type EventFlag = TimeLocationFlag | TypeFlag;
  */
 export type HdayEvent = {
   /** Event type: range (date range), weekly (recurring), or unknown (unparseable) */
-  type: 'range' | 'weekly' | 'unknown';
+  type: "range" | "weekly" | "unknown";
 
   /** Start date in YYYY/MM/DD format (for range events) */
   start?: string;

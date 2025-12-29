@@ -1,5 +1,5 @@
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -9,7 +9,7 @@ interface ConfirmationDialogProps {
   cancelLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
-  variant?: 'danger' | 'primary' | 'warning';
+  variant?: "danger" | "primary" | "warning";
 }
 
 /**
@@ -32,11 +32,11 @@ export function ConfirmationDialog({
   isOpen,
   title,
   message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
   onConfirm,
   onCancel,
-  variant = 'primary',
+  variant = "primary",
 }: ConfirmationDialogProps) {
   return (
     <Modal show={isOpen} onHide={onCancel} centered>
