@@ -37,7 +37,7 @@ interface CurrentStatusProps {
 }
 
 /**
- * Render current and upcoming shift information, personalised when a team is selected.
+ * Render current and upcoming shift information, personalized when a team is selected.
  *
  * Shows current shift status, next shift details with countdown, off-day progress, an optional timeline
  * for the currently working team, and controls to select/change the team or view who is working.

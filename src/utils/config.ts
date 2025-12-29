@@ -5,6 +5,14 @@
  *
  * @param dateString - Date string in `YYYY-MM-DD` format
  * @returns A Date representing the given date at 00:00:00.000 UTC; may be invalid if `dateString` is not a valid `YYYY-MM-DD`
+ *
+ * @example
+ * parseUTCDate('2025-01-15')
+ * // Returns: Date object for January 15, 2025 at 00:00:00.000 UTC
+ *
+ * @example
+ * parseUTCDate('invalid')
+ * // Returns: Invalid Date
  */
 function parseUTCDate(dateString: string): Date {
   // Simple UTC parsing without dayjs dependency to avoid test issues

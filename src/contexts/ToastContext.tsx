@@ -22,6 +22,13 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
+/**
+ * Hook to access toast notification context
+ * Must be used within a ToastProvider
+ *
+ * @returns The ToastContextType with toast notification methods
+ * @throws {Error} If used outside of a ToastProvider
+ */
 export const useToast = () => {
   const context = useContext(ToastContext);
   if (context === undefined) {

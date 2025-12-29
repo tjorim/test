@@ -1,3 +1,68 @@
+/**
+ * .hday Format Parser and Serializer
+ *
+ * Parser and serializer for the `.hday` format - a human-readable text format
+ * for managing time-off events (vacations, business trips, recurring office days, etc.).
+ *
+ * ## Format Specification
+ *
+ * **Range Events** (specific dates):
+ * ```
+ * [flags]YYYY/MM/DD[-YYYY/MM/DD] [# comment]
+ * ```
+ * Examples:
+ * - `2025/01/15 # Single day off`
+ * - `2025/12/23-2025/12/27 # Multi-day vacation`
+ * - `b2025/03/10-2025/03/14 # Business trip (b flag)`
+ *
+ * **Weekly Events** (recurring patterns):
+ * ```
+ * dN[flags] [# comment]
+ * ```
+ * Where N = 1-7 (Monday to Sunday)
+ * Examples:
+ * - `d1 # Every Monday`
+ * - `d5k # Every Friday in office (k flag)`
+ *
+ * ## Flags
+ *
+ * **Type Flags** (mutually exclusive, first wins):
+ * - `b` = business trip
+ * - `s` = course/training
+ * - `k` = in office
+ * - `u` = other
+ * - `e` = weekend
+ * - `h` = birthday
+ * - `i` = sick leave
+ * - (default: holiday if no type flag)
+ *
+ * **Time/Location Flags** (mutually exclusive, first wins):
+ * - `a` = half day AM
+ * - `p` = half day PM
+ * - `w` = onsite
+ * - `n` = no fly zone
+ * - `f` = can fly
+ *
+ * ## Round-Trip Guarantee
+ *
+ * Unknown/malformed lines are preserved in the `raw` field, ensuring that
+ * parsing → editing → serializing maintains the original text exactly.
+ *
+ * ## Flag Normalization
+ *
+ * The parser automatically enforces mutual exclusivity:
+ * - Multiple type flags → keeps first, removes rest (with console warning)
+ * - Multiple time/location flags → keeps first, removes rest (with console warning)
+ * - No type flag → adds default 'holiday'
+ *
+ * ## Accessibility
+ *
+ * All color constants meet WCAG AA standards (4.5:1 minimum contrast with black text).
+ * See `EVENT_COLORS` for verified contrast ratios.
+ *
+ * @module lib/hday/parser
+ */
+
 import type { EventFlag, HdayEvent, TimeLocationFlag, TypeFlag } from "./types";
 
 // Type flags that override the default 'holiday' flag
@@ -42,7 +107,22 @@ export const EVENT_COLORS = {
  * Unknown characters are ignored and a console warning is emitted for each.
  *
  * @param prefix - Single-character flag string (e.g. "ap" for half-am and half-pm)
- * @returns The normalised array of `EventFlag` values; if no type flag is present the result includes `holiday`
+ * @returns The normalized array of `EventFlag` values; if no type flag is present the result includes `holiday`
+ *
+ * @example
+ * parsePrefixFlags("ba") // Business trip, half-day AM
+ * // Returns: ['business', 'half_am']
+ *
+ * @example
+ * parsePrefixFlags("ka") // In office, half-day AM
+ * // Returns: ['in', 'half_am']
+ *
+ * @example
+ * parsePrefixFlags("xyz") // Invalid flags trigger warnings
+ * // Console: "Unknown flag character 'x' ignored. Known flags: a, p, b, e, h, i, k, s, u, w, n, f"
+ * // Returns: ['holiday'] (default when no valid type flag)
+ *
+ * @see normalizeEventFlags For the flag normalization logic applied to the result
  */
 function parsePrefixFlags(prefix: string): EventFlag[] {
   const flagMap: Record<string, EventFlag> = {
@@ -145,8 +225,32 @@ export function normalizeEventFlags(flags: EventFlag[]): EventFlag[] {
  *
  * Flags (single letters): a=half_am, p=half_pm, b=business, s=course, i=in, w=onsite, n=no_fly, f=can_fly.
  *
+ * Edge cases:
+ * - Empty lines and whitespace-only lines are ignored
+ * - Invalid flag characters are ignored with console warnings
+ * - Malformed dates or lines that don't match any pattern are preserved as `unknown` type
+ * - Multiple type flags: only the first is kept (others removed)
+ * - Multiple time/location flags: only the first is kept (others removed)
+ *
  * @param text - Raw .hday file content
  * @returns An array of parsed HdayEvent objects representing range, weekly or unknown events
+ *
+ * @example
+ * // Single day vacation
+ * parseHday("2025/01/15 # Vacation day")
+ * // Returns: [{ type: 'range', start: '2025/01/15', end: '2025/01/15', title: 'Vacation day', flags: ['holiday'], raw: '2025/01/15 # Vacation day' }]
+ *
+ * @example
+ * // Multi-day business trip
+ * parseHday("b2025/12/23-2025/12/27 # Christmas business trip")
+ * // Returns: [{ type: 'range', start: '2025/12/23', end: '2025/12/27', title: 'Christmas business trip', flags: ['business'], raw: 'b2025/12/23-2025/12/27 # Christmas business trip' }]
+ *
+ * @example
+ * // Weekly recurring event (every Monday in office, half day AM)
+ * parseHday("d1ka # Monday morning in office")
+ * // Returns: [{ type: 'weekly', weekday: 1, title: 'Monday morning in office', flags: ['in', 'half_am'], raw: 'd1ka # Monday morning in office' }]
+ *
+ * @see toLine For the inverse operation (serializing events back to .hday format)
  */
 export function parseHday(text: string): HdayEvent[] {
   const reRange =
@@ -218,7 +322,24 @@ export function parseHday(text: string): HdayEvent[] {
  *
  * @param ev - The event to serialize; for `unknown` events the `raw` field must be present.
  * @returns The corresponding single-line representation suitable for a .hday file.
- * @throws Error if an `unknown` event is missing its `raw` field or if the event `type` is unsupported.
+ * @throws {Error} If an `unknown` event is missing its `raw` field or if the event `type` is unsupported.
+ *
+ * @example
+ * // Serialize a single-day vacation
+ * toLine({ type: 'range', start: '2025/01/15', end: '2025/01/15', title: 'Day off', flags: ['holiday'] })
+ * // Returns: "2025/01/15 # Day off"
+ *
+ * @example
+ * // Serialize a business trip with half-day AM flag
+ * toLine({ type: 'range', start: '2025/03/10', end: '2025/03/14', flags: ['business', 'half_am'], title: 'Conference' })
+ * // Returns: "ba2025/03/10-2025/03/14 # Conference"
+ *
+ * @example
+ * // Serialize a weekly recurring event
+ * toLine({ type: 'weekly', weekday: 5, flags: ['in'], title: 'Office Friday' })
+ * // Returns: "d5k # Office Friday"
+ *
+ * @see parseHday For the inverse operation (parsing .hday text into events)
  */
 export function toLine(ev: Omit<HdayEvent, "raw"> | HdayEvent): string {
   const flagMap: Record<string, string> = {

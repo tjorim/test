@@ -207,7 +207,7 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
  * Accesses the settings context.
  *
  * @returns The current settings context value.
- * @throws Error if the hook is used outside a SettingsProvider.
+ * @throws {Error} If the hook is used outside a SettingsProvider.
  */
 export function useSettings(): SettingsContextType {
   const context = useContext(SettingsContext);

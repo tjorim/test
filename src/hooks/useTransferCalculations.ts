@@ -81,6 +81,30 @@ function checkTransfer(
  *  - `availableOtherTeams`: list of team ids available for comparison (excludes `myTeam`)
  *  - `otherTeam`: the currently selected comparison team id
  *  - `setOtherTeam`: setter function to change the selected comparison team
+ *
+ * @example
+ * // In a React component - show handover/takeover points between teams
+ * function TransferView({ myTeam }) {
+ *   const { transfers, otherTeam, setOtherTeam, availableOtherTeams, hasMoreTransfers } =
+ *     useTransferCalculations({ myTeam, limit: 10 });
+ *
+ *   return (
+ *     <div>
+ *       <select value={otherTeam} onChange={(e) => setOtherTeam(Number(e.target.value))}>
+ *         {availableOtherTeams.map(t => <option key={t} value={t}>Team {t}</option>)}
+ *       </select>
+ *
+ *       <h3>Transfers between Team {myTeam} and Team {otherTeam}</h3>
+ *       {transfers.map(t => (
+ *         <div key={t.date.format()}>
+ *           {t.date.format('MMM D')}: {t.type === 'handover' ? '→' : '←'}
+ *           {' '}T{t.fromTeam} ({t.fromShiftType}) to T{t.toTeam} ({t.toShiftType})
+ *         </div>
+ *       ))}
+ *       {hasMoreTransfers && <p>More transfers available...</p>}
+ *     </div>
+ *   );
+ * }
  */
 export function useTransferCalculations({
   myTeam,

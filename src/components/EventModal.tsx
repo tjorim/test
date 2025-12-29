@@ -81,6 +81,17 @@ type EventModalProps = {
  * exclusive flags (type and time/location). Validation messages for start/end dates are surfaced
  * to assistive technologies via ARIA attributes.
  *
+ * Accessibility Features:
+ * - Modal.Header closeButton provides keyboard-accessible close (Escape key, X button)
+ * - All form inputs have associated <Form.Label> elements for screen readers
+ * - Required fields marked with aria-required="true" and visual * indicator
+ * - Form validation errors use aria-describedby to link error messages to inputs
+ * - Live preview section provides immediate feedback on event formatting
+ * - Form.Check components (checkboxes/radios) have proper label associations
+ * - Semantic HTML structure with proper heading hierarchy
+ * - Focus trap built into React Bootstrap Modal component
+ * - Modal backdrop click and Escape key both trigger onHide for flexibility
+ *
  * @param show - Whether the modal is visible
  * @param editIndex - Index of the event being edited, or -1 for a new event
  * @param formRef - Ref attached to the modal body for focus management

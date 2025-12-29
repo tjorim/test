@@ -19,6 +19,9 @@ interface SettingsPanelProps {
 /**
  * Render the settings sidebar with preferences, information and quick actions.
  *
+ * @param show - Whether the settings panel is visible
+ * @param onHide - Callback invoked to hide the settings panel
+ * @param onShowAbout - Optional callback invoked to show the About modal
  * @returns The rendered settings panel element
  */
 export function SettingsPanel({ show, onHide, onShowAbout }: SettingsPanelProps) {

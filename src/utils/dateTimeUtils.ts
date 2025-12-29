@@ -26,6 +26,10 @@ export const formatDisplayDate = (date: Date): string => {
  * Returns the 2-digit ISO week year (e.g., "25" for 2025)
  * @param date - The date to extract the year from
  * @returns The 2-digit ISO week year
+ *
+ * @example
+ * getISOWeekYear2Digit('2025-05-13') // "25"
+ * getISOWeekYear2Digit('2024-12-30') // "25" (ISO week year can differ from calendar year at year boundaries)
  */
 export const getISOWeekYear2Digit = (date: string | Date | dayjs.Dayjs): string => {
   return dayjs(date).isoWeekYear().toString().slice(-2);
@@ -35,6 +39,10 @@ export const getISOWeekYear2Digit = (date: string | Date | dayjs.Dayjs): string 
  * Returns the 2-digit ISO week number (e.g., "20" for the 20th week)
  * @param date - The date to extract the week number from
  * @returns The 2-digit ISO week number
+ *
+ * @example
+ * getISOWeek2Digit('2025-05-13') // "20" (week 20 of 2025)
+ * getISOWeek2Digit('2025-01-06') // "02" (padded with zero)
  */
 export const getISOWeek2Digit = (date: string | Date | dayjs.Dayjs): string => {
   return dayjs(date).isoWeek().toString().padStart(2, "0");
@@ -44,6 +52,11 @@ export const getISOWeek2Digit = (date: string | Date | dayjs.Dayjs): string => {
  * Returns the ISO weekday (1-7) for the date, where 1 is Monday and 7 is Sunday
  * @param date - The date to extract the weekday from
  * @returns The ISO weekday number
+ *
+ * @example
+ * getISOWeekday('2025-05-12') // 1 (Monday)
+ * getISOWeekday('2025-05-13') // 2 (Tuesday)
+ * getISOWeekday('2025-05-18') // 7 (Sunday)
  */
 export const getISOWeekday = (date: string | Date | dayjs.Dayjs): number => {
   return dayjs(date).isoWeekday();
@@ -55,6 +68,13 @@ export const getISOWeekday = (date: string | Date | dayjs.Dayjs): number => {
  * Uses ISO week numbering, where weeks start on Monday and end on Sunday
  * @param date - The date to format
  * @returns The formatted date code (e.g., "2520.2")
+ *
+ * @example
+ * formatYYWWD('2025-05-13') // "2520.2" (2025, week 20, Tuesday)
+ * formatYYWWD('2025-01-06') // "2502.1" (2025, week 02, Monday)
+ * formatYYWWD('2024-12-30') // "2501.1" (ISO week 1 of 2025, Monday)
+ *
+ * @see getShiftCode For combining this with shift types to create full shift codes
  */
 export const formatYYWWD = (date: string | Date | dayjs.Dayjs): string => {
   const year = getISOWeekYear2Digit(date);
@@ -66,8 +86,14 @@ export const formatYYWWD = (date: string | Date | dayjs.Dayjs): string => {
 /**
  * Format a Dayjs object into a time string using the specified 12h or 24h preference.
  *
+ * @param dayjsObj - The Dayjs object to format
  * @param timeFormat - "12h" produces `hh:mm A` (e.g. `07:30 PM`); "24h" produces `HH:mm` (e.g. `19:30`)
  * @returns The formatted time string
+ *
+ * @example
+ * const time = dayjs('2025-05-13 19:30');
+ * formatTimeByPreference(time, '12h') // "07:30 PM"
+ * formatTimeByPreference(time, '24h') // "19:30"
  */
 export function formatTimeByPreference(dayjsObj: dayjs.Dayjs, timeFormat: "12h" | "24h"): string {
   return dayjsObj.format(timeFormat === "12h" ? "hh:mm A" : "HH:mm");

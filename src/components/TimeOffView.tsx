@@ -48,7 +48,19 @@ const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_F
 /**
  * Render the Time Off Management UI that lists time-off events and provides add, edit, import, export and delete flows.
  *
- * The component manages form state and validation, displays a responsive table of events, and shows modal dialogs for event editing and deletion confirmation. It uses the EventStore and Toast contexts for persistence and user feedback and includes accessibility-focused behaviours (ARIA labels, semantic table structure and keyboard support).
+ * The component manages form state and validation, displays a responsive table of events, and shows modal dialogs for event editing and deletion confirmation. It uses the EventStore and Toast contexts for persistence and user feedback.
+ *
+ * Accessibility Features:
+ * - Semantic table structure with proper thead/tbody for screen readers
+ * - ARIA labels on icon-only buttons (Edit/Delete) for screen reader announcements
+ * - aria-hidden on decorative icons to prevent redundant announcements
+ * - Proper form labels and ARIA attributes in EventModal (aria-required, aria-describedby)
+ * - Keyboard navigation supported via standard HTML elements (buttons, inputs, table)
+ * - Color contrast: Event badges use #000 text on colored backgrounds for readability
+ * - Modal dialogs use React Bootstrap's built-in accessibility features (focus trap, Escape key)
+ * - Empty state provides helpful context for new users
+ * - Import/Export buttons clearly labeled with icons and text
+ * - Responsive table layout adapts to smaller screens
  *
  * @returns The Time Off Management React element.
  */

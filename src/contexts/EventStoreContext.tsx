@@ -248,6 +248,9 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
 /**
  * Hook to access event store context
  * Must be used within an EventStoreProvider
+ *
+ * @returns The EventStoreContextType with all event store operations
+ * @throws {Error} If used outside of an EventStoreProvider
  */
 export function useEventStore(): EventStoreContextType {
   const context = useContext(EventStoreContext);
