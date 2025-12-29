@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TransferView } from "../../src/components/TransferView";
 import { useTransferCalculations } from "../../src/hooks/useTransferCalculations";
 import { dayjs } from "../../src/utils/dateTimeUtils";
@@ -78,6 +78,10 @@ describe("TransferView", () => {
   beforeEach(() => {
     mockUseTransferCalculations.mockReturnValue(defaultHookReturn);
     mockConsoleWarn.mockClear();
+  });
+
+  afterEach(() => {
+    mockConsoleWarn.mockRestore();
   });
 
   describe("Basic rendering", () => {
