@@ -140,20 +140,19 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
     }
   }, [events]);
 
-  // Persist to localStorage whenever events change (serialize in background)
+  // Persist to localStorage whenever events change
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      if (events.length > 0) {
-        const serialized = events.map((e) => toLine(e)).join("\n") + "\n";
-        localStorage.setItem(STORAGE_KEY, serialized);
+      if (rawText) {
+        localStorage.setItem(STORAGE_KEY, rawText);
       } else {
         localStorage.removeItem(STORAGE_KEY);
       }
     } catch (error) {
       console.error("Failed to save .hday content to localStorage:", error);
     }
-  }, [events]);
+  }, [rawText]);
 
   /**
    * Get calendar events within a date range
