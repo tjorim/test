@@ -52,6 +52,11 @@ jobs:
           # Create deployment directory if it doesn't exist
           mkdir -p _site
 
+          if [ ! -d "dist" ]; then
+            echo "❌ dist directory not found. Did the build step run successfully?"
+            exit 1
+          fi
+
           # Copy Vite build contents directly into _site (not nested)
           cp -r dist/. _site/
 
