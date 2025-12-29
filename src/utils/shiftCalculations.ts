@@ -11,6 +11,7 @@ export interface Shift {
   start: number | null;
   end: number | null;
   isWorking: boolean;
+  className: string;
 }
 
 export interface ShiftResult {
@@ -20,7 +21,7 @@ export interface ShiftResult {
   teamNumber: number;
 }
 
-export interface NextShiftResult {
+export interface UpcomingShiftResult {
   date: Dayjs;
   shift: Shift;
   code: string;
@@ -186,7 +187,7 @@ export function getShiftCode(date: string | Date | Dayjs, teamNumber: number): s
 export function getNextShift(
   fromDate: string | Date | Dayjs,
   teamNumber: number,
-): NextShiftResult | null {
+): UpcomingShiftResult | null {
   // Validate team number range
   if (teamNumber < 1 || teamNumber > CONFIG.TEAMS_COUNT) {
     return null;

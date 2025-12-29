@@ -8,35 +8,6 @@ import { EventStoreProvider } from '../../src/contexts/EventStoreContext';
 import { SettingsProvider } from '../../src/contexts/SettingsContext';
 import { ToastProvider } from '../../src/contexts/ToastContext';
 
-// Mock the hooks
-vi.mock('../../src/hooks/useOnlineStatus', () => ({
-  useOnlineStatus: vi.fn(() => true),
-}));
-
-vi.mock('../../src/hooks/usePWAInstall', () => ({
-  usePWAInstall: vi.fn(() => ({
-    isInstallable: false,
-    promptInstall: vi.fn(),
-  })),
-}));
-
-vi.mock('../../src/hooks/useServiceWorkerStatus', () => ({
-  useServiceWorkerStatus: vi.fn(() => 'active'),
-  getServiceWorkerStatusText: vi.fn(() => 'Service Worker is active'),
-}));
-
-import { useOnlineStatus } from '../../src/hooks/useOnlineStatus';
-import { usePWAInstall } from '../../src/hooks/usePWAInstall';
-import {
-  getServiceWorkerStatusText,
-  useServiceWorkerStatus,
-} from '../../src/hooks/useServiceWorkerStatus';
-
-const mockUseOnlineStatus = vi.mocked(useOnlineStatus);
-const mockUsePWAInstall = vi.mocked(usePWAInstall);
-const mockUseServiceWorkerStatus = vi.mocked(useServiceWorkerStatus);
-const mockGetServiceWorkerStatusText = vi.mocked(getServiceWorkerStatusText);
-
 function renderWithProviders(ui: React.ReactElement) {
   return render(
     <SettingsProvider>
@@ -47,72 +18,16 @@ function renderWithProviders(ui: React.ReactElement) {
   );
 }
 
-beforeEach(() => {
-  mockUseOnlineStatus.mockReturnValue(true);
-  mockUsePWAInstall.mockReturnValue({
-    isInstallable: false,
-    promptInstall: vi.fn(),
-  });
-  mockUseServiceWorkerStatus.mockReturnValue({
-    isRegistered: true,
-    isInstalling: false,
-    isWaiting: false,
-    isActive: true,
-  });
-  mockGetServiceWorkerStatusText.mockReturnValue('Service Worker is active');
-});
-
-afterEach(() => {
-  vi.clearAllMocks();
-});
-
 describe('Header', () => {
   describe('Basic rendering', () => {
-    it('renders NextShift title', () => {
+    it('renders Worktime title', () => {
       renderWithProviders(<Header />);
-      expect(screen.getByText('NextShift')).toBeInTheDocument();
+      expect(screen.getByText('Worktime')).toBeInTheDocument();
     });
 
     it('renders About button', () => {
       renderWithProviders(<Header />);
-      expect(screen.getByLabelText('About NextShift')).toBeInTheDocument();
-    });
-  });
-
-  describe('Online status', () => {
-    it('shows online badge when online', () => {
-      mockUseOnlineStatus.mockReturnValue(true);
-      renderWithProviders(<Header />);
-      expect(screen.getByText('Online')).toBeInTheDocument();
-    });
-
-    it('shows offline badge when offline', () => {
-      mockUseOnlineStatus.mockReturnValue(false);
-      renderWithProviders(<Header />);
-      expect(screen.getByText('Offline')).toBeInTheDocument();
-    });
-  });
-
-  describe('PWA install', () => {
-    it('shows install button when installable', () => {
-      const mockPromptInstall = vi.fn();
-      mockUsePWAInstall.mockReturnValue({
-        isInstallable: true,
-        promptInstall: mockPromptInstall,
-      });
-
-      renderWithProviders(<Header />);
-      expect(screen.getByText('Install')).toBeInTheDocument();
-    });
-
-    it('does not show install button when not installable', () => {
-      mockUsePWAInstall.mockReturnValue({
-        isInstallable: false,
-        promptInstall: vi.fn(),
-      });
-
-      renderWithProviders(<Header />);
-      expect(screen.queryByText('Install')).not.toBeInTheDocument();
+      expect(screen.getByLabelText('About Worktime')).toBeInTheDocument();
     });
   });
 
@@ -122,7 +37,7 @@ describe('Header', () => {
       const mockOnShowAbout = vi.fn();
       renderWithProviders(<Header onShowAbout={mockOnShowAbout} />);
 
-      const aboutButton = screen.getByLabelText('About NextShift');
+      const aboutButton = screen.getByLabelText('About Worktime');
       await user.click(aboutButton);
 
       expect(mockOnShowAbout).toHaveBeenCalledTimes(1);
@@ -132,11 +47,11 @@ describe('Header', () => {
       const user = userEvent.setup();
       renderWithProviders(<App />);
 
-      const aboutButton = screen.getByLabelText('About NextShift');
+      const aboutButton = screen.getByLabelText('About Worktime');
       await user.click(aboutButton);
 
       // Modal should be open
-      expect(screen.getByText('About NextShift')).toBeInTheDocument();
+      expect(screen.getByText('About Worktime')).toBeInTheDocument();
     });
 
     it('opens About modal when accessed from Settings panel in full App', async () => {
@@ -152,7 +67,7 @@ describe('Header', () => {
       await user.click(aboutHelpButton);
 
       // Modal should be open
-      expect(screen.getByText('About NextShift')).toBeInTheDocument();
+      expect(screen.getByText('About Worktime')).toBeInTheDocument();
     });
 
     it('closes About modal when Close button is clicked', async () => {
@@ -160,18 +75,18 @@ describe('Header', () => {
       renderWithProviders(<App />);
 
       // Open About modal
-      const aboutButton = screen.getByLabelText('About NextShift');
+      const aboutButton = screen.getByLabelText('About Worktime');
       await user.click(aboutButton);
 
       // Modal should be open
-      expect(screen.getByText('About NextShift')).toBeInTheDocument();
+      expect(screen.getByText('About Worktime')).toBeInTheDocument();
 
       // Close modal
       const closeButton = screen.getByText('Close');
       await user.click(closeButton);
 
       // Modal should be closed
-      expect(screen.queryByText('About NextShift')).not.toBeInTheDocument();
+      expect(screen.queryByText('About Worktime')).not.toBeInTheDocument();
     });
   });
 

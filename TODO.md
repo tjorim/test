@@ -1,12 +1,12 @@
-# NextShift Development Roadmap
+# Worktime Development Roadmap
 
-**Current Version**: 3.3.0  
-**Branch**: `main`  
+**Current Version**: 4.0.0
+**Branch**: `main`
 **Status**: Active Development
 
 ## Overview
 
-This document serves as a general to-do list and development roadmap for NextShift improvements, covering UI enhancements, features, and user experience improvements.
+This document serves as a general to-do list and development roadmap for Worktime improvements, covering shift tracking, time-off management, UI enhancements, and user experience improvements.
 
 ## Development To-dos
 
@@ -139,22 +139,75 @@ Features that enhance functionality with moderate development effort.
 - **Estimated Effort**: 2–3 hours
 - **Status**: 🔲 Planned (High Priority)
 
-#### 9. PWA Installation Prompts
+#### 9. Time-Off Calendar Visual Enhancements
 
-- **Component**: Intelligent installation timing
+- **Component**: TimeOffView calendar display improvements
 - **Use Cases**:
-  - Better onboarding integration
-  - Smart prompt timing based on user engagement
-  - Installation success tracking
-- **Implementation**: Enhance existing usePWAInstall hook
-- **Estimated Effort**: 1–2 hours
+  - Color-coded calendar events matching .hday flag colors
+  - Auto-load and highlight current month
+  - Visual indicator for today's date
+  - Weekly recurring event indicators (d1-d7) on appropriate weekdays
+  - Auto-sort events by date in event table
+- **Implementation**: Enhance TimeOffView calendar rendering
+- **Estimated Effort**: 3–4 hours
+- **Status**: 🔲 Future
+
+#### 10. Time-Off Keyboard Shortcuts
+
+- **Component**: Enhanced keyboard navigation for time-off management
+- **Use Cases**:
+  - Ctrl+S / Cmd+S to download .hday file
+  - Ctrl+N to add new event
+  - Escape to cancel edit mode
+  - Delete key to remove selected event
+- **Implementation**: Add keyboard event handlers to TimeOffView
+- **Estimated Effort**: 2 hours
+- **Status**: 🔲 Future
+
+#### 11. Time-Off Bulk Operations
+
+- **Component**: Multi-event management
+- **Use Cases**:
+  - Select multiple events for deletion
+  - Copy/duplicate events to different dates
+  - Import and merge events from another .hday file
+- **Implementation**: Add selection state and bulk action toolbar
+- **Estimated Effort**: 3–4 hours
+- **Status**: 🔲 Future
+
+#### 12. Calendar Export Formats
+
+- **Component**: Multi-format export functionality
+- **Use Cases**:
+  - Export shift schedule as .ics calendar file
+  - Export time-off events to iCal/ICS format
+  - Export to CSV for spreadsheet analysis
+  - Integration with external calendar apps (Google Calendar, Outlook)
+- **Implementation**: Create export utilities for multiple formats
+- **Files to Modify**:
+  - `src/utils/exportCalendar.ts` - Add calendar generation utility
+  - `src/components/SettingsPanel.tsx` - Enable export buttons
+  - `src/components/TimeOffView.tsx` - Add export options
+- **Estimated Effort**: 4–5 hours
+- **Status**: 🔲 Future
+
+#### 13. Time-Off Statistics Dashboard
+
+- **Component**: Vacation and time-off analytics
+- **Use Cases**:
+  - View vacation days used vs. remaining
+  - Breakdown by event type (vacation, business, training)
+  - Year-over-year comparison
+  - Team-wide statistics (if multiple users)
+- **Implementation**: New statistics component with charts
+- **Estimated Effort**: 4–5 hours
 - **Status**: 🔲 Future
 
 ### 🎨 Future Enhancements
 
 Advanced features for future development phases.
 
-#### 9. Carousel for Mobile Team View
+#### 14. Carousel for Mobile Team View
 
 - **Component**: `react-bootstrap/Carousel`
 - **Use Cases**:
@@ -164,7 +217,7 @@ Advanced features for future development phases.
 - **Estimated Effort**: 5–6 hours
 - **Status**: 🔲 Future
 
-#### 10. Accordion for Transfer History
+#### 15. Accordion for Transfer History
 
 - **Component**: `react-bootstrap/Accordion`
 - **Use Cases**:
@@ -174,18 +227,18 @@ Advanced features for future development phases.
 - **Estimated Effort**: 3–4 hours
 - **Status**: 🔲 Future
 
-#### 11. Notification System Implementation
+#### 16. Notification System Implementation
 
-- **Component**: Actual notification functionality
+- **Component**: Browser notification functionality
 - **Use Cases**:
   - Shift reminders and countdown alerts
-  - Push notifications for PWA
+  - Time-off event reminders
   - Customizable notification preferences
 - **Implementation**: Build on existing notification settings in SettingsContext
 - **Estimated Effort**: 4–5 hours
 - **Status**: 🔲 Future
 
-#### 12. Advanced Accessibility Features
+#### 17. Advanced Accessibility Features
 
 - **Component**: Enhanced accessibility support
 - **Use Cases**:
@@ -197,7 +250,7 @@ Advanced features for future development phases.
 - **Estimated Effort**: 3–4 hours
 - **Status**: 🔲 Future
 
-#### 13. Multi-Roster Pattern Support
+#### 18. Multi-Roster Pattern Support
 
 - **Component**: Configurable shift patterns beyond 5-team 2-2-2-4 cycle
 - **Use Cases**:
@@ -220,15 +273,17 @@ Advanced features for future development phases.
 - **Estimated Effort**: 8–12 hours (Major feature)
 - **Status**: 🔲 Future
 
-#### 14. Floating Action Button
+#### 19. Floating Action Button
 
 - **Component**: Custom positioned `react-bootstrap/Button`
 - **Use Cases**:
   - Quick team switch
+  - Quick add time-off event
   - Add to calendar
   - Quick actions overlay
 - **Implementation**: Fixed positioned button system
 - **Estimated Effort**: 2–3 hours
+- **Status**: 🔲 Future
 
 ## Current To-do Status
 
@@ -248,13 +303,23 @@ Advanced features for future development phases.
 6. **Enhanced List Groups** - Better data organization
 7. **TeamDetailModal Enhancement** - Activate disabled features
 8. **Enhanced Error Boundaries** - Better error handling
-9. **PWA Installation Prompts** – Intelligent installation timing
-10. **Mobile Carousel** - Improved mobile navigation
-11. **Transfer History Accordion** - Organized historical data
-12. **Notification System** - Actual notification functionality
-13. **Multi-Roster Pattern Support** - Support 3/4/6-team rosters and custom patterns
-14. **Advanced Accessibility** - Enhanced screen reader support
-15. **Floating Action Button** - Quick actions overlay
+
+### 📋 Backlog (Time-Off Management)
+
+9. **Time-Off Calendar Visual Enhancements** - Color-coded events, auto-load current month, highlight today
+10. **Time-Off Keyboard Shortcuts** - Ctrl+S download, Ctrl+N new event, Escape cancel
+11. **Time-Off Bulk Operations** - Multi-select, copy/duplicate, merge imports
+12. **Calendar Export Formats** - .ics, CSV export for shifts and time-off
+13. **Time-Off Statistics Dashboard** - Vacation days used/remaining, breakdown by type
+
+### 📋 Backlog (UI/UX)
+
+14. **Mobile Carousel** - Improved mobile navigation
+15. **Transfer History Accordion** - Organized historical data
+16. **Notification System** - Browser notifications for shifts and time-off
+17. **Advanced Accessibility** - Enhanced screen reader support, high contrast mode
+18. **Multi-Roster Pattern Support** - Support 3/4/6-team rosters and custom patterns
+19. **Floating Action Button** - Quick actions overlay
 
 ## Technical Requirements
 
@@ -263,7 +328,7 @@ Advanced features for future development phases.
 - All components use existing `react-bootstrap` - no new dependencies
 - Maintain existing responsive design
 - Preserve accessibility standards
-- Keep PWA functionality intact
+- Keep bundle size minimal
 
 ### Testing Strategy
 

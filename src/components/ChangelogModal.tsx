@@ -67,14 +67,14 @@ export function ChangelogModal({ show, onHide }: ChangelogModalProps) {
       <Modal.Header closeButton>
         <Modal.Title>
           <i className="bi bi-journal-text me-2"></i>
-          What's New in NextShift
+          What's New in Worktime
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className="mb-3">
           <p className="text-muted">
-            Track the evolution of NextShift with our comprehensive changelog. See what's new,
-            what's changed, and what's coming next.
+            Track the evolution of Worktime with our comprehensive changelog. See what's new, what's
+            changed, and what's coming next.
           </p>
         </div>
 
@@ -131,7 +131,7 @@ export function ChangelogModal({ show, onHide }: ChangelogModalProps) {
       </Modal.Body>
       <Modal.Footer>
         <small className="text-muted me-auto">
-          NextShift follows{' '}
+          Worktime follows{' '}
           <a href="https://semver.org/" target="_blank" rel="noopener noreferrer">
             Semantic Versioning
           </a>

@@ -482,7 +482,7 @@ describe('Type Safety and Interface Compliance', () => {
     });
   });
 
-  it('should return proper NextShiftResult interface from getNextShift', () => {
+  it('should return proper UpcomingShiftResult interface from getNextShift', () => {
     const testDate = new Date('2025-07-16');
     const nextShift = getNextShift(testDate, 1);
 

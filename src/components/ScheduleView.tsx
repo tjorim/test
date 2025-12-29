@@ -262,7 +262,10 @@ export function ScheduleView({
                                 <span
                                   className="event-dot cursor-help"
                                   style={{
-                                    backgroundColor: event.meta?.color || '#EC0000',
+                                    backgroundColor:
+                                      event.meta && 'color' in event.meta
+                                        ? event.meta.color || '#EC0000'
+                                        : '#EC0000',
                                   }}
                                   aria-label={event.label || 'Time off event'}
                                 />

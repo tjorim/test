@@ -4,17 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**NextShift** - Created by **[Jorim Tielemans](https://github.com/tjorim)**
+**Worktime** - Created by **[Jorim Tielemans](https://github.com/tjorim)**
 
-NextShift is a Team Shift Tracker PWA for a continuous (24/7) 5-team shift schedule. This lightweight, offline-capable Progressive Web App allows users to quickly check which teams are working on any given day, see when their team's next shift is, and identify transfer/handover points between teams.
+Worktime is a Team Shift Tracker and Time-Off Manager for continuous (24/7) 5-team shift schedules. This lightweight web application combines shift tracking with integrated time-off management (.hday format), allowing users to quickly check which teams are working on any given day, see when their team's next shift is, manage vacation/time-off events, and identify transfer/handover points between teams.
 
-**Repository**: [https://github.com/tjorim/NextShift](https://github.com/tjorim/NextShift)  
-**Issues & Feature Requests**: [GitHub Issues](https://github.com/tjorim/NextShift/issues)
+**Note**: Previously known as NextShift. Rebranded to Worktime with v4.0.0 after merging HdayPlanner's time-off management capabilities.
 
 ## File Structure
 
 ```text
-NextShift/
+Worktime/
 ├── index.html              # Main HTML entry point
 ├── src/
 │   ├── App.tsx            # Main React application component
@@ -46,9 +45,6 @@ NextShift/
 │   │   ├── useKeyboardShortcuts.ts # Keyboard shortcuts functionality
 │   │   ├── useLiveTime.ts          # Live updating time with configurable frequency
 │   │   ├── useLocalStorage.ts      # LocalStorage persistence hook
-│   │   ├── useOnlineStatus.ts      # Online/offline status hook
-│   │   ├── usePWAInstall.ts        # PWA installation prompt hook
-│   │   ├── useServiceWorkerStatus.ts # Service worker status hook
 │   │   ├── useShiftCalculation.ts  # Shift calculation logic hook
 │   │   └── useTransferCalculations.ts # Team transfer analysis hook
 │   ├── utils/             # TypeScript utilities and business logic
@@ -64,20 +60,17 @@ NextShift/
 │   ├── setup.ts          # Test environment setup
 │   └── shiftCalculations.test.ts # Business logic tests
 ├── public/
-│   ├── assets/icons/      # PWA and favicon icons
-│   └── sw.js             # Custom service worker
+│   └── assets/icons/      # Favicon icons
 ├── scripts/               # Build and utility scripts
 │   ├── generate-changelog.ts   # Automatic changelog generation from data
-│   └── generate-icons.js       # PWA icon generator script
-├── vite.config.ts         # Vite build configuration with React and PWA
+│   └── generate-icons.js       # Icon generator script
+├── vite.config.ts         # Vite build configuration with React
 ├── vitest.config.ts       # Vitest testing configuration
 ├── tsconfig.json          # TypeScript project references
 ├── tsconfig.app.json      # TypeScript app configuration
 ├── tsconfig.node.json     # TypeScript Node.js configuration
 ├── tsconfig.test.json     # TypeScript test configuration
-└── dist/                  # Production build output (PWA)
-    ├── sw.js             # Built service worker (Workbox)
-    ├── manifest.webmanifest # Auto-generated PWA manifest
+└── dist/                  # Production build output
     └── assets/           # Built and optimized assets
 ```
 
@@ -122,7 +115,7 @@ VITE_REFERENCE_TEAM=1
 
 ```javascript
 // Add to index.html before main script
-window.NEXTSHIFT_CONFIG = {
+window.WORKTIME_CONFIG = {
     REFERENCE_DATE: '2025-01-06',
     REFERENCE_TEAM: 1
 };
@@ -155,7 +148,6 @@ These variables anchor all shift calculations. If not configured, defaults to `2
 - **Time Off Management**: Import/export .hday files for vacation and time-off tracking with event overlays on schedule
 - **Date Navigation**: Today button, date picker, previous/next day
 - **Date Format**: Display in YYWW.D format (e.g., 2520.2M = year 2025, week 20, Tuesday Morning)
-- **Offline Support**: Full PWA functionality without internet connection
 - **Terminal Web Interface**: Browser-based terminal-style UI with keyboard navigation (accessible via `?view=terminal`)
 
 ## Recent Improvements (v3.1+)
@@ -187,7 +179,7 @@ These variables anchor all shift calculations. If not configured, defaults to `2
 
 ## Time Off Management (.hday Integration)
 
-NextShift now supports importing and managing time-off events via the `.hday` format, enabling vacation planning and event tracking alongside shift schedules.
+Worktime supports importing and managing time-off events via the `.hday` format (merged from HdayPlanner), enabling vacation planning and event tracking alongside shift schedules.
 
 ### .hday Format
 
@@ -252,18 +244,16 @@ d1i # Every Monday in office
 ## Technology Stack
 
 - **Frontend**: React 19 with TypeScript and modern JSX transform
-- **Build Tool**: Vite 8 beta with PWA plugin for modern development and optimization
+- **Build Tool**: Vite 8 beta for modern development and optimization
 - **UI Framework**: React Bootstrap (Bootstrap 5 components) for responsive design
 - **Date Handling**: Day.js for date calculations and week number formatting
-- **PWA**: Auto-generated Service Worker with Workbox for offline functionality
 - **Storage**: Custom React hooks for localStorage persistence and state management
-- **Icons**: PNG icons in auto-generated manifest
 - **Code Quality**: oxlint and oxfmt (OXC tools) for ultra-fast linting and formatting
 - **Testing**: Vitest with React Testing Library for component and unit testing
 
 ## Development Commands
 
-This PWA uses Vite for modern development and build processes:
+This application uses Vite for modern development and build processes:
 
 1. **Development Server**: Fast development with hot module replacement
 
@@ -271,7 +261,7 @@ This PWA uses Vite for modern development and build processes:
    npm run dev          # Start Vite dev server at http://localhost:8000
    ```
 
-2. **Production Build**: Optimized build with automatic PWA generation
+2. **Production Build**: Optimized build
 
    ```bash
    npm run build        # Build for production in dist/ directory
@@ -292,17 +282,12 @@ This PWA uses Vite for modern development and build processes:
 
    ```bash
    npm run generate-changelog  # Generate CHANGELOG.md from data
-   npm run generate-icons      # Generate all PWA and favicon icons
+   npm run generate-icons      # Generate favicon icons
    ```
-
-5. **PWA Testing**:
-   - Use development server for service worker testing
-   - Test offline functionality with built version
-   - Verify PWA installability in browser dev tools
 
 ## Terminal Web Interface
 
-NextShift includes a terminal-styled web interface that provides all shift tracking functionality in a retro terminal aesthetic.
+Worktime includes a terminal-styled web interface that provides all shift tracking functionality in a retro terminal aesthetic.
 
 ### Features
 
@@ -350,15 +335,6 @@ http://localhost:8000/?view=terminal
   - `TerminalNextShift.tsx` - Next shift information
   - `TerminalTransfers.tsx` - Transfer analysis
 - **Integration**: URL parameter `?view=terminal` in App.tsx
-
-## PWA Configuration
-
-- **vite.config.ts**: Vite PWA plugin configuration for automatic generation
-- **manifest.webmanifest**: Auto-generated PWA manifest with proper metadata
-- **Service Worker**: Auto-generated with Workbox for optimal caching strategies
-- **Icons**: Local PNG icons (192px and 512px) for installation
-- **Shortcuts**: Quick access to "Today's Schedule" and "My Next Shift"
-- **Auto-updates**: Built-in service worker update mechanism
 
 ## Future Extensions
 

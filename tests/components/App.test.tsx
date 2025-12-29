@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import App from '../../src/App';
 import { SettingsProvider } from '../../src/contexts/SettingsContext';
 import { dayjs } from '../../src/utils/dateTimeUtils';
@@ -37,28 +36,6 @@ vi.mock('../../src/components/ErrorBoundary', () => ({
   ErrorBoundary: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="error-boundary">{children}</div>
   ),
-}));
-
-vi.mock('../../src/components/UpdateAvailableModal', () => ({
-  UpdateAvailableModal: ({
-    show,
-    onUpdate,
-    onLater,
-  }: {
-    show: boolean;
-    onUpdate: () => void;
-    onLater: () => void;
-  }) =>
-    show ? (
-      <div data-testid="update-available-modal">
-        <button type="button" onClick={onUpdate} data-testid="update-button">
-          Update Now
-        </button>
-        <button type="button" onClick={onLater} data-testid="later-button">
-          Later
-        </button>
-      </div>
-    ) : null,
 }));
 
 vi.mock('../../src/components/AboutModal', () => ({
@@ -115,19 +92,6 @@ vi.mock('../../src/hooks/useShiftCalculation', () => ({
     setCurrentDate: vi.fn(),
     todayShifts: mockTodayShifts,
   }),
-}));
-
-// Mock service worker status hook
-const mockServiceWorkerStatus = {
-  isRegistered: true,
-  isInstalling: false,
-  isWaiting: false,
-  isActive: true,
-  version: '3.2.1',
-};
-
-vi.mock('../../src/hooks/useServiceWorkerStatus', () => ({
-  useServiceWorkerStatus: vi.fn(() => mockServiceWorkerStatus),
 }));
 
 describe('App', () => {
@@ -246,145 +210,6 @@ describe('App', () => {
           </SettingsProvider>,
         ),
       ).not.toThrow();
-    });
-  });
-
-  describe('Update Prompt Functionality', () => {
-    let originalLocation: Location;
-    let originalServiceWorker: ServiceWorkerContainer;
-
-    beforeEach(() => {
-      vi.clearAllMocks();
-      // Reset service worker status
-      mockServiceWorkerStatus.isWaiting = false;
-      // Capture original global objects
-      originalLocation = window.location;
-      originalServiceWorker = navigator.serviceWorker;
-    });
-
-    afterEach(() => {
-      // Restore original globals to prevent cross-test leakage
-      Object.defineProperty(navigator, 'serviceWorker', {
-        value: originalServiceWorker,
-        configurable: true,
-      });
-      Object.defineProperty(window, 'location', {
-        value: originalLocation,
-        configurable: true,
-      });
-    });
-
-    it('does not show update prompt when no update is waiting', () => {
-      mockServiceWorkerStatus.isWaiting = false;
-
-      render(
-        <SettingsProvider>
-          <App />
-        </SettingsProvider>,
-      );
-
-      expect(screen.queryByTestId('update-available-modal')).not.toBeInTheDocument();
-    });
-
-    it('shows update prompt when service worker has waiting update', () => {
-      mockServiceWorkerStatus.isWaiting = true;
-
-      render(
-        <SettingsProvider>
-          <App />
-        </SettingsProvider>,
-      );
-
-      expect(screen.getByTestId('update-available-modal')).toBeInTheDocument();
-      expect(screen.getByTestId('update-button')).toBeInTheDocument();
-      expect(screen.getByTestId('later-button')).toBeInTheDocument();
-    });
-
-    it('handles update button click with service worker registration', async () => {
-      mockServiceWorkerStatus.isWaiting = true;
-
-      // Mock service worker registration
-      const mockRegistration = {
-        waiting: {
-          postMessage: vi.fn(),
-        },
-      };
-
-      let controllerChangeListener: (() => void) | undefined;
-
-      Object.defineProperty(navigator, 'serviceWorker', {
-        value: {
-          getRegistration: vi.fn().mockResolvedValue(mockRegistration),
-          addEventListener: vi.fn((event: string, listener: () => void) => {
-            if (event === 'controllerchange') {
-              controllerChangeListener = listener;
-            }
-          }),
-          removeEventListener: vi.fn(),
-        },
-        configurable: true,
-      });
-
-      // Mock window.location.reload
-      Object.defineProperty(window, 'location', {
-        value: {
-          reload: vi.fn(),
-        },
-        configurable: true,
-      });
-
-      const user = userEvent.setup();
-
-      render(
-        <SettingsProvider>
-          <App />
-        </SettingsProvider>,
-      );
-
-      const updateButton = screen.getByTestId('update-button');
-      await user.click(updateButton);
-
-      expect(navigator.serviceWorker.getRegistration).toHaveBeenCalled();
-      expect(mockRegistration.waiting.postMessage).toHaveBeenCalledWith({
-        type: 'SKIP_WAITING',
-      });
-      expect(navigator.serviceWorker.addEventListener).toHaveBeenCalledWith(
-        'controllerchange',
-        expect.any(Function),
-        {
-          once: true,
-        },
-      );
-
-      // Simulate the controllerchange event
-      if (controllerChangeListener) {
-        controllerChangeListener();
-      }
-
-      expect(window.location.reload).toHaveBeenCalled();
-    });
-
-    it('renders later button that can be clicked', async () => {
-      mockServiceWorkerStatus.isWaiting = true;
-
-      const user = userEvent.setup();
-
-      render(
-        <SettingsProvider>
-          <App />
-        </SettingsProvider>,
-      );
-
-      // Modal should be shown initially
-      expect(screen.getByTestId('update-available-modal')).toBeInTheDocument();
-
-      const laterButton = screen.getByTestId('later-button');
-
-      // Click the later button
-      await user.click(laterButton);
-
-      // Verify the modal is dismissed after clicking later
-      expect(screen.queryByTestId('update-available-modal')).not.toBeInTheDocument();
     });
   });
 });

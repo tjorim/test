@@ -8,7 +8,7 @@ import {
   getCurrentShiftDay,
   getNextShift,
   getShiftCode,
-  type NextShiftResult,
+  type UpcomingShiftResult,
   type ShiftResult,
 } from '../utils/shiftCalculations';
 
@@ -18,7 +18,7 @@ export interface UseShiftCalculationReturn {
   currentDate: Dayjs;
   setCurrentDate: (date: Dayjs) => void;
   currentShift: ShiftResult | null;
-  nextShift: NextShiftResult | null;
+  nextShift: UpcomingShiftResult | null;
   todayShifts: ShiftResult[];
   currentShiftDay: Dayjs;
 }
@@ -50,7 +50,7 @@ export function useShiftCalculation(): UseShiftCalculationReturn {
   }, [myTeam, currentDate]);
 
   // Calculate next shift for user's team
-  const nextShift = useMemo((): NextShiftResult | null => {
+  const nextShift = useMemo((): UpcomingShiftResult | null => {
     if (!myTeam) return null;
 
     return getNextShift(currentDate, myTeam);

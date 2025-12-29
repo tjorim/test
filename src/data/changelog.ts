@@ -15,7 +15,7 @@ export interface ChangelogVersion {
 export const changelogData: ChangelogVersion[] = [
   {
     version: '4.0.0',
-    date: '2025-12-28',
+    date: '2025-12-29',
     status: 'current',
     added: [
       'Time Off Management: Dedicated tab for importing/exporting .hday files for vacation and time-off tracking',
@@ -34,6 +34,13 @@ export const changelogData: ChangelogVersion[] = [
       'Accessibility Features: ARIA labels, keyboard navigation, form validation',
     ],
     changed: [
+      '🎨 REBRAND: Complete rebrand from NextShift to Worktime to reflect merged shift tracking + time-off management',
+      'Updated all user-facing text from NextShift to Worktime (ChangelogModal, TerminalHeader, etc.)',
+      'Updated configuration interfaces: NextShiftConfig → WorktimeConfig, NextShiftUserState → WorktimeUserState',
+      'Updated type interfaces: NextShiftResult → UpcomingShiftResult',
+      'Updated window configuration: window.NEXTSHIFT_CONFIG → window.WORKTIME_CONFIG',
+      'Updated all documentation (CLAUDE.md, TODO.md, CHANGELOG.md, README.md) with Worktime branding',
+      'Merged HdayPlanner TODO items into unified Worktime roadmap',
       'Upgraded to Vite 8.0.0-beta.5 with Rolldown bundler for faster builds',
       'Replaced Biome with oxlint and oxfmt (OXC tools) for ultra-fast Rust-based linting',
       'Removed cookie consent system (internal users only - no consent needed)',
@@ -43,19 +50,25 @@ export const changelogData: ChangelogVersion[] = [
       'MainTabs: Added fourth tab for Time Off Management',
       'ScheduleView: Enhanced with event overlay indicators',
       'TodayView: Enhanced with time-off event banner',
-      'Updated all documentation (CLAUDE.md, README.md) for Worktime MVP',
+      'Simplified deployment: Now standard web app with browser HTTP caching (no PWA complexity)',
     ],
     fixed: [
+      '🔧 Fixed 6 TypeScript build errors: unused imports, type guards, RefObject types, missing properties, Rolldown compatibility',
+      '✅ Fixed 42 test failures: EventStoreProvider, mocks, branding, localStorage keys (460 tests now passing)',
       'dayjs comparisons: Fixed isSameOrBefore/isSameOrAfter (not built-in) with explicit logic',
       'EventStoreContext: Fixed React batching issues with functional state updates',
       'localStorage cleanup: Now removes keys when empty instead of storing empty strings',
       'filterEventsInRange: Proper date range filtering with inclusive boundaries',
       'Test stability: Fixed multiple element matches in TimeOffView tests',
     ],
+    planned: [
+      '🚫 BREAKING: Removed all PWA functionality (9 files total) to eliminate cache issues where users get stuck on old versions',
+      'Benefits: Force refresh works (Ctrl+F5), simpler deployment, -1600 lines of code, standard browser caching',
+    ],
     technicalDetails: {
-      title: 'Worktime MVP: Time Off Integration',
+      title: 'Worktime v4.0: Complete Rebrand + Time-Off Integration + PWA Removal',
       description:
-        "Merged HdayPlanner's .hday time-off management into NextShift PWA. Created src/lib/hday/ parser (482 lines), src/lib/events/ converters, EventStoreContext for state management, TimeOffView and EventModal components. Upgraded build toolchain to Vite 8 beta and OXC tools. Removed cookie consent for internal use simplification. All 189 tests passing (139 .hday parser + 50 new integration tests).",
+        "Complete rebrand from NextShift to Worktime. Merged HdayPlanner's .hday time-off management. Created src/lib/hday/ parser (482 lines), src/lib/events/ converters, EventStoreContext for state management, TimeOffView and EventModal components. Removed all PWA functionality (service workers, install prompts, offline status) to avoid cache-related issues - users can now force refresh. Upgraded build toolchain to Vite 8 beta and OXC tools. All 460 tests passing (139 .hday parser + 50 integration tests + 271 existing tests).",
     },
   },
   {

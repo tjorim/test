@@ -1,0 +1,13 @@
+# CODEOWNERS file for Worktime
+# This file defines who is responsible for code review and maintenance
+# of different parts of the repository.
+
+# Global owner for all files
+* @tjorim @copilot
+
+# Documentation
+/docs/ @tjorim
+*.md @tjorim
+
+# GitHub workflows and configuration
+/.github/ @tjorim

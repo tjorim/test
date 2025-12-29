@@ -17,14 +17,14 @@ describe('ChangelogModal', () => {
     it('renders modal when show is true', () => {
       render(<ChangelogModal {...defaultProps} />);
 
-      expect(screen.getByText("What's New in NextShift")).toBeInTheDocument();
-      expect(screen.getByText(/Track the evolution of NextShift/)).toBeInTheDocument();
+      expect(screen.getByText("What's New in Worktime")).toBeInTheDocument();
+      expect(screen.getByText(/Track the evolution of Worktime/)).toBeInTheDocument();
     });
 
     it('does not render modal when show is false', () => {
       render(<ChangelogModal {...defaultProps} show={false} />);
 
-      expect(screen.queryByText("What's New in NextShift")).not.toBeInTheDocument();
+      expect(screen.queryByText("What's New in Worktime")).not.toBeInTheDocument();
     });
 
     it('calls onHide when close button is clicked', () => {
@@ -228,7 +228,7 @@ describe('ChangelogModal', () => {
     it('includes semantic versioning reference', () => {
       render(<ChangelogModal {...defaultProps} />);
 
-      expect(screen.getByText('NextShift follows')).toBeInTheDocument();
+      expect(screen.getByText('Worktime follows')).toBeInTheDocument();
 
       const semverLink = screen.getByText('Semantic Versioning');
       expect(semverLink).toHaveAttribute('href', 'https://semver.org/');
@@ -242,7 +242,7 @@ describe('ChangelogModal', () => {
       render(<ChangelogModal {...defaultProps} />);
 
       // Modal should have proper title
-      const modalTitle = screen.getByText("What's New in NextShift");
+      const modalTitle = screen.getByText("What's New in Worktime");
       expect(modalTitle).toBeInTheDocument();
 
       // Close button should be accessible

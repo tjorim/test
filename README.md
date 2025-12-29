@@ -1,12 +1,12 @@
-# NextShift - Team Shift Tracker
+# Worktime - Shift Tracker & Time Off Management
 
 **Created by [Jorim Tielemans](https://github.com/tjorim)**
 
-A lightweight, offline-capable Progressive Web App (PWA) for tracking 5-team continuous (24/7) shift schedules.
+A lightweight, offline-capable Progressive Web App (PWA) for tracking 5-team continuous (24/7) shift schedules and managing time-off with .hday files.
 
 ## Overview
 
-NextShift helps teams working in a 5-team rotating shift system to quickly check:
+Worktime helps teams working in a 5-team rotating shift system to quickly check:
 
 - Which teams are working on any given day
 - When their next shift is scheduled
@@ -107,8 +107,8 @@ Examples:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/tjorim/NextShift.git
-   cd NextShift
+   git clone https://github.com/tjorim/worktime.git
+   cd worktime
    ```
 
 2. **Install dependencies**
@@ -279,20 +279,20 @@ npm run test         # Run test suite
 
 ### 📞 Get Help & Report Issues
 
-- **🐛 Bug Reports**: [Create an issue](https://github.com/tjorim/NextShift/issues/new?template=bug_report.md)
-- **💡 Feature Requests**: [Request a feature](https://github.com/tjorim/NextShift/issues/new?template=feature_request.md)
-- **❓ Questions & Discussion**: [GitHub Discussions](https://github.com/tjorim/NextShift/discussions)
+- **🐛 Bug Reports**: [Create an issue](https://github.com/tjorim/worktime/issues/new?template=bug_report.md)
+- **💡 Feature Requests**: [Request a feature](https://github.com/tjorim/worktime/issues/new?template=feature_request.md)
+- **❓ Questions & Discussion**: [GitHub Discussions](https://github.com/tjorim/worktime/discussions)
 
 ### 🛠️ Development
 
-- **Fork the repo**: [https://github.com/tjorim/NextShift](https://github.com/tjorim/NextShift)
+- **Fork the repo**: [https://github.com/tjorim/worktime](https://github.com/tjorim/worktime)
 - **Submit Pull Requests**: All contributions welcome!
 - **Follow the code style**: Uses OXC tools (oxlint/oxfmt) for consistent formatting
 
 ### 📬 Contact
 
 - **Author**: [Jorim Tielemans](https://github.com/tjorim)
-- **Repository**: [https://github.com/tjorim/NextShift](https://github.com/tjorim/NextShift)
+- **Repository**: [https://github.com/tjorim/worktime](https://github.com/tjorim/worktime)
 
 ## Browser Support
 

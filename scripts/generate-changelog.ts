@@ -7,7 +7,7 @@ import { changelogData, futurePlans } from '../src/data/changelog';
 function generateChangelog(): string {
   const header = `# Changelog
 
-All notable changes to NextShift will be documented in this file.
+All notable changes to Worktime will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] - Future Enhancements
 
 ### Planned
+
 ${Object.entries(futurePlans)
   .filter(([key]) => key.startsWith('v'))
   .flatMap(([_, plan]) => plan.features)
@@ -28,7 +29,7 @@ ${Object.entries(futurePlans)
       let versionSection = `## [${version.version}] - ${version.date}\n\n`;
 
       if (version.added.length > 0) {
-        versionSection += '### Added\n';
+        versionSection += '### Added\n\n';
         version.added.forEach((item) => {
           versionSection += `- ${item}\n`;
         });
@@ -36,7 +37,7 @@ ${Object.entries(futurePlans)
       }
 
       if (version.changed.length > 0) {
-        versionSection += '### Changed\n';
+        versionSection += '### Changed\n\n';
         version.changed.forEach((item) => {
           versionSection += `- ${item}\n`;
         });
@@ -44,7 +45,7 @@ ${Object.entries(futurePlans)
       }
 
       if (version.fixed.length > 0) {
-        versionSection += '### Fixed\n';
+        versionSection += '### Fixed\n\n';
         version.fixed.forEach((item) => {
           versionSection += `- ${item}\n`;
         });
@@ -52,7 +53,7 @@ ${Object.entries(futurePlans)
       }
 
       if (version.planned && version.planned.length > 0) {
-        versionSection += '### Planned\n';
+        versionSection += '### Planned\n\n';
         version.planned.forEach((item) => {
           versionSection += `- ${item}\n`;
         });
@@ -60,7 +61,7 @@ ${Object.entries(futurePlans)
       }
 
       if (version.technicalDetails) {
-        versionSection += `### ${version.technicalDetails.title}\n`;
+        versionSection += `### ${version.technicalDetails.title}\n\n`;
         versionSection += `${version.technicalDetails.description}\n\n`;
       }
 
@@ -70,13 +71,13 @@ ${Object.entries(futurePlans)
 
   // Generate version links for Keep a Changelog format
   const versionLinks = [
-    '[Unreleased]: https://github.com/tjorim/NextShift/compare/v3.2.0...HEAD',
+    '[Unreleased]: https://github.com/tjorim/worktime/compare/v3.2.0...HEAD',
     ...changelogData.slice(0, -1).map((version, index) => {
       const nextVersion = changelogData[index + 1];
-      return `[${version.version}]: https://github.com/tjorim/NextShift/compare/v${nextVersion.version}...v${version.version}`;
+      return `[${version.version}]: https://github.com/tjorim/worktime/compare/v${nextVersion.version}...v${version.version}`;
     }),
     // Last version compared to initial release
-    `[${changelogData[changelogData.length - 1].version}]: https://github.com/tjorim/NextShift/releases/tag/v${changelogData[changelogData.length - 1].version}`,
+    `[${changelogData[changelogData.length - 1].version}]: https://github.com/tjorim/worktime/releases/tag/v${changelogData[changelogData.length - 1].version}`,
   ];
 
   const footer = `---
@@ -87,12 +88,11 @@ ${Object.entries(futurePlans)
   .filter(([key]) => key.startsWith('v'))
   .map(
     ([version, plan]) =>
-      `### ${version} - ${plan.title}\n${plan.features.map((feature) => `- ${feature}`).join('\n')}`,
+      `### ${version} - ${plan.title}\n\n${plan.features.map((feature) => `- ${feature}`).join('\n')}`,
   )
   .join('\n\n')}
 
-### ${futurePlans.future.title}
-${futurePlans.future.features.map((feature) => `- ${feature}`).join('\n')}
+### ${futurePlans.future.title}\n\n${futurePlans.future.features.map((feature) => `- ${feature}`).join('\n')}
 
 ${versionLinks.join('\n')}
 `;

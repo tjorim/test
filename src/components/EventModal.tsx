@@ -36,7 +36,7 @@ function FlagCheckbox({
 type EventModalProps = {
   show: boolean;
   editIndex: number;
-  formRef: RefObject<HTMLDivElement>;
+  formRef: RefObject<HTMLDivElement | null>;
   eventType: 'range' | 'weekly';
   eventWeekday: number;
   eventStart: string;

@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { ScheduleView } from '../../src/components/ScheduleView';
+import { EventStoreProvider } from '../../src/contexts/EventStoreContext';
 import { SettingsProvider } from '../../src/contexts/SettingsContext';
 import { ToastProvider } from '../../src/contexts/ToastContext';
 import { dayjs } from '../../src/utils/dateTimeUtils';
@@ -22,6 +23,7 @@ vi.mock('../../src/utils/shiftCalculations', () => ({
       start: 7,
       end: 15,
       isWorking: true,
+      className: 'shift-morning',
     },
     date: dayjs(date),
     dateCode: '2503.1M',
@@ -42,6 +44,7 @@ vi.mock('../../src/utils/dateTimeUtils', () => {
               isSame: vi.fn(() => false),
               isoWeek: vi.fn(() => 20),
               isoWeekday: vi.fn(() => (callCount % 7) + 1),
+              toDate: vi.fn(() => new Date(2025, 0, uniqueDay)),
             };
           }),
           format: vi.fn(() => 'Jan 13'),
@@ -52,11 +55,14 @@ vi.mock('../../src/utils/dateTimeUtils', () => {
           const uniqueDay = 18 + (callCount % 7);
           return {
             format: vi.fn(() => `${uniqueDay}-${Date.now()}-${Math.random()}`),
+            toDate: vi.fn(() => new Date(2025, 0, uniqueDay)),
           };
         }),
         subtract: vi.fn(() => ({
           format: vi.fn(() => 'Jan 12'),
+          toDate: vi.fn(() => new Date(2025, 0, 12)),
         })),
+        toDate: vi.fn(() => new Date(2025, 0, 15)),
       };
     }),
     formatYYWWD: vi.fn((_date: string) => '2503.1'),
@@ -103,7 +109,9 @@ const defaultProps = {
 function renderWithProviders(ui: React.ReactElement) {
   return render(
     <ToastProvider>
-      <SettingsProvider>{ui}</SettingsProvider>
+      <SettingsProvider>
+        <EventStoreProvider>{ui}</EventStoreProvider>
+      </SettingsProvider>
     </ToastProvider>,
   );
 }

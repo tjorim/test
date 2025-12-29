@@ -1,9 +1,6 @@
 import { useState } from 'react';
-import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import { useOnlineStatus } from '../hooks/useOnlineStatus';
-import { usePWAInstall } from '../hooks/usePWAInstall';
 import { SettingsPanel } from './SettingsPanel';
 
 interface HeaderProps {
@@ -12,17 +9,14 @@ interface HeaderProps {
 }
 
 /**
- * Displays the top navigation bar for the NextShift application.
+ * Displays the top navigation bar for the Worktime application.
  *
- * The header shows the app title, online/offline status, a PWA install button when available,
- * and action buttons for Terminal view and About modal.
+ * The header shows the app title and action buttons for Terminal view, About modal, and Settings.
  *
  * @param onShowAbout - Optional callback invoked when the About button is clicked
  * @param onToggleTerminal - Optional callback invoked when the Terminal button is clicked to toggle terminal view mode
  */
 export function Header({ onShowAbout, onToggleTerminal }: HeaderProps = {}) {
-  const isOnline = useOnlineStatus();
-  const { isInstallable, promptInstall } = usePWAInstall();
   const [showSettings, setShowSettings] = useState(false);
 
   const handleShowAbout = () => {
@@ -40,28 +34,9 @@ export function Header({ onShowAbout, onToggleTerminal }: HeaderProps = {}) {
           <div className="d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center">
               <i className="bi bi-clock-history me-2 header-icon"></i>
-              <h1 className="h4 mb-0 fw-bold">NextShift</h1>
+              <h1 className="h4 mb-0 fw-bold">Worktime</h1>
             </div>
             <div className="d-flex align-items-center header-button-spacing">
-              <Badge
-                bg={isOnline ? 'success' : 'danger'}
-                className={`connection-${isOnline ? 'online' : 'offline'}`}
-              >
-                <i className={`bi ${isOnline ? 'bi-wifi' : 'bi-wifi-off'} me-1`}></i>
-                {isOnline ? 'Online' : 'Offline'}
-              </Badge>
-              {isInstallable && (
-                <Button
-                  variant="outline-light"
-                  size="sm"
-                  onClick={promptInstall}
-                  aria-label="Install NextShift App"
-                  className="header-button"
-                >
-                  <i className="bi bi-download"></i>
-                  <span className="d-none d-lg-inline ms-1">Install</span>
-                </Button>
-              )}
               <Button
                 variant="outline-light"
                 size="sm"
@@ -76,7 +51,7 @@ export function Header({ onShowAbout, onToggleTerminal }: HeaderProps = {}) {
                 variant="outline-light"
                 size="sm"
                 onClick={handleShowAbout}
-                aria-label="About NextShift"
+                aria-label="About Worktime"
                 className="header-button"
               >
                 <i className="bi bi-info-circle"></i>

@@ -3,10 +3,6 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
-import {
-  getServiceWorkerStatusText,
-  useServiceWorkerStatus,
-} from '../hooks/useServiceWorkerStatus';
 import { CONFIG } from '../utils/config';
 
 interface AboutModalProps {
@@ -15,16 +11,15 @@ interface AboutModalProps {
 }
 
 /**
- * About & Help modal for NextShift, showing version, features, support, and credits.
+ * About & Help modal for Worktime, showing version, features, support, and credits.
  */
 export function AboutModal({ show, onHide }: AboutModalProps) {
-  const serviceWorkerStatus = useServiceWorkerStatus();
   return (
     <Modal show={show} onHide={onHide} size="lg" centered scrollable>
       <Modal.Header closeButton>
         <Modal.Title>
           <i className="bi bi-info-circle me-2"></i>
-          About NextShift
+          About Worktime
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -33,14 +28,10 @@ export function AboutModal({ show, onHide }: AboutModalProps) {
           <div className="mb-2">
             <i className="bi bi-clock-history text-primary" style={{ fontSize: '2rem' }}></i>
           </div>
-          <h5 className="mb-2">NextShift - Team Shift Tracker</h5>
-          <div className="d-flex justify-content-center align-items-center gap-3 mb-2">
+          <h5 className="mb-2">Worktime - Shift Tracker & Time Off</h5>
+          <div className="mb-2">
             <Badge bg="primary">
               <i className="bi bi-tag me-1"></i>Version {CONFIG.VERSION}
-            </Badge>
-            <Badge bg="success">
-              <i className="bi bi-wifi me-1"></i>
-              {getServiceWorkerStatusText(serviceWorkerStatus)}
             </Badge>
           </div>
         </div>
@@ -77,8 +68,8 @@ export function AboutModal({ show, onHide }: AboutModalProps) {
             </Col>
             <Col xs={6}>
               <div className="d-flex align-items-center small">
-                <i className="bi bi-wifi-off text-success me-2"></i>
-                <span>Offline PWA support</span>
+                <i className="bi bi-file-earmark-text text-success me-2"></i>
+                <span>.hday time-off files</span>
               </div>
             </Col>
             <Col xs={6}>
@@ -108,7 +99,7 @@ export function AboutModal({ show, onHide }: AboutModalProps) {
             <Row className="g-2">
               <Col xs={6}>
                 <a
-                  href="https://github.com/tjorim/NextShift#readme"
+                  href="https://github.com/tjorim/worktime#readme"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline-secondary btn-sm w-100"
@@ -119,7 +110,7 @@ export function AboutModal({ show, onHide }: AboutModalProps) {
               </Col>
               <Col xs={6}>
                 <a
-                  href="https://github.com/tjorim/NextShift"
+                  href="https://github.com/tjorim/worktime"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline-secondary btn-sm w-100"
@@ -142,7 +133,7 @@ export function AboutModal({ show, onHide }: AboutModalProps) {
             <Row className="g-2">
               <Col xs={6}>
                 <a
-                  href="https://github.com/tjorim/NextShift/issues/new?template=bug_report.md"
+                  href="https://github.com/tjorim/worktime/issues/new?template=bug_report.md"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline-danger btn-sm w-100"
@@ -152,7 +143,7 @@ export function AboutModal({ show, onHide }: AboutModalProps) {
               </Col>
               <Col xs={6}>
                 <a
-                  href="https://github.com/tjorim/NextShift/issues/new?template=feature_request.md"
+                  href="https://github.com/tjorim/worktime/issues/new?template=feature_request.md"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline-success btn-sm w-100"

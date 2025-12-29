@@ -1,24 +1,25 @@
 {
-  "name": "nextshift",
-  "version": "3.4.1",
-  "description": "Team Shift Tracker PWA for 5-team continuous (24/7) schedule",
+  "name": "worktime",
+  "version": "4.0.0",
+  "description": "Team Shift Tracker + Time Off Management for 5-team continuous (24/7) schedules",
   "keywords": [
     "continuous",
-    "offline",
-    "pwa",
-    "service-worker",
+    "hday",
     "shift-tracker",
-    "team-schedule"
+    "team-schedule",
+    "time-off",
+    "vacation-tracker",
+    "worktime"
   ],
-  "homepage": "https://github.com/tjorim/NextShift#readme",
+  "homepage": "https://github.com/tjorim/worktime#readme",
   "bugs": {
-    "url": "https://github.com/tjorim/NextShift/issues"
+    "url": "https://github.com/tjorim/worktime/issues"
   },
   "license": "Apache-2.0",
   "author": "Jorim Tielemans <tielemans.jorim@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tjorim/NextShift.git"
+    "url": "git+https://github.com/tjorim/worktime.git"
   },
   "type": "module",
   "main": "dist/index.js",
@@ -67,7 +68,6 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vite": "^8.0.0-beta.5",
-    "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.0.16"
   },
   "engines": {

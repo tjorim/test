@@ -1,5 +1,5 @@
 // src/utils/share.ts
-// Generic and context-aware sharing utility for NextShift
+// Generic and context-aware sharing utility for Worktime
 
 export interface ShareOptions {
   title?: string;
@@ -57,8 +57,8 @@ export async function share(
 export function shareApp(onSuccess?: () => void, onError?: (err: unknown) => void) {
   share(
     {
-      title: 'NextShift',
-      text: 'Check out NextShift for 24/7 rotating shift schedules!',
+      title: 'Worktime',
+      text: 'Check out Worktime for 24/7 shift tracking and time-off management!',
       url: `${window.location.origin}${window.location.pathname}`,
     },
     onSuccess,
@@ -90,8 +90,8 @@ export function shareAppWithContext(
 
   share(
     {
-      title: 'NextShift',
-      text: `NextShift: ${contextText}`,
+      title: 'Worktime',
+      text: `Worktime: ${contextText}`,
       url: shareUrl,
     },
     onSuccess,

@@ -17,7 +17,7 @@ import {
   formatYYWWD,
   getLocalizedShiftTime,
 } from '../utils/dateTimeUtils';
-import type { NextShiftResult, OffDayProgress, ShiftResult } from '../utils/shiftCalculations';
+import type { UpcomingShiftResult, OffDayProgress, ShiftResult } from '../utils/shiftCalculations';
 import {
   calculateShift,
   getAllTeamsShifts,
@@ -82,7 +82,7 @@ export function CurrentStatus({ myTeam, onChangeTeam, onShowWhoIsWorking }: Curr
 
   // Calculate next shift from today
   // biome-ignore lint/correctness/useExhaustiveDependencies: Using minute-based ISO string to limit recalculation to once per minute instead of every render
-  const nextShift = useMemo((): NextShiftResult | null => {
+  const nextShift = useMemo((): UpcomingShiftResult | null => {
     if (!validatedTeam) return null;
     return getNextShift(today, validatedTeam);
   }, [validatedTeam, todayMinuteKey]);

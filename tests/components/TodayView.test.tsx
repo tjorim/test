@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { TodayView } from '../../src/components/TodayView';
+import { EventStoreProvider } from '../../src/contexts/EventStoreContext';
 import { SettingsProvider } from '../../src/contexts/SettingsContext';
 import { ToastProvider } from '../../src/contexts/ToastContext';
 import { dayjs } from '../../src/utils/dateTimeUtils';
@@ -26,7 +27,9 @@ vi.mock('../../src/utils/shiftCalculations', () => ({
 function renderWithProviders(ui: React.ReactElement) {
   return render(
     <ToastProvider>
-      <SettingsProvider>{ui}</SettingsProvider>
+      <SettingsProvider>
+        <EventStoreProvider>{ui}</EventStoreProvider>
+      </SettingsProvider>
     </ToastProvider>,
   );
 }
@@ -41,6 +44,7 @@ const mockTodayShifts: ShiftResult[] = [
       start: 7,
       end: 15,
       isWorking: true,
+      className: 'shift-morning',
     },
     date: dayjs('2025-01-15'),
     code: '2503.3M',
@@ -54,6 +58,7 @@ const mockTodayShifts: ShiftResult[] = [
       start: 15,
       end: 23,
       isWorking: true,
+      className: 'shift-evening',
     },
     date: dayjs('2025-01-15'),
     code: '2503.3E',
@@ -67,6 +72,7 @@ const mockTodayShifts: ShiftResult[] = [
       start: null,
       end: null,
       isWorking: false,
+      className: 'shift-off',
     },
     date: dayjs('2025-01-15'),
     code: '2503.3O',

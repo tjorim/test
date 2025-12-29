@@ -5,7 +5,6 @@ import type React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from '../../src/App';
 import { WelcomeWizard } from '../../src/components/WelcomeWizard';
-import { CookieConsentProvider } from '../../src/contexts/CookieConsentContext';
 
 const defaultProps = {
   show: true,
@@ -16,7 +15,7 @@ const defaultProps = {
 
 // Test wrapper with required providers
 function renderWithProviders(ui: React.ReactElement) {
-  return render(<CookieConsentProvider>{ui}</CookieConsentProvider>);
+  return render(ui);
 }
 
 // Test helper functions
@@ -30,51 +29,40 @@ const findModalTitle = async (text: RegExp) => {
 const waitForStep = async (stepNumber: number, timeout = 3000) => {
   await waitFor(
     () => {
-      expect(screen.getByText(new RegExp(`Step ${stepNumber} of 4`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(`Step ${stepNumber} of 3`, 'i'))).toBeInTheDocument();
     },
     { timeout },
   );
 };
 
-const navigateWizardSteps = async (user: ReturnType<typeof userEvent.setup>) => {
-  // Step 1 -> Step 2
+const navigateToTeamSelection = async (user: ReturnType<typeof userEvent.setup>) => {
+  // Step 1 (welcome) -> Step 2 (features)
   const getStartedButton = screen.getByRole('button', {
     name: /Let's Get Started/i,
   });
   await user.click(getStartedButton);
   await waitForStep(2);
 
-  // Step 2 -> Step 3 (consent)
-  const privacyButton = await screen.findByRole('button', {
-    name: /Set Privacy Preferences/i,
+  // Step 2 (features) -> Step 3 (team selection)
+  const chooseTeamButton = screen.getByRole('button', {
+    name: /Choose My Team/i,
   });
-  await user.click(privacyButton);
+  await user.click(chooseTeamButton);
   await waitForStep(3);
-
-  // Step 3 -> Step 4 (team selection)
-  // Enable functional cookies first to see team selection step
-  const functionalSwitch = await screen.findByLabelText(/Functional/);
-  await user.click(functionalSwitch);
-
-  const continueButton = await screen.findByRole('button', {
-    name: /Continue to Team Selection/i,
-  });
-  await user.click(continueButton);
-  await waitForStep(4);
 };
 
 describe('WelcomeWizard', () => {
   describe('Basic rendering', () => {
     it('renders modal when show is true', () => {
       renderWithProviders(<WelcomeWizard {...defaultProps} />);
-      expect(screen.getByRole('heading', { name: /Welcome to NextShift!/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Welcome to Worktime!/i })).toBeInTheDocument();
     });
 
     it('does not render modal when show is false', () => {
       renderWithProviders(<WelcomeWizard {...defaultProps} show={false} />);
       expect(
         screen.queryByRole('heading', {
-          name: /Welcome to NextShift!/i,
+          name: /Welcome to Worktime!/i,
         }),
       ).not.toBeInTheDocument();
     });
@@ -84,12 +72,7 @@ describe('WelcomeWizard', () => {
       renderWithProviders(<WelcomeWizard {...defaultProps} />);
 
       // Navigate to team selection step
-      await user.click(screen.getByText("Let's Get Started!"));
-      await user.click(screen.getByText('Set Privacy Preferences'));
-
-      // Enable functional cookies first to see team selection step
-      await user.click(screen.getByLabelText(/Functional/));
-      await user.click(screen.getByText('Continue to Team Selection'));
+      await navigateToTeamSelection(user);
 
       for (let team = 1; team <= 5; team++) {
         expect(screen.getByText(`Team ${team}`)).toBeInTheDocument();
@@ -105,12 +88,7 @@ describe('WelcomeWizard', () => {
       renderWithProviders(<WelcomeWizard {...defaultProps} onTeamSelect={mockOnTeamSelect} />);
 
       // Navigate to team selection step
-      await user.click(screen.getByText("Let's Get Started!"));
-      await user.click(screen.getByText('Set Privacy Preferences'));
-
-      // Enable functional cookies first to see team selection step
-      await user.click(screen.getByLabelText(/Functional/));
-      await user.click(screen.getByText('Continue to Team Selection'));
+      await navigateToTeamSelection(user);
 
       const team3Button = screen.getByText('Team 3');
       await user.click(team3Button);
@@ -139,7 +117,7 @@ describe('WelcomeWizard', () => {
       renderWithProviders(<WelcomeWizard {...defaultProps} onHide={mockOnHide} />);
 
       // Modal renders without errors and accepts the callback
-      expect(screen.getByText('Welcome to NextShift! 👋')).toBeInTheDocument();
+      expect(screen.getByText('Welcome to Worktime! 👋')).toBeInTheDocument();
       expect(mockOnHide).toBeDefined();
     });
   });
@@ -190,24 +168,23 @@ describe('WelcomeWizard', () => {
       render(<App />);
 
       // Verify welcome wizard appears
-      await findModalTitle(/Welcome to NextShift/i);
+      await findModalTitle(/Welcome to Worktime/i);
 
-      // Navigate through wizard steps using helper
-      await navigateWizardSteps(user);
+      // Navigate through wizard to team selection
+      await navigateToTeamSelection(user);
 
       // Complete team selection
       await user.click(screen.getByLabelText(/Select Team 1/i));
 
       await waitFor(() =>
-        expect(screen.queryByText(/Welcome to NextShift/i)).not.toBeInTheDocument(),
+        expect(screen.queryByText(/Welcome to Worktime/i)).not.toBeInTheDocument(),
       );
 
       // Simulate reset
       fireEvent.click(screen.getByLabelText(/Settings/i));
-      fireEvent.click(screen.getByText(/Privacy & Data/i));
-      fireEvent.click(screen.getByText(/Clear All Data & Reset Consent/i));
+      fireEvent.click(screen.getByText(/Reset Settings/i));
 
-      const welcomeHeadingsAfterReset = await screen.findAllByText(/Welcome to NextShift/i);
+      const welcomeHeadingsAfterReset = await screen.findAllByText(/Welcome to Worktime/i);
       const modalHeadingAfterReset = welcomeHeadingsAfterReset.find((el) =>
         el.className.includes('modal-title'),
       );
@@ -219,10 +196,10 @@ describe('WelcomeWizard', () => {
       render(<App />);
 
       // Verify welcome wizard appears
-      await findModalTitle(/Welcome to NextShift/i);
+      await findModalTitle(/Welcome to Worktime/i);
 
-      // Navigate through wizard steps using helper
-      await navigateWizardSteps(user);
+      // Navigate through wizard to team selection
+      await navigateToTeamSelection(user);
 
       // Skip team selection
       const browseButton = screen.getByRole('button', {
@@ -232,15 +209,14 @@ describe('WelcomeWizard', () => {
 
       // Modal should close
       await waitFor(() =>
-        expect(screen.queryByText(/Welcome to NextShift/i)).not.toBeInTheDocument(),
+        expect(screen.queryByText(/Welcome to Worktime/i)).not.toBeInTheDocument(),
       );
 
       // Should be able to open settings and reset again
       await user.click(screen.getByLabelText(/Settings/i));
-      await user.click(screen.getByText(/Privacy & Data/i));
-      await user.click(screen.getByText(/Clear All Data & Reset Consent/i));
+      await user.click(screen.getByText(/Reset Settings/i));
 
-      const welcomeHeadingsAfterReset = await screen.findAllByText(/Welcome to NextShift/i);
+      const welcomeHeadingsAfterReset = await screen.findAllByText(/Welcome to Worktime/i);
       const modalHeadingAfterReset = welcomeHeadingsAfterReset.find((el) =>
         el.className.includes('modal-title'),
       );
@@ -252,14 +228,16 @@ describe('WelcomeWizard', () => {
       render(<App />);
 
       // Verify welcome wizard appears with correct initial step
-      await findModalTitle(/Welcome to NextShift/i);
-      expect(screen.getByText(/Step 1 of 4/i)).toBeInTheDocument();
+      await findModalTitle(/Welcome to Worktime/i);
+      expect(screen.getByText(/Step 1 of 3/i)).toBeInTheDocument();
 
-      // Navigate through wizard steps and verify progress indicators
-      await navigateWizardSteps(user);
+      // Navigate to features step
+      await user.click(screen.getByText("Let's Get Started!"));
+      expect(screen.getByText(/Step 2 of 3/i)).toBeInTheDocument();
 
-      // Verify we reached the final step
-      expect(screen.getByText(/Step 4 of 4/i)).toBeInTheDocument();
+      // Navigate to team selection step
+      await user.click(screen.getByText(/Choose My Team/i));
+      expect(screen.getByText(/Step 3 of 3/i)).toBeInTheDocument();
     });
   });
 });

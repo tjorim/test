@@ -238,7 +238,7 @@ export function SettingsPanel({ show, onHide, onShowAbout }: SettingsPanelProps)
                         <i className="bi bi-share me-2"></i>
                         Share App
                       </div>
-                      <small className="text-muted">Send NextShift to colleagues</small>
+                      <small className="text-muted">Send Worktime to colleagues</small>
                     </div>
                     <i className="bi bi-share text-muted"></i>
                   </div>
@@ -273,7 +273,7 @@ export function SettingsPanel({ show, onHide, onShowAbout }: SettingsPanelProps)
 
           {/* App Version Footer */}
           <div className="mt-auto p-3 text-center border-top">
-            <small className="text-muted d-block">NextShift v{CONFIG.VERSION}</small>
+            <small className="text-muted d-block">Worktime v{CONFIG.VERSION}</small>
             <small className="text-muted">Built with ❤️ by Jorim Tielemans</small>
           </div>
         </Offcanvas.Body>

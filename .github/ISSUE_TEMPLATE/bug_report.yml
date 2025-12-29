@@ -1,0 +1,216 @@
+name: 🐛 Bug Report
+description: Report a bug to help improve Worktime
+title: '[BUG] '
+labels: ['bug', 'triage']
+assignees:
+  - tjorim
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug! Please fill out the information below to help us investigate and fix the issue.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🐛 Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe the bug you encountered...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 🔄 Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: What should have happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: ❌ Actual Behavior
+      description: A clear and concise description of what actually happened.
+      placeholder: What actually happened?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-area
+    attributes:
+      label: 🔧 Feature Area
+      description: Which feature area is affected?
+      options:
+        - Shift Tracking
+        - Time-Off Management (.hday)
+        - Calendar/Schedule View
+        - Settings/Preferences
+        - Terminal Interface
+        - Documentation
+        - Unknown
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: What device are you using?
+      placeholder: e.g. iPhone 12, Desktop PC, iPad
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      placeholder: e.g. iOS 15.1, Windows 11, macOS 12.0
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      description: What browser are you using?
+      placeholder: e.g. Chrome 95, Safari 15, Firefox 93
+    validations:
+      required: true
+
+  - type: input
+    id: worktime-version
+    attributes:
+      label: Worktime Version
+      description: What version of Worktime are you using? (Check the About modal)
+      placeholder: e.g. 4.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: selected-team
+    attributes:
+      label: Selected Team
+      description: Which team do you have selected? (if shift tracking issue)
+      placeholder: e.g. Team 3
+    validations:
+      required: false
+
+  - type: input
+    id: bug-date
+    attributes:
+      label: Date When Bug Occurred
+      description: When did you encounter this bug?
+      placeholder: e.g. 2025-12-29
+    validations:
+      required: false
+
+  - type: input
+    id: current-shift
+    attributes:
+      label: Current Shift Displayed
+      description: What shift was displayed when the bug occurred? (if shift tracking issue)
+      placeholder: e.g. 2530.6N
+    validations:
+      required: false
+
+  - type: textarea
+    id: hday-file-sample
+    attributes:
+      label: 📄 .hday File Sample
+      description: If this is a time-off issue, provide a sample of your .hday file (anonymized if needed)
+      placeholder: |
+        2025/01/01-2025/01/05 # Example vacation
+        d1 # Every Monday
+        # Example entries
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📸 Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+      placeholder: Drag and drop screenshots here or paste image URLs...
+    validations:
+      required: false
+
+  - type: input
+    id: reference-date
+    attributes:
+      label: Reference Date Configured
+      description: Do you know what reference date is configured? (if applicable to shift calculation bugs)
+      placeholder: e.g. 2025-01-06
+    validations:
+      required: false
+
+  - type: input
+    id: reference-team
+    attributes:
+      label: Reference Team Configured
+      description: Do you know what reference team is configured? (if applicable to shift calculation bugs)
+      placeholder: e.g. Team 1
+    validations:
+      required: false
+
+  - type: input
+    id: expected-shift
+    attributes:
+      label: Expected Team/Shift
+      description: If this is a shift calculation bug, what team/shift did you expect?
+      placeholder: e.g. Team 1 Morning
+    validations:
+      required: false
+
+  - type: input
+    id: actual-shift
+    attributes:
+      label: Actual Team/Shift Shown
+      description: If this is a shift calculation bug, what team/shift was actually shown?
+      placeholder: e.g. Team 2 Evening
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📋 Additional Context
+      description: Add any other context about the problem here.
+      placeholder: Any additional information that might help...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 🏷️ Priority
+      description: How critical is this bug for your use?
+      options:
+        - Critical - App is unusable
+        - High - Major feature broken
+        - Medium - Minor feature issue
+        - Low - Cosmetic issue
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Thank you for helping improve Worktime! 🚀

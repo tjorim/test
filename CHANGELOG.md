@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to NextShift will be documented in this file.
+All notable changes to Worktime will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -16,6 +16,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Advanced accessibility features
 - Floating action buttons
 - Accordion for organized data
+
+## [4.0.0] - 2025-12-29
+
+### Added
+
+- Time Off Management: Dedicated tab for importing/exporting .hday files for vacation and time-off tracking
+- .hday Parser: Comprehensive parser with 139 test cases supporting range and weekly events
+- Event Modal: Interactive form for creating/editing time-off events with live .hday preview
+- Event Store Context: React Context for managing time-off events with CRUD operations
+- Event Overlays: Colored dots on schedule view showing time-off events for each day
+- Today Banner: Alert banner showing today's time-off events in Today view
+- Import/Export: File picker for importing .hday files and download for exporting
+- Weekly Events: Support for recurring events (e.g., "Every Monday")
+- Event Flags: Business trips, training, in-office, sick leave, and time/location flags
+- CalendarEvent Model: Unified event model bridging shifts and time-off events
+- Event Converters: Convert between .hday events and calendar display format
+- Confirmation Dialog: Safety prompt before deleting events
+- Comprehensive Testing: 50 new tests for converters, EventStore, and TimeOffView
+- Accessibility Features: ARIA labels, keyboard navigation, form validation
+
+### Changed
+
+- 🎨 REBRAND: Complete rebrand from NextShift to Worktime to reflect merged shift tracking + time-off management
+- Updated all user-facing text from NextShift to Worktime (ChangelogModal, TerminalHeader, etc.)
+- Updated configuration interfaces: NextShiftConfig → WorktimeConfig, NextShiftUserState → WorktimeUserState
+- Updated type interfaces: NextShiftResult → UpcomingShiftResult
+- Updated window configuration: window.NEXTSHIFT_CONFIG → window.WORKTIME_CONFIG
+- Updated all documentation (CLAUDE.md, TODO.md, CHANGELOG.md, README.md) with Worktime branding
+- Merged HdayPlanner TODO items into unified Worktime roadmap
+- Upgraded to Vite 8.0.0-beta.5 with Rolldown bundler for faster builds
+- Replaced Biome with oxlint and oxfmt (OXC tools) for ultra-fast Rust-based linting
+- Removed cookie consent system (internal users only - no consent needed)
+- Simplified localStorage hooks (removed consent categories)
+- Simplified WelcomeWizard (removed consent step, now 3-step flow)
+- App.tsx: Added EventStoreProvider wrapping entire app
+- MainTabs: Added fourth tab for Time Off Management
+- ScheduleView: Enhanced with event overlay indicators
+- TodayView: Enhanced with time-off event banner
+- Simplified deployment: Now standard web app with browser HTTP caching (no PWA complexity)
+
+### Fixed
+
+- 🔧 Fixed 6 TypeScript build errors: unused imports, type guards, RefObject types, missing properties, Rolldown compatibility
+- ✅ Fixed 42 test failures: EventStoreProvider, mocks, branding, localStorage keys (460 tests now passing)
+- dayjs comparisons: Fixed isSameOrBefore/isSameOrAfter (not built-in) with explicit logic
+- EventStoreContext: Fixed React batching issues with functional state updates
+- localStorage cleanup: Now removes keys when empty instead of storing empty strings
+- filterEventsInRange: Proper date range filtering with inclusive boundaries
+- Test stability: Fixed multiple element matches in TimeOffView tests
+
+### Planned
+
+- 🚫 BREAKING: Removed all PWA functionality (9 files total) to eliminate cache issues where users get stuck on old versions
+- Benefits: Force refresh works (Ctrl+F5), simpler deployment, -1600 lines of code, standard browser caching
+
+### Worktime v4.0: Complete Rebrand + Time-Off Integration + PWA Removal
+
+Complete rebrand from NextShift to Worktime. Merged HdayPlanner's .hday time-off management. Created src/lib/hday/ parser (482 lines), src/lib/events/ converters, EventStoreContext for state management, TimeOffView and EventModal components. Removed all PWA functionality (service workers, install prompts, offline status) to avoid cache-related issues - users can now force refresh. Upgraded build toolchain to Vite 8 beta and OXC tools. All 460 tests passing (139 .hday parser + 50 integration tests + 271 existing tests).
 
 ## [3.4.0] - 2025-11-17
 
@@ -253,10 +311,11 @@ Built with React 19 with TypeScript, Vite build system with PWA plugin, Day.js f
 - Multi-language support
 - Data export capabilities
 
-[Unreleased]: https://github.com/tjorim/NextShift/compare/v3.2.0...HEAD
-[3.4.0]: https://github.com/tjorim/NextShift/compare/v3.3.0...v3.4.0
-[3.3.0]: https://github.com/tjorim/NextShift/compare/v3.2.0...v3.3.0
-[3.2.0]: https://github.com/tjorim/NextShift/compare/v3.1.0...v3.2.0
-[3.1.0]: https://github.com/tjorim/NextShift/compare/v3.0.0...v3.1.0
-[3.0.0]: https://github.com/tjorim/NextShift/compare/v2.0.0...v3.0.0
-[2.0.0]: https://github.com/tjorim/NextShift/releases/tag/v2.0.0
+[Unreleased]: https://github.com/tjorim/worktime/compare/v3.2.0...HEAD
+[4.0.0]: https://github.com/tjorim/worktime/compare/v3.4.0...v4.0.0
+[3.4.0]: https://github.com/tjorim/worktime/compare/v3.3.0...v3.4.0
+[3.3.0]: https://github.com/tjorim/worktime/compare/v3.2.0...v3.3.0
+[3.2.0]: https://github.com/tjorim/worktime/compare/v3.1.0...v3.2.0
+[3.1.0]: https://github.com/tjorim/worktime/compare/v3.0.0...v3.1.0
+[3.0.0]: https://github.com/tjorim/worktime/compare/v2.0.0...v3.0.0
+[2.0.0]: https://github.com/tjorim/worktime/releases/tag/v2.0.0

@@ -8,14 +8,14 @@ function parseUTCDate(dateString: string): Date {
   return new Date(`${dateString}T00:00:00.000Z`);
 }
 
-export interface NextShiftConfig {
+export interface WorktimeConfig {
   REFERENCE_DATE: Date;
   REFERENCE_TEAM: number;
 }
 
 declare global {
   interface Window {
-    NEXTSHIFT_CONFIG?: {
+    WORKTIME_CONFIG?: {
       REFERENCE_DATE?: string;
       REFERENCE_TEAM?: number;
     };
@@ -44,16 +44,16 @@ export const CONFIG = {
     }
 
     // Try to load from window config (for runtime configuration)
-    if (typeof window !== 'undefined' && window.NEXTSHIFT_CONFIG?.REFERENCE_DATE) {
+    if (typeof window !== 'undefined' && window.WORKTIME_CONFIG?.REFERENCE_DATE) {
       try {
-        const windowDate = parseUTCDate(window.NEXTSHIFT_CONFIG.REFERENCE_DATE);
+        const windowDate = parseUTCDate(window.WORKTIME_CONFIG.REFERENCE_DATE);
         if (!Number.isNaN(windowDate.getTime())) {
           return windowDate;
         }
       } catch {
         // Fall through to warning
       }
-      console.warn('Invalid window.NEXTSHIFT_CONFIG.REFERENCE_DATE format, using default');
+      console.warn('Invalid window.WORKTIME_CONFIG.REFERENCE_DATE format, using default');
     }
 
     // Fallback to default date (aligned with Team 1 starting August 1, 2022)
@@ -70,12 +70,12 @@ export const CONFIG = {
     }
 
     // Try to load from window config (for runtime configuration)
-    if (typeof window !== 'undefined' && window.NEXTSHIFT_CONFIG?.REFERENCE_TEAM) {
-      const windowTeam = parseInt(String(window.NEXTSHIFT_CONFIG.REFERENCE_TEAM), 10);
+    if (typeof window !== 'undefined' && window.WORKTIME_CONFIG?.REFERENCE_TEAM) {
+      const windowTeam = parseInt(String(window.WORKTIME_CONFIG.REFERENCE_TEAM), 10);
       if (windowTeam >= 1 && windowTeam <= TEAMS_COUNT) {
         return windowTeam;
       }
-      console.warn('Invalid window.NEXTSHIFT_CONFIG.REFERENCE_TEAM value, using default');
+      console.warn('Invalid window.WORKTIME_CONFIG.REFERENCE_TEAM value, using default');
     }
 
     // Fallback to default team

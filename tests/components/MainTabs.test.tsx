@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { MainTabs } from '../../src/components/MainTabs';
+import { EventStoreProvider } from '../../src/contexts/EventStoreContext';
 import { SettingsProvider } from '../../src/contexts/SettingsContext';
 import { ToastProvider } from '../../src/contexts/ToastContext';
 import { dayjs } from '../../src/utils/dateTimeUtils';
@@ -42,7 +43,9 @@ function renderWithProviders(ui: React.ReactElement) {
 function wrapWithProviders(ui: React.ReactElement) {
   return (
     <ToastProvider>
-      <SettingsProvider>{ui}</SettingsProvider>
+      <SettingsProvider>
+        <EventStoreProvider>{ui}</EventStoreProvider>
+      </SettingsProvider>
     </ToastProvider>
   );
 }

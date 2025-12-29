@@ -97,16 +97,11 @@ describe('SettingsContext unified user state', () => {
       result.current.resetSettings();
     });
 
-    // Check the new separate storage keys
-    const onboardingStored = window.localStorage.getItem('worktime_necessary_onboarding_state');
-    expect(onboardingStored).not.toBeNull();
-    expect(JSON.parse(onboardingStored || '{}')).toEqual({
+    // Check the unified storage key
+    const userStateStored = window.localStorage.getItem('worktime_user_state');
+    expect(userStateStored).not.toBeNull();
+    expect(JSON.parse(userStateStored || '{}')).toEqual({
       hasCompletedOnboarding: false,
-    });
-
-    const preferencesStored = window.localStorage.getItem('worktime_user_preferences');
-    expect(preferencesStored).not.toBeNull();
-    expect(JSON.parse(preferencesStored || '{}')).toEqual({
       myTeam: null,
       settings: {
         timeFormat: '24h',
@@ -115,10 +110,9 @@ describe('SettingsContext unified user state', () => {
       },
     });
 
-    // Check that old keys are still null
+    // Check that old keys are null
     expect(window.localStorage.getItem('hasCompletedOnboarding')).toBeNull();
     expect(window.localStorage.getItem('userSettings')).toBeNull();
-    expect(window.localStorage.getItem('worktime_user_state')).toBeNull();
   });
 
   it('updates theme setting without DOM side effects', () => {

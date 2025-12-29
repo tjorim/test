@@ -48,13 +48,13 @@ export const defaultSettings: UserSettings = {
   notifications: 'off',
 };
 
-interface NextShiftUserState {
+interface WorktimeUserState {
   hasCompletedOnboarding: boolean;
   myTeam: number | null; // The user's team from onboarding
   settings: UserSettings;
 }
 
-const defaultUserState: NextShiftUserState = {
+const defaultUserState: WorktimeUserState = {
   hasCompletedOnboarding: false,
   myTeam: null,
   settings: defaultSettings,
@@ -78,7 +78,7 @@ interface SettingsProviderProps {
  * All settings are persisted to localStorage for the internal user base.
  */
 export function SettingsProvider({ children }: SettingsProviderProps) {
-  function validateUserState(state: unknown): state is NextShiftUserState {
+  function validateUserState(state: unknown): state is WorktimeUserState {
     if (typeof state !== 'object' || state === null) return false;
     const s = state as Record<string, unknown>;
     if (typeof s.hasCompletedOnboarding !== 'boolean') return false;
@@ -92,12 +92,12 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
   }
 
   // Unified user state in a single localStorage key
-  const [rawUserState, setUserState] = useLocalStorage<NextShiftUserState>(
+  const [rawUserState, setUserState] = useLocalStorage<WorktimeUserState>(
     'worktime_user_state',
     defaultUserState,
   );
 
-  const userState: NextShiftUserState = validateUserState(rawUserState)
+  const userState: WorktimeUserState = validateUserState(rawUserState)
     ? rawUserState
     : defaultUserState;
 

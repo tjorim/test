@@ -16,16 +16,11 @@ function renderWithSettings(ui: React.ReactElement) {
 
 describe('TeamDetailModal', () => {
   it('disables View Transfers button and shows tooltip when viewing own team', async () => {
-    // Set user preferences with the new storage structure
+    // Set user state with the unified storage structure
     window.localStorage.setItem(
-      'worktime_necessary_onboarding_state',
+      'worktime_user_state',
       JSON.stringify({
         hasCompletedOnboarding: true,
-      }),
-    );
-    window.localStorage.setItem(
-      'worktime_user_preferences',
-      JSON.stringify({
         myTeam: 2,
         settings: {
           timeFormat: '24h',
@@ -55,14 +50,9 @@ describe('TeamDetailModal', () => {
 
   it('enables View Transfers button for other teams', () => {
     window.localStorage.setItem(
-      'worktime_necessary_onboarding_state',
+      'worktime_user_state',
       JSON.stringify({
         hasCompletedOnboarding: true,
-      }),
-    );
-    window.localStorage.setItem(
-      'worktime_user_preferences',
-      JSON.stringify({
         myTeam: 2,
         settings: {
           timeFormat: '24h',

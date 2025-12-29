@@ -8,7 +8,7 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(packageJson.version),
   },
-  plugins: [reactPlugin()],
+  plugins: [reactPlugin()] as any,
   test: {
     environment: 'happy-dom',
     globals: true,
