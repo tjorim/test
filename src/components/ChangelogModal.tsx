@@ -44,8 +44,8 @@ export function ChangelogModal({ show, onHide }: ChangelogModalProps) {
           {title}
         </h6>
         <ul className="list-unstyled">
-          {items.map((item) => (
-            <li key={item} className="mb-1">
+          {items.map((item, index) => (
+            <li key={`${title}-${index}`} className="mb-1">
               <small className="text-muted">•</small> {item}
             </li>
           ))}
