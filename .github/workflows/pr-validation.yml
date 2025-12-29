@@ -109,7 +109,7 @@ jobs:
 
           # Run tests
           if npm run test; then
-            echo "✅ Tests passed (460 tests)"
+            echo "✅ Tests passed"
           else
             echo "❌ Tests failed"
             exit 1
@@ -169,7 +169,7 @@ jobs:
 
           # Check if .hday parser tests still pass
           if npm run test -- hday.test.ts; then
-            echo "✅ .hday parser tests passed (139 tests)"
+            echo "✅ .hday parser tests passed"
           else
             echo "❌ .hday parser tests failed"
             exit 1
