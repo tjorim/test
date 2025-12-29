@@ -44,6 +44,11 @@ function TeamCard({
   onTeamClick?: (teamNumber: number) => void;
 }) {
   const { settings } = useSettings();
+  const shiftDetails = getShiftByCode(shiftResult.shift.code);
+  const shiftTimeLabel =
+    shiftDetails.start && shiftDetails.end
+      ? getLocalizedShiftTime(shiftDetails.start, shiftDetails.end, settings.timeFormat)
+      : shiftDetails.hours;
 
   const cardContent = (
     <>
@@ -75,24 +80,15 @@ function TeamCard({
             <Tooltip id={`shift-tooltip-${shiftResult.teamNumber}`}>
               <strong>Shift Code: {shiftResult.shift.code}</strong>
               <br />
-              {(() => {
-                const shift = getShiftByCode(shiftResult.shift.code);
-                return (
-                  <>
-                    {shift.emoji} <em>{shift.name}</em>
-                    <br />
-                    {shift.start && shift.end
-                      ? getLocalizedShiftTime(shift.start, shift.end, settings.timeFormat)
-                      : shift.hours}
-                  </>
-                );
-              })()}
+              <>
+                {shiftDetails.emoji} <em>{shiftDetails.name}</em>
+                <br />
+                {shiftTimeLabel}
+              </>
             </Tooltip>
           }
         >
-          <Badge
-            className={`shift-code cursor-help ${getShiftByCode(shiftResult.shift.code).className}`}
-          >
+          <Badge className={`shift-code cursor-help ${shiftDetails.className}`}>
             {shiftResult.shift.code}
           </Badge>
         </OverlayTrigger>
