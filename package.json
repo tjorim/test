@@ -1,0 +1,79 @@
+{
+  "name": "worktime",
+  "version": "4.0.0",
+  "description": "Team Shift Tracker + Time Off Management for 5-team continuous (24/7) schedules",
+  "keywords": [
+    "continuous",
+    "hday",
+    "shift-tracker",
+    "team-schedule",
+    "time-off",
+    "vacation-tracker",
+    "worktime"
+  ],
+  "homepage": "https://github.com/tjorim/worktime#readme",
+  "bugs": {
+    "url": "https://github.com/tjorim/worktime/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jorim Tielemans <tielemans.jorim@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tjorim/worktime.git"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "format": "oxfmt .",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest",
+    "generate-changelog": "tsx scripts/generate-changelog.ts",
+    "generate-icons": "tsx scripts/generate-icons.ts"
+  },
+  "dependencies": {
+    "@types/uuid": "^10.0.0",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "dayjs": "^1.11.19",
+    "react": "^19.2.3",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.2.3",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/ui": "^4.0.16",
+    "canvas": "^3.2.0",
+    "happy-dom": "^20.0.11",
+    "lightningcss": "^1.30.2",
+    "oxfmt": "^0.20.0",
+    "oxlint": "^1.35.0",
+    "sass": "^1.97.1",
+    "terser": "^5.44.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0-beta.5",
+    "vitest": "^4.0.16"
+  },
+  "overrides": {
+    "@vitejs/plugin-react": {
+      "vite": "$vite"
+    }
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

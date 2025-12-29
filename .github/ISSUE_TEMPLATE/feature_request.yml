@@ -1,0 +1,169 @@
+name: 💡 Feature Request
+description: Suggest a new feature or improvement for Worktime
+title: "[FEATURE] "
+labels: ["enhancement", "feature-request"]
+assignees:
+  - tjorim
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please provide as much detail as possible to help us understand and evaluate your request.
+
+  - type: textarea
+    id: feature-summary
+    attributes:
+      label: 💡 Feature Summary
+      description: A clear and concise description of the feature you'd like to see added.
+      placeholder: Describe the feature you want...
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: 🎯 Problem Statement
+      description: What problem does this feature solve? Is your feature request related to a problem?
+      placeholder: 'Example: "I''m always frustrated when..."'
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: 🛠️ Proposed Solution
+      description: Describe the solution you'd like to see implemented.
+      placeholder: How would you like this feature to work?
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-story
+    attributes:
+      label: 🔄 User Story
+      description: As a [type of user], I want [some goal] so that [some reason].
+      placeholder: As a [user type], I want [goal] so that [reason]...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-area
+    attributes:
+      label: 🔧 Feature Area
+      description: Which feature area should this be added to?
+      options:
+        - Shift Tracking
+        - Time-Off Management (.hday)
+        - Calendar/Schedule View
+        - Settings/Preferences
+        - .hday File Format
+        - Documentation
+        - Multiple areas
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platform-support
+    attributes:
+      label: 📱 Platform Considerations
+      description: Which platforms should this feature support?
+      options:
+        - label: Desktop browsers
+        - label: Mobile browsers
+        - label: Offline mode
+        - label: All platforms
+
+  - type: textarea
+    id: ui-ux-considerations
+    attributes:
+      label: 🎨 UI/UX Considerations
+      description: If applicable, describe how you envision the feature working
+      placeholder: |
+        - Where should it appear in the app?
+        - How should users interact with it?
+        - Any specific design preferences?
+    validations:
+      required: false
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: 📊 Use Cases
+      description: Describe specific scenarios where this feature would be helpful
+      placeholder: |
+        1. **Scenario 1:** [Description]
+        2. **Scenario 2:** [Description]
+        3. **Scenario 3:** [Description]
+    validations:
+      required: true
+
+  - type: textarea
+    id: hday-format-impact
+    attributes:
+      label: 📄 .hday Format Impact
+      description: Does this feature require changes to the .hday file format?
+      placeholder: Describe any new flags, syntax, or format changes needed...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: technical-considerations
+    attributes:
+      label: 🔧 Technical Considerations
+      description: Any technical aspects to consider
+      options:
+        - label: Requires offline functionality
+        - label: Needs data persistence (localStorage)
+        - label: Performance sensitive
+        - label: Changes .hday format
+        - label: Backward compatibility required
+        - label: Integration with existing features
+
+  - type: textarea
+    id: alternative-solutions
+    attributes:
+      label: 🆚 Alternative Solutions
+      description: Describe any alternative solutions or features you've considered.
+      placeholder: What other approaches have you thought about?
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📋 Additional Context
+      description: Add any other context, mockups, or screenshots about the feature request here.
+      placeholder: Any additional information, mockups, or examples...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 🏷️ Priority
+      description: How important is this feature to your workflow?
+      options:
+        - Must-have - Critical for daily use
+        - Should-have - Would significantly improve experience
+        - Could-have - Nice to have enhancement
+        - Won't-have - Low-priority suggestion
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: 🎯 Impact
+      description: Who would benefit from this feature?
+      options:
+        - label: Individual shift workers
+        - label: Team managers/supervisors
+        - label: Time-off planning users
+        - label: All users
+        - label: Specific user groups (please describe in additional context)
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Thank you for helping make Worktime better! 🚀

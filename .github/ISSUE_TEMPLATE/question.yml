@@ -1,0 +1,117 @@
+name: ❓ Question or Support
+description: Ask a question about using Worktime or get help
+title: "[QUESTION] "
+labels: ["question", "support"]
+assignees:
+  - tjorim
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about Worktime? We're here to help! Please provide as much detail as possible so we can give you the best answer.
+
+  - type: textarea
+    id: question-summary
+    attributes:
+      label: ❓ Question Summary
+      description: What would you like to know about Worktime?
+      placeholder: Describe your question clearly...
+    validations:
+      required: true
+
+  - type: textarea
+    id: trying-to-do
+    attributes:
+      label: 📖 What I'm Trying to Do
+      description: Describe what you're trying to accomplish
+      placeholder: What are you trying to achieve with Worktime?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: what-tried
+    attributes:
+      label: 🔍 What I've Tried
+      description: Let us know what you've already attempted
+      options:
+        - label: Checked the README.md
+        - label: Looked at existing issues
+        - label: Tried the About modal in the app
+        - label: Searched GitHub discussions
+        - label: Read the .hday format specification
+
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: What device are you using?
+      placeholder: e.g. iPhone, Desktop, Tablet
+    validations:
+      required: false
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      description: What browser are you using?
+      placeholder: e.g. Chrome, Safari, Firefox
+    validations:
+      required: false
+
+  - type: input
+    id: worktime-version
+    attributes:
+      label: Worktime Version
+      description: What version are you using? (Check About modal)
+      placeholder: e.g. 4.0.0
+    validations:
+      required: false
+
+  - type: input
+    id: team-config
+    attributes:
+      label: Team Configuration
+      description: If relevant, what team are you using?
+      placeholder: e.g. Team 3
+    validations:
+      required: false
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 🎯 Category
+      description: What type of question is this?
+      options:
+        - How to use a feature
+        - Shift calculation explanation
+        - Time-off management (.hday)
+        - .hday file format syntax
+        - Configuration/setup
+        - Date format questions
+        - Team selection help
+        - Offline functionality
+        - General usage
+        - Other (please describe below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-details
+    attributes:
+      label: 📋 Additional Details
+      description: Any other information that might help answer your question
+      placeholder: Any additional context, screenshots, or specific details...
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        **Need faster help?**
+        - 📚 Check the [README](https://github.com/tjorim/worktime#readme) for quick setup guides
+        - 🔍 Browse [existing issues](https://github.com/tjorim/worktime/issues) to see if your question was answered
+        - 🔧 Use the About modal in the app for version and feature info
+
+        ## Thank you for using Worktime! 🚀

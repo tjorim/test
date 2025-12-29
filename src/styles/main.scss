@@ -1,0 +1,413 @@
+// Bootstrap Icons
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* Worktime Custom Styles */
+
+/* Today column highlighting for schedule table */
+.today-column {
+  background-color: var(--bs-primary-bg-subtle) !important;
+}
+
+/* Today row highlighting for team detail modal */
+.today-row {
+  background-color: var(--bs-primary-bg-subtle) !important;
+  border-left: 4px solid var(--bs-primary) !important;
+}
+
+/* Live team card styling */
+.live-team-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(25, 135, 84, 0.1);
+  pointer-events: none;
+  border-radius: var(--bs-card-border-radius);
+  z-index: 1;
+}
+
+.live-badge {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-size: 0.625rem;
+  padding: 1px 4px;
+  z-index: 2;
+}
+
+/* Timeline styles */
+.timeline-small-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Live indicator pulse animation */
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+.live-indicator {
+  animation: live-pulse 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 3px var(--bs-success));
+}
+
+.timeline-current-badge {
+  cursor: help;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-container {
+  background: linear-gradient(135deg, var(--bs-body-bg) 0%, var(--bs-secondary-bg) 100%);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.timeline-header {
+  color: var(--bs-body-color);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.timeline-flow {
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timeline-arrow {
+  color: var(--bs-secondary);
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.timeline-badge {
+  min-width: 2.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.timeline-code {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* Common utility styles */
+.cursor-help {
+  cursor: help;
+}
+
+.help-underline {
+  cursor: help;
+  text-decoration: underline dotted;
+}
+
+.date-picker-auto {
+  width: auto;
+}
+
+.toast-icon {
+  font-size: 1.2em;
+}
+
+.progress-thin {
+  height: 8px;
+}
+
+/* Remove top border radius from main component cards in tab content for seamless look, but not nested cards */
+.tab-content .card:not(.card .card) {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* Also remove top border radius from card headers in main tab content cards */
+.tab-content .card:not(.card .card) .card-header {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.card-timeline {
+  background: var(--bs-card-bg, #fff);
+  border: 2px solid var(--bs-border-color, #e3f2fd);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+:root {
+  --shift-morning: #1976d2;
+  --shift-morning-text: #ffffff;
+  --shift-evening: #bf360c;
+  --shift-evening-text: #ffffff;
+  --shift-night: #7b1fa2;
+  --shift-night-text: #ffffff;
+  --shift-off: #616161;
+  --shift-off-text: #ffffff;
+  --primary-color: #0d6efd;
+}
+
+/* Shift status badges */
+.shift-morning {
+  background-color: var(--shift-morning);
+  color: var(--shift-morning-text);
+  border: 1px solid var(--shift-morning-text);
+}
+
+.shift-evening {
+  background-color: var(--shift-evening);
+  color: var(--shift-evening-text);
+  border: 1px solid var(--shift-evening-text);
+}
+
+.shift-night {
+  background-color: var(--shift-night);
+  color: var(--shift-night-text);
+  border: 1px solid var(--shift-night-text);
+}
+
+.shift-off {
+  background-color: var(--shift-off);
+  color: var(--shift-off-text);
+  border: 1px solid var(--shift-off-text);
+}
+
+/* Team highlight for user's team */
+.my-team {
+  border: 2px solid var(--primary-color) !important;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+/* Large shift badge styling */
+.shift-badge-lg {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Responsive adjustments */
+@media (width <= 768px) {
+  .container-fluid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  .btn-sm {
+    font-size: 0.75rem;
+  }
+}
+
+/* Schedule table styling */
+.schedule-table {
+  font-size: 0.875rem;
+}
+
+.schedule-table th,
+.schedule-table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.5rem 0.25rem;
+}
+
+.schedule-table .team-header {
+  background-color: var(--bs-table-bg, #f8f9fa);
+  color: var(--bs-table-color, #212529);
+  font-weight: 600;
+}
+
+/* Shift codes */
+.shift-code {
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  display: inline-block;
+  min-width: 2rem;
+}
+
+/* Event indicators (time-off events in schedule) */
+.event-indicators {
+  display: flex;
+  gap: 2px;
+  margin-top: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.event-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Connection status */
+.connection-offline {
+  background-color: #dc3545 !important;
+}
+
+.connection-online {
+  background-color: #198754 !important;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Team selection buttons */
+.team-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+}
+
+.team-btn.selected {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Date navigation */
+.date-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* PWA install prompt */
+.install-prompt {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 1050;
+  display: none;
+}
+
+@media (width >= 768px) {
+  .install-prompt {
+    left: auto;
+    right: 1rem;
+    max-width: 300px;
+  }
+}
+
+/* Header styling */
+.header-icon {
+  font-size: 1.25rem;
+}
+
+.header-button {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.header-button-spacing {
+  gap: 0.25rem;
+}
+
+/* Team card hover effects */
+.team-card-interactive {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid var(--bs-border-color, #dee2e6) !important;
+  background: none;
+}
+
+.team-card-interactive:hover,
+.team-card-interactive:focus {
+  background-color: var(--bs-body-bg, #fff) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--bs-primary, #0d6efd) !important;
+}
+
+[data-bs-theme="dark"] .team-card-interactive:hover,
+[data-bs-theme="dark"] .team-card-interactive:focus {
+  background-color: var(--bs-body-bg, #181a1b) !important;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-bs-theme="dark"] {
+  --shift-morning: #1565c0;
+  --shift-morning-text: #e3f2fd;
+  --shift-evening: #8d3200;
+  --shift-evening-text: #ffe0b2;
+  --shift-night: #4527a0;
+  --shift-night-text: #ede7f6;
+  --shift-off: #212121;
+  --shift-off-text: #bdbdbd;
+  --primary-color: #90caf9;
+
+  background-color: #181a1b !important;
+  color: #e0e0e0 !important;
+}
+
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .modal-content,
+[data-bs-theme="dark"] .offcanvas,
+[data-bs-theme="dark"] .table,
+[data-bs-theme="dark"] .tab-content,
+[data-bs-theme="dark"] .nav,
+[data-bs-theme="dark"] .navbar,
+[data-bs-theme="dark"] .dropdown-menu {
+  background-color: #23272b !important;
+  color: #e0e0e0 !important;
+}
+
+[data-bs-theme="dark"] .nav-tabs .nav-link {
+  background-color: transparent !important;
+  color: #adb5bd !important;
+  border-color: transparent transparent #343a40;
+}
+
+[data-bs-theme="dark"] .nav-tabs .nav-link.active {
+  background-color: #23272b !important;
+  color: #e0e0e0 !important;
+  border-color: #495057 #495057 #23272b !important;
+  font-weight: 600;
+}
+
+[data-bs-theme="dark"] .nav-tabs .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #e0e0e0 !important;
+}
+
+[data-bs-theme="dark"] .schedule-table th,
+[data-bs-theme="dark"] .schedule-table .team-header {
+  background-color: var(--bs-table-bg, #23272b);
+  color: var(--bs-table-color, #e0e0e0);
+}
+
+.schedule-table td:first-child {
+  background-color: var(--bs-table-bg, #f8f9fa);
+}
+
+[data-bs-theme="dark"] .schedule-table td:first-child {
+  background-color: var(--bs-table-bg, #23272b);
+}
