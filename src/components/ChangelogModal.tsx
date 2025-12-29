@@ -85,7 +85,7 @@ export function ChangelogModal({ show, onHide }: ChangelogModalProps) {
           </p>
         </div>
 
-        <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key as string)}>
+        <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key ?? "")}>
           {changelogData.map((version, index) => (
             <Accordion.Item eventKey={index.toString()} key={version.version}>
               <Accordion.Header>

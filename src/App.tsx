@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Container from "react-bootstrap/Container";
 import { AboutModal } from "./components/AboutModal";
 import { CurrentStatus } from "./components/CurrentStatus";
@@ -29,6 +29,7 @@ function AppContent() {
   const { myTeam, setMyTeam, hasCompletedOnboarding, completeOnboardingWithTeam, settings } =
     useSettings();
   const { currentDate, setCurrentDate, todayShifts } = useShiftCalculation();
+  const pendingDeepLinkRef = useRef<{ team?: string; date?: string }>({});
 
   // Handle URL parameters for deep linking
   useEffect(() => {
@@ -42,27 +43,41 @@ function AppContent() {
       setActiveTab(tabParam);
     }
 
-    // Set team from URL (if valid and user has completed onboarding)
-    if (teamParam && hasCompletedOnboarding) {
-      const teamNumber = parseInt(teamParam, 10);
-      if (teamNumber >= 1 && teamNumber <= CONFIG.TEAMS_COUNT) {
-        setMyTeam(teamNumber);
-      }
+    if (teamParam) {
+      pendingDeepLinkRef.current.team = teamParam;
     }
 
-    // Set date from URL
-    if (dateParam && hasCompletedOnboarding) {
-      const parsedDate = dayjs(dateParam);
-      if (parsedDate.isValid()) {
-        setCurrentDate(parsedDate);
-      }
+    if (dateParam) {
+      pendingDeepLinkRef.current.date = dateParam;
     }
 
     // Clear URL parameters after processing to keep URL clean
     if (urlParams.toString()) {
       window.history.replaceState({}, "", window.location.pathname);
     }
-  }, [hasCompletedOnboarding, setMyTeam, setCurrentDate]); // Run when onboarding completes
+  }, []);
+
+  useEffect(() => {
+    if (!hasCompletedOnboarding) return;
+
+    const { team, date } = pendingDeepLinkRef.current;
+
+    if (team) {
+      const teamNumber = parseInt(team, 10);
+      if (teamNumber >= 1 && teamNumber <= CONFIG.TEAMS_COUNT) {
+        setMyTeam(teamNumber);
+      }
+    }
+
+    if (date) {
+      const parsedDate = dayjs(date);
+      if (parsedDate.isValid()) {
+        setCurrentDate(parsedDate);
+      }
+    }
+
+    pendingDeepLinkRef.current = {};
+  }, [hasCompletedOnboarding, setMyTeam, setCurrentDate]);
 
   // Show welcome wizard only on first visit (never completed onboarding)
   useEffect(() => {
