@@ -85,7 +85,7 @@ function AppContent() {
       setTeamModalMode("onboarding");
       setShowTeamModal(true);
     }
-  }, [hasCompletedOnboarding]); // Only run on mount
+  }, [hasCompletedOnboarding]); // Run whenever onboarding completion changes
 
   // Theme switching effect - following Bootstrap 5.3 best practices
   useEffect(() => {
