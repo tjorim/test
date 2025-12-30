@@ -121,10 +121,10 @@ Critical features and improvements that significantly impact user experience.
   - ✅ Single event add/edit/delete works
 - **Features Missing in Worktime**:
   - ✅ **Undo/Redo functionality** - History tracking with undo/redo buttons + shortcuts (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)
-  - Checkbox-based event selection
-  - Bulk delete (select multiple, delete all at once)
+  - ✅ Checkbox-based event selection
+  - ✅ Bulk delete (select multiple, delete all at once)
   - Event duplication (copy event to new date)
-  - "Select All" / "Clear All" buttons
+  - ✅ "Select All" / "Clear All" buttons
 - **Implementation**: Add selection state, bulk action toolbar, and history tracking
 - **Files to Modify**:
   - `src/components/TimeOffView.tsx` - Add checkbox column, bulk actions toolbar, undo/redo buttons

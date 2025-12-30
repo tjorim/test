@@ -74,6 +74,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     addEvent,
     updateEvent,
     deleteEvent,
+    deleteEvents,
     importHday,
     exportHday,
     canUndo,
@@ -102,6 +103,8 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   // Delete confirmation
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(-1);
+  const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
 
   // Refs
   const formRef = useRef<HTMLDivElement>(null);
@@ -226,6 +229,33 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     setShowDeleteConfirm(false);
     setDeleteIndex(-1);
   };
+
+  const handleToggleSelection = (index: number) => {
+    setSelectedIndices((prev) =>
+      prev.includes(index) ? prev.filter((item) => item !== index) : [...prev, index],
+    );
+  };
+
+  const handleSelectAll = () => {
+    setSelectedIndices(events.map((_, index) => index));
+  };
+
+  const handleClearSelection = () => {
+    setSelectedIndices([]);
+  };
+
+  const handleBulkDeleteConfirm = () => {
+    if (selectedIndices.length > 0) {
+      deleteEvents(selectedIndices);
+      toast.showSuccess(`Deleted ${selectedIndices.length} events`, "🗑️");
+    }
+    setSelectedIndices([]);
+    setShowBulkDeleteConfirm(false);
+  };
+
+  useEffect(() => {
+    setSelectedIndices((prev) => prev.filter((index) => index >= 0 && index < events.length));
+  }, [events.length]);
 
   const handleImport = () => {
     fileInputRef.current?.click();
@@ -396,6 +426,35 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
               <i className="bi bi-arrow-clockwise me-1"></i>
               Redo
             </Button>
+            <Button
+              variant="outline-danger"
+              size="sm"
+              onClick={() => setShowBulkDeleteConfirm(true)}
+              className="me-2"
+              disabled={selectedIndices.length === 0}
+              aria-label="Delete selected events"
+            >
+              <i className="bi bi-trash me-1"></i>
+              Delete Selected
+            </Button>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={handleSelectAll}
+              className="me-2"
+              disabled={events.length === 0 || selectedIndices.length === events.length}
+            >
+              Select All
+            </Button>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={handleClearSelection}
+              className="me-2"
+              disabled={selectedIndices.length === 0}
+            >
+              Clear Selection
+            </Button>
             <Button variant="outline-primary" size="sm" onClick={handleImport} className="me-2">
               <i className="bi bi-download me-1"></i>
               Import
@@ -424,6 +483,20 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
             <Table responsive hover>
               <thead>
                 <tr>
+                  <th>
+                    <input
+                      type="checkbox"
+                      aria-label="Select all events"
+                      checked={events.length > 0 && selectedIndices.length === events.length}
+                      onChange={(event) => {
+                        if (event.target.checked) {
+                          handleSelectAll();
+                        } else {
+                          handleClearSelection();
+                        }
+                      }}
+                    />
+                  </th>
                   <th>Type</th>
                   <th>Date / Pattern</th>
                   <th>Title</th>
@@ -443,6 +516,14 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
 
                   return (
                     <tr key={index} aria-describedby={unknownDescriptionId}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          aria-label={`Select ${event.title || eventLabel}`}
+                          checked={selectedIndices.includes(index)}
+                          onChange={() => handleToggleSelection(index)}
+                        />
+                      </td>
                       <td>
                         <span
                           className="badge"
@@ -561,6 +642,17 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
         variant="danger"
         onConfirm={handleConfirmDelete}
         onCancel={() => setShowDeleteConfirm(false)}
+      />
+
+      <ConfirmationDialog
+        isOpen={showBulkDeleteConfirm}
+        title="Delete Selected Events"
+        message={`Are you sure you want to delete ${selectedIndices.length} selected events? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleBulkDeleteConfirm}
+        onCancel={() => setShowBulkDeleteConfirm(false)}
       />
     </div>
   );

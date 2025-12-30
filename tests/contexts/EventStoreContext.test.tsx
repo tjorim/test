@@ -216,6 +216,43 @@ describe("EventStoreContext", () => {
     });
   });
 
+  describe("deleteEvents", () => {
+    it("should delete multiple events by index", () => {
+      const { result } = renderHook(() => useEventStore(), { wrapper });
+
+      act(() => {
+        result.current.addEvent({
+          type: "range",
+          start: "2025/01/15",
+          end: "2025/01/15",
+          flags: ["holiday"],
+          title: "Event 1",
+        });
+        result.current.addEvent({
+          type: "range",
+          start: "2025/01/16",
+          end: "2025/01/16",
+          flags: ["holiday"],
+          title: "Event 2",
+        });
+        result.current.addEvent({
+          type: "range",
+          start: "2025/01/17",
+          end: "2025/01/17",
+          flags: ["holiday"],
+          title: "Event 3",
+        });
+      });
+
+      act(() => {
+        result.current.deleteEvents([0, 2]);
+      });
+
+      expect(result.current.events).toHaveLength(1);
+      expect(result.current.events[0].title).toBe("Event 2");
+    });
+  });
+
   describe("getEventsInRange", () => {
     it("should return events within the date range", () => {
       const { result } = renderHook(() => useEventStore(), { wrapper });

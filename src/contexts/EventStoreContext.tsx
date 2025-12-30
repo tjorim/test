@@ -22,6 +22,7 @@ type EventStoreAction =
   | { type: "ADD_EVENT"; payload: HdayEvent }
   | { type: "UPDATE_EVENT"; payload: { index: number; event: HdayEvent } }
   | { type: "DELETE_EVENT"; payload: number }
+  | { type: "DELETE_EVENTS"; payload: number[] }
   | { type: "IMPORT_HDAY"; payload: string }
   | { type: "CLEAR_ALL" }
   | { type: "UNDO" }
@@ -51,6 +52,9 @@ interface EventStoreContextType {
 
   /** Delete an event by index */
   deleteEvent: (index: number) => void;
+
+  /** Delete multiple events by index */
+  deleteEvents: (indices: number[]) => void;
 
   /** Import .hday text (replaces all events) */
   importHday: (text: string) => void;
@@ -129,6 +133,21 @@ function eventsReducer(state: EventStoreState, action: EventStoreAction): EventS
         return state;
       }
       const filtered = state.events.filter((_, i) => i !== action.payload);
+      return applyWithHistory(state, sortEvents(filtered));
+    }
+
+    case "DELETE_EVENTS": {
+      if (action.payload.length === 0) {
+        return state;
+      }
+      const indices = new Set(
+        action.payload.filter((index) => index >= 0 && index < state.events.length),
+      );
+      if (indices.size === 0) {
+        console.error("Invalid event indices:", action.payload);
+        return state;
+      }
+      const filtered = state.events.filter((_, i) => !indices.has(i));
       return applyWithHistory(state, sortEvents(filtered));
     }
 
@@ -271,6 +290,10 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
     dispatch({ type: "DELETE_EVENT", payload: index });
   }, []);
 
+  const deleteEvents = useCallback((indices: number[]) => {
+    dispatch({ type: "DELETE_EVENTS", payload: indices });
+  }, []);
+
   /**
    * Import .hday text (replaces all events)
    */
@@ -308,6 +331,7 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
       addEvent,
       updateEvent,
       deleteEvent,
+      deleteEvents,
       importHday,
       exportHday,
       clearAll,
@@ -323,6 +347,7 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
       addEvent,
       updateEvent,
       deleteEvent,
+      deleteEvents,
       importHday,
       exportHday,
       clearAll,
