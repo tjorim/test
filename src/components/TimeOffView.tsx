@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
@@ -64,8 +64,26 @@ const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_F
  *
  * @returns The Time Off Management React element.
  */
-export function TimeOffView() {
-  const { events, addEvent, updateEvent, deleteEvent, importHday, exportHday } = useEventStore();
+interface TimeOffViewProps {
+  isActive?: boolean;
+}
+
+export function TimeOffView({ isActive = true }: TimeOffViewProps) {
+  const {
+    events,
+    addEvent,
+    updateEvent,
+    deleteEvent,
+    deleteEvents,
+    duplicateEvent,
+    duplicateEvents,
+    importHday,
+    exportHday,
+    canUndo,
+    canRedo,
+    undo,
+    redo,
+  } = useEventStore();
   const toast = useToast();
 
   // Modal state
@@ -87,6 +105,8 @@ export function TimeOffView() {
   // Delete confirmation
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(-1);
+  const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
 
   // Refs
   const formRef = useRef<HTMLDivElement>(null);
@@ -212,6 +232,45 @@ export function TimeOffView() {
     setDeleteIndex(-1);
   };
 
+  const handleToggleSelection = (index: number) => {
+    setSelectedIndices((prev) =>
+      prev.includes(index) ? prev.filter((item) => item !== index) : [...prev, index],
+    );
+  };
+
+  const handleSelectAll = () => {
+    setSelectedIndices(events.map((_, index) => index));
+  };
+
+  const handleClearSelection = () => {
+    setSelectedIndices([]);
+  };
+
+  const handleBulkDeleteConfirm = () => {
+    if (selectedIndices.length > 0) {
+      deleteEvents(selectedIndices);
+      toast.showSuccess(`Deleted ${selectedIndices.length} events`, "🗑️");
+    }
+    setSelectedIndices([]);
+    setShowBulkDeleteConfirm(false);
+  };
+
+  const handleDuplicate = (index: number) => {
+    duplicateEvent(index);
+    toast.showSuccess("Event duplicated", "📄");
+  };
+
+  const handleBulkDuplicate = () => {
+    if (selectedIndices.length === 0) return;
+    duplicateEvents(selectedIndices);
+    toast.showSuccess(`Duplicated ${selectedIndices.length} events`, "📄");
+    setSelectedIndices([]);
+  };
+
+  useEffect(() => {
+    setSelectedIndices((prev) => prev.filter((index) => index >= 0 && index < events.length));
+  }, [events.length]);
+
   const handleImport = () => {
     fileInputRef.current?.click();
   };
@@ -226,6 +285,7 @@ export function TimeOffView() {
       parseHday(text);
       // Import if valid
       importHday(text);
+      setSelectedIndices([]); // Clear selection after import
       toast.showSuccess(`Imported ${file.name}`, "📥");
     } catch (error) {
       console.error("Failed to import .hday file:", error);
@@ -258,6 +318,58 @@ export function TimeOffView() {
 
     toast.showSuccess("Exported timeoff.hday", "📤");
   };
+
+  const handleUndo = useCallback(() => {
+    if (!canUndo) return;
+    undo();
+    toast.showSuccess("Undo successful", "↩️");
+  }, [canUndo, undo, toast]);
+
+  const handleRedo = useCallback(() => {
+    if (!canRedo) return;
+    redo();
+    toast.showSuccess("Redo successful", "↪️");
+  }, [canRedo, redo, toast]);
+
+  useEffect(() => {
+    if (!isActive) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        (target instanceof HTMLElement && target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (event.ctrlKey || event.metaKey) {
+        const key = event.key.toLowerCase();
+        if (key === "z") {
+          event.preventDefault();
+          if (event.shiftKey) {
+            handleRedo();
+          } else {
+            handleUndo();
+          }
+        }
+        if (key === "y") {
+          event.preventDefault();
+          handleRedo();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleRedo, handleUndo, isActive]);
 
   const previewLine = buildPreviewLine({
     eventType,
@@ -299,6 +411,73 @@ export function TimeOffView() {
             Time Off Management
           </h5>
           <div>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={handleUndo}
+              className="me-2"
+              disabled={!canUndo}
+              aria-label="Undo last change"
+            >
+              <i className="bi bi-arrow-counterclockwise me-1"></i>
+              Undo
+            </Button>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={handleRedo}
+              className="me-2"
+              disabled={!canRedo}
+              aria-label="Redo last change"
+            >
+              <i className="bi bi-arrow-clockwise me-1"></i>
+              Redo
+            </Button>
+            <Button
+              variant="outline-danger"
+              size="sm"
+              onClick={() => {
+                if (selectedIndices.length === 0) {
+                  return;
+                }
+                setShowBulkDeleteConfirm(true);
+              }}
+              className="me-2"
+              disabled={selectedIndices.length === 0}
+              aria-label="Delete selected events"
+            >
+              <i className="bi bi-trash me-1"></i>
+              Delete Selected
+            </Button>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={handleBulkDuplicate}
+              className="me-2"
+              disabled={selectedIndices.length === 0}
+              aria-label="Duplicate selected events"
+            >
+              <i className="bi bi-files me-1"></i>
+              Duplicate Selected
+            </Button>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={handleSelectAll}
+              className="me-2"
+              disabled={events.length === 0 || selectedIndices.length === events.length}
+            >
+              Select All
+            </Button>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={handleClearSelection}
+              className="me-2"
+              disabled={selectedIndices.length === 0}
+            >
+              Clear Selection
+            </Button>
             <Button variant="outline-primary" size="sm" onClick={handleImport} className="me-2">
               <i className="bi bi-download me-1"></i>
               Import
@@ -327,6 +506,20 @@ export function TimeOffView() {
             <Table responsive hover>
               <thead>
                 <tr>
+                  <th>
+                    <input
+                      type="checkbox"
+                      aria-label="Select all events"
+                      checked={events.length > 0 && selectedIndices.length === events.length}
+                      onChange={(event) => {
+                        if (event.target.checked) {
+                          handleSelectAll();
+                        } else {
+                          handleClearSelection();
+                        }
+                      }}
+                    />
+                  </th>
                   <th>Type</th>
                   <th>Date / Pattern</th>
                   <th>Title</th>
@@ -346,6 +539,14 @@ export function TimeOffView() {
 
                   return (
                     <tr key={index} aria-describedby={unknownDescriptionId}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          aria-label={`Select ${event.title || eventLabel}`}
+                          checked={selectedIndices.includes(index)}
+                          onChange={() => handleToggleSelection(index)}
+                        />
+                      </td>
                       <td>
                         <span
                           className="badge"
@@ -393,6 +594,15 @@ export function TimeOffView() {
                               aria-label={`Edit ${event.title || eventLabel}`}
                             >
                               <i className="bi bi-pencil" aria-hidden="true"></i>
+                            </Button>
+                            <Button
+                              variant="outline-secondary"
+                              size="sm"
+                              onClick={() => handleDuplicate(index)}
+                              className="me-2"
+                              aria-label={`Duplicate ${event.title || eventLabel}`}
+                            >
+                              <i className="bi bi-files" aria-hidden="true"></i>
                             </Button>
                             <Button
                               variant="outline-danger"
@@ -458,12 +668,23 @@ export function TimeOffView() {
       <ConfirmationDialog
         isOpen={showDeleteConfirm}
         title="Delete Event"
-        message="Are you sure you want to delete this event? This action cannot be undone."
+        message="Are you sure you want to delete this event? This action can be undone."
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variant="danger"
         onConfirm={handleConfirmDelete}
         onCancel={() => setShowDeleteConfirm(false)}
+      />
+
+      <ConfirmationDialog
+        isOpen={showBulkDeleteConfirm}
+        title="Delete Selected Events"
+        message={`Are you sure you want to delete ${selectedIndices.length} selected events? This action can be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={handleBulkDeleteConfirm}
+        onCancel={() => setShowBulkDeleteConfirm(false)}
       />
     </div>
   );

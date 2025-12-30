@@ -125,7 +125,7 @@ export function MainTabs({
             </>
           }
         >
-          <TimeOffView />
+          <TimeOffView isActive={activeKey === "timeoff"} />
         </Tab>
       </Tabs>
 
