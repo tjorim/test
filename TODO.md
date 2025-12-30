@@ -110,39 +110,7 @@ Critical features and improvements that significantly impact user experience.
 - **Estimated Effort**: 5–6 hours
 - **Status**: 🔲 Planned (High Priority)
 
-**4.3 Event Bulk Operations + Undo/Redo** 🔴 **[CRITICAL - User Request]**
-
-- **Component**: Multi-event management with history tracking
-- **Source**: `HdayPlanner/frontend/src/components/EventsCard.tsx`
-- **Current Gap**:
-  - ❌ **No Undo/Redo** - if you accidentally delete an event, it's gone forever
-  - ❌ **No bulk operations** - must delete/edit events one at a time
-  - ❌ **No event duplication** - must manually recreate similar events
-  - ✅ Single event add/edit/delete works
-- **Features Missing in Worktime**:
-  - ✅ **Undo/Redo functionality** - History tracking with undo/redo buttons + shortcuts (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)
-  - ✅ Checkbox-based event selection
-  - ✅ Bulk delete (select multiple, delete all at once)
-  - ✅ Event duplication (copy event to new date)
-  - ✅ "Select All" / "Clear All" buttons
-- **Implementation**: Add selection state, bulk action toolbar, and history tracking
-- **Files to Modify**:
-  - `src/components/TimeOffView.tsx` - Add checkbox column, bulk actions toolbar, undo/redo buttons
-  - `src/contexts/EventStoreContext.tsx` - Add history state, bulkDelete, duplicateEvent, undo, redo
-- **Technical Requirements**:
-  - History stack for undo/redo (store previous states)
-  - Keyboard shortcuts (Ctrl+Z for undo, Ctrl+Y/Ctrl+Shift+Z for redo)
-  - Visual indication of undo/redo availability (disabled buttons when stack empty)
-- **Performance Foundation**: ✅ **EventStoreContext Optimized (v4.0)** - Events array is now the primary state instead of rawText, making undo/redo instant:
-  - **Before optimization**: Would need to parse rawText on every undo/redo (~50ms lag with 100 events)
-  - **After optimization**: Simple array restoration via setEvents(previousState) (<1ms, instant)
-  - Implementation can use simple array history stack (no complex parsing/serialization)
-  - Can leverage libraries like [immer](https://immerjs.github.io/immer/) for efficient structural sharing
-  - Enables potential for partial undo (individual event changes, not whole-document)
-- **Estimated Effort**: 5–6 hours (undo/redo complexity, but optimized foundation reduces implementation time)
-- **Status**: ✅ Done (Undo/redo and bulk operations restored)
-
-**4.4 Raw .hday Content Editor/Viewer** 🔴 **[CRITICAL - User Request]**
+**4.3 Raw .hday Content Editor/Viewer** 🔴 **[CRITICAL - User Request]**
 
 - **Component**: View and edit raw .hday file content
 - **Source**: `HdayPlanner/frontend/src/components/RawContentAccordion.tsx`
@@ -167,7 +135,7 @@ Critical features and improvements that significantly impact user experience.
 - **Estimated Effort**: 2–3 hours
 - **Status**: 🔲 Planned (High Priority - User Request)
 
-**4.5 Missing Utility Functions**
+**4.4 Missing Utility Functions**
 
 - **Component**: Helper functions from HdayPlanner
 - **Source**: `HdayPlanner/frontend/src/lib/hday.ts`
@@ -182,7 +150,7 @@ Critical features and improvements that significantly impact user experience.
 - **Estimated Effort**: 1–2 hours
 - **Status**: 🔲 Planned
 
-**4.6 Enhanced Keyboard Navigation**
+**4.5 Enhanced Keyboard Navigation**
 
 - **Component**: Calendar-specific keyboard shortcuts
 - **Source**: `HdayPlanner/frontend/src/components/MonthGrid.tsx` (roving tabindex)
@@ -200,20 +168,18 @@ Critical features and improvements that significantly impact user experience.
 **Summary of HdayPlanner Integration Gaps:**
 
 - ✅ **Successfully Merged**: .hday parser (139 tests), import/export files, event modal (create/edit/delete), all flags/types
+- ✅ **Restored in Worktime**: Undo/redo with history tracking, bulk operations (multi-select, bulk delete/duplicate, select all)
 - 🔴 **CRITICAL Missing Features** (User Requests):
   - ❌ **MonthGrid Calendar View** - Visual month calendar with event overlays (only table view exists)
   - ❌ **View/Edit Raw .hday Content** - No way to view or paste .hday text in UI (must use external file)
-- ✅ **Restored in Worktime**:
-  - ✅ **Undo/Redo** - History tracking with undo/redo buttons and keyboard shortcuts
 - ❌ **Missing Core UI**: Statistics dashboard (vacation allowance tracking)
-- ❌ **Missing UX**: Bulk operations (multi-select, duplicate), advanced keyboard nav
-- 📊 **Total Estimated Effort**: 22–30 hours to achieve feature parity
+- ❌ **Missing UX**: Advanced keyboard nav for calendar
+- 📊 **Total Estimated Effort**: 15–19 hours to achieve feature parity
 - 🎯 **Priority Order**:
   1. Raw .hday viewer/editor (2-3h) - Quick win, high user value
   2. MonthGrid calendar view (6-8h) - Core visualization feature
-  3. Undo/Redo (5-6h) - Safety net for user mistakes
-  4. Statistics dashboard (5-6h) - Vacation tracking
-  5. Bulk operations (3-4h) - Efficiency improvements
+  3. Statistics dashboard (5-6h) - Vacation tracking
+  4. Advanced keyboard nav (2-3h) - Efficiency improvements
 
 ### 🎯 Medium-Priority Items
 
@@ -577,6 +543,25 @@ Advanced features for future development phases.
   - Preserve zero-infrastructure-cost option
   - Smooth migration without breaking changes
 
+### State Management Optimization
+
+**Zustand Migration** (Low Priority)
+
+- **Component**: Replace Context API with Zustand for state management
+- **Current State**: EventStoreContext uses Context API + useReducer pattern
+- **Potential Benefits**:
+  - 95% memory reduction with Immer middleware (structural sharing)
+  - Zero-code undo/redo via Temporal middleware (eliminates 200+ lines of manual history logic)
+  - Granular subscriptions (better performance - components only re-render when their data slice changes)
+  - Built-in localStorage persistence
+  - Redux DevTools integration
+- **Trade-offs**:
+  - +15 KB bundle size (Zustand 1 KB + Immer 14 KB)
+  - Learning curve for team
+  - Migration effort: ~4-5 hours
+- **Recommendation**: Consider when adding second store (SettingsStore migration candidate)
+- **Status**: 🔲 Future (nice-to-have optimization, not blocking)
+
 ### Accessibility Enhancements
 
 - High contrast mode
@@ -586,5 +571,5 @@ Advanced features for future development phases.
 
 ---
 
-**Last Updated**: 2025-12-29  
+**Last Updated**: 2025-12-30
 **Next Review**: After Phase 1 completion

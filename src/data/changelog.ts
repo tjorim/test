@@ -14,9 +14,33 @@ export interface ChangelogVersion {
 
 export const changelogData: ChangelogVersion[] = [
   {
+    version: "4.1.0",
+    date: "2025-12-30",
+    status: "current",
+    added: [
+      "Undo/Redo: History tracking with undo/redo buttons and keyboard shortcuts (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)",
+      "Bulk Operations: Select multiple events with checkboxes and perform bulk delete or duplicate",
+      "Event Duplication: Duplicate single or multiple time-off events",
+      "Select All/Clear All: Quick selection management buttons",
+      "History Stack: 50-state history limit with visual disabled states when empty",
+      "Keyboard Shortcuts: Ctrl+Z (undo), Ctrl+Y (redo), Ctrl+Shift+Z (redo alternative)",
+    ],
+    changed: [
+      "TimeOffView: Added checkbox column for multi-select, bulk action toolbar with undo/redo controls",
+      "EventStoreContext: Added history/future stacks and UNDO/REDO actions to reducer",
+      "MainTabs: Pass isActive prop to TimeOffView for keyboard shortcut management",
+    ],
+    fixed: [],
+    technicalDetails: {
+      title: "Time Off Event History & Bulk Operations",
+      description:
+        "Implemented undo/redo functionality and bulk operations for time-off events. Added history and future stacks to EventStoreContext with 50-state limit. Created checkbox-based multi-select UI with bulk delete, bulk duplicate, select all, and clear selection. Added keyboard shortcuts for undo (Ctrl+Z), redo (Ctrl+Y, Ctrl+Shift+Z) with proper event handling. Toast notifications provide user feedback. Added 15+ tests covering undo/redo flows and bulk operations.",
+    },
+  },
+  {
     version: "4.0.0",
     date: "2025-12-29",
-    status: "current",
+    status: "released",
     added: [
       "Time Off Management: Dedicated tab for importing/exporting .hday files for vacation and time-off tracking",
       ".hday Parser: Comprehensive parser with 139 test cases supporting range and weekly events",

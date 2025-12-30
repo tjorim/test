@@ -285,6 +285,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
       parseHday(text);
       // Import if valid
       importHday(text);
+      setSelectedIndices([]); // Clear selection after import
       toast.showSuccess(`Imported ${file.name}`, "📥");
     } catch (error) {
       console.error("Failed to import .hday file:", error);
@@ -353,7 +354,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
       if (event.ctrlKey || event.metaKey) {
         const key = event.key.toLowerCase();
         if (key === "z") {
-          event.preventDefault?.();
+          event.preventDefault();
           if (event.shiftKey) {
             handleRedo();
           } else {
@@ -361,7 +362,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
           }
         }
         if (key === "y") {
-          event.preventDefault?.();
+          event.preventDefault();
           handleRedo();
         }
       }
