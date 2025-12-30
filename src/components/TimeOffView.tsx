@@ -347,10 +347,6 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
         return;
       }
 
-      if (!event.key) {
-        return;
-      }
-
       if (event.ctrlKey || event.metaKey) {
         const key = event.key.toLowerCase();
         if (key === "z") {
@@ -672,7 +668,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
       <ConfirmationDialog
         isOpen={showDeleteConfirm}
         title="Delete Event"
-        message="Are you sure you want to delete this event? This action cannot be undone."
+        message="Are you sure you want to delete this event? This action can be undone."
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variant="danger"
