@@ -75,6 +75,8 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     updateEvent,
     deleteEvent,
     deleteEvents,
+    duplicateEvent,
+    duplicateEvents,
     importHday,
     exportHday,
     canUndo,
@@ -251,6 +253,18 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     }
     setSelectedIndices([]);
     setShowBulkDeleteConfirm(false);
+  };
+
+  const handleDuplicate = (index: number) => {
+    duplicateEvent(index);
+    toast.showSuccess("Event duplicated", "📄");
+  };
+
+  const handleBulkDuplicate = () => {
+    if (selectedIndices.length === 0) return;
+    duplicateEvents(selectedIndices);
+    toast.showSuccess(`Duplicated ${selectedIndices.length} events`, "📄");
+    setSelectedIndices([]);
   };
 
   useEffect(() => {
@@ -440,6 +454,17 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
             <Button
               variant="outline-secondary"
               size="sm"
+              onClick={handleBulkDuplicate}
+              className="me-2"
+              disabled={selectedIndices.length === 0}
+              aria-label="Duplicate selected events"
+            >
+              <i className="bi bi-files me-1"></i>
+              Duplicate Selected
+            </Button>
+            <Button
+              variant="outline-secondary"
+              size="sm"
               onClick={handleSelectAll}
               className="me-2"
               disabled={events.length === 0 || selectedIndices.length === events.length}
@@ -571,6 +596,15 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
                               aria-label={`Edit ${event.title || eventLabel}`}
                             >
                               <i className="bi bi-pencil" aria-hidden="true"></i>
+                            </Button>
+                            <Button
+                              variant="outline-secondary"
+                              size="sm"
+                              onClick={() => handleDuplicate(index)}
+                              className="me-2"
+                              aria-label={`Duplicate ${event.title || eventLabel}`}
+                            >
+                              <i className="bi bi-files" aria-hidden="true"></i>
                             </Button>
                             <Button
                               variant="outline-danger"
