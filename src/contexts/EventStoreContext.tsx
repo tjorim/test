@@ -165,6 +165,9 @@ function eventsReducer(state: EventStoreState, action: EventStoreAction): EventS
         return state;
       }
       const event = state.events[action.payload];
+      if (!event) {
+        return state;
+      }
       const duplicated: HdayEvent = { ...event };
       return applyWithHistory(state, sortEvents([...state.events, duplicated]));
     }
@@ -180,9 +183,15 @@ function eventsReducer(state: EventStoreState, action: EventStoreAction): EventS
         console.error("Invalid event indices:", action.payload);
         return state;
       }
-      const duplicates: HdayEvent[] = indices.map((index) => ({
-        ...state.events[index],
-      }));
+      const duplicates: HdayEvent[] = indices
+        .map((index) => state.events[index])
+        .filter((event): event is HdayEvent => Boolean(event))
+        .map((event) => ({
+          ...event,
+        }));
+      if (duplicates.length === 0) {
+        return state;
+      }
       return applyWithHistory(state, sortEvents([...state.events, ...duplicates]));
     }
 
