@@ -17,6 +17,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Floating action buttons
 - Accordion for organized data
 
+## [4.1.0] - 2025-12-30
+
+### Added
+
+- Undo/Redo: History tracking with undo/redo buttons and keyboard shortcuts (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)
+- Bulk Operations: Select multiple events with checkboxes and perform bulk delete or duplicate
+- Event Duplication: Duplicate single or multiple time-off events
+- Select All/Clear All: Quick selection management buttons
+- History Stack: 50-state history limit with visual disabled states when empty
+- Keyboard Shortcuts: Ctrl+Z (undo), Ctrl+Y (redo), Ctrl+Shift+Z (redo alternative)
+
+### Changed
+
+- TimeOffView: Added checkbox column for multi-select, bulk action toolbar with undo/redo controls
+- EventStoreContext: Added history/future stacks and UNDO/REDO actions to reducer
+- MainTabs: Pass isActive prop to TimeOffView for keyboard shortcut management
+
+### Time Off Event History & Bulk Operations
+
+Implemented undo/redo functionality and bulk operations for time-off events. Added history and future stacks to EventStoreContext with 50-state limit. Created checkbox-based multi-select UI with bulk delete, bulk duplicate, select all, and clear selection. Added keyboard shortcuts for undo (Ctrl+Z), redo (Ctrl+Y, Ctrl+Shift+Z) with proper event handling. Toast notifications provide user feedback. Added 15+ tests covering undo/redo flows and bulk operations.
+
 ## [4.0.0] - 2025-12-29
 
 ### Added
@@ -293,7 +314,8 @@ Built with React 19 with TypeScript, Vite build system with PWA plugin, Day.js f
 - Multi-language support
 - Data export capabilities
 
-[Unreleased]: https://github.com/tjorim/worktime/compare/v4.0.0...HEAD
+[Unreleased]: https://github.com/tjorim/worktime/compare/v4.1.0...HEAD
+[4.1.0]: https://github.com/tjorim/worktime/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/tjorim/worktime/compare/v3.4.0...v4.0.0
 [3.4.0]: https://github.com/tjorim/worktime/compare/v3.3.0...v3.4.0
 [3.3.0]: https://github.com/tjorim/worktime/compare/v3.2.0...v3.3.0
