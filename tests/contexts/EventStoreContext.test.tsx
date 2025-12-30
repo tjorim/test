@@ -607,5 +607,122 @@ d5 # Every Friday`;
       expect(result.current.events).toHaveLength(2);
       expect(result.current.canRedo).toBe(false);
     });
+
+    it("should enforce history limit when undoing many changes", () => {
+      const { result } = renderHook(() => useEventStore(), { wrapper });
+
+      act(() => {
+        for (let i = 0; i < 55; i += 1) {
+          result.current.addEvent({
+            type: "range",
+            start: `2025/02/${String(i + 1).padStart(2, "0")}`,
+            end: `2025/02/${String(i + 1).padStart(2, "0")}`,
+            flags: ["holiday"],
+            title: `Event ${i + 1}`,
+          });
+        }
+      });
+
+      expect(result.current.events).toHaveLength(55);
+
+      act(() => {
+        for (let i = 0; i < 50; i += 1) {
+          result.current.undo();
+        }
+      });
+
+      expect(result.current.events).toHaveLength(5);
+      expect(result.current.canUndo).toBe(false);
+      expect(result.current.canRedo).toBe(true);
+    });
+
+    it("should undo update and delete operations", () => {
+      const { result } = renderHook(() => useEventStore(), { wrapper });
+
+      act(() => {
+        result.current.addEvent({
+          type: "range",
+          start: "2025/03/10",
+          end: "2025/03/10",
+          flags: ["holiday"],
+          title: "Original",
+        });
+      });
+
+      act(() => {
+        result.current.updateEvent(0, {
+          type: "range",
+          start: "2025/03/11",
+          end: "2025/03/11",
+          flags: ["business"],
+          title: "Updated",
+        });
+      });
+
+      expect(result.current.events[0].title).toBe("Updated");
+
+      act(() => {
+        result.current.deleteEvent(0);
+      });
+
+      expect(result.current.events).toHaveLength(0);
+
+      act(() => {
+        result.current.undo();
+      });
+
+      expect(result.current.events).toHaveLength(1);
+      expect(result.current.events[0].title).toBe("Updated");
+
+      act(() => {
+        result.current.undo();
+      });
+
+      expect(result.current.events).toHaveLength(1);
+      expect(result.current.events[0].title).toBe("Original");
+    });
+
+    it("should support multiple consecutive undos and redos", () => {
+      const { result } = renderHook(() => useEventStore(), { wrapper });
+
+      act(() => {
+        result.current.addEvent({
+          type: "range",
+          start: "2025/04/01",
+          end: "2025/04/01",
+          flags: ["holiday"],
+          title: "Event 1",
+        });
+        result.current.addEvent({
+          type: "range",
+          start: "2025/04/02",
+          end: "2025/04/02",
+          flags: ["holiday"],
+          title: "Event 2",
+        });
+        result.current.addEvent({
+          type: "range",
+          start: "2025/04/03",
+          end: "2025/04/03",
+          flags: ["holiday"],
+          title: "Event 3",
+        });
+      });
+
+      act(() => {
+        result.current.undo();
+        result.current.undo();
+      });
+
+      expect(result.current.events).toHaveLength(1);
+      expect(result.current.events[0].title).toBe("Event 1");
+
+      act(() => {
+        result.current.redo();
+      });
+
+      expect(result.current.events).toHaveLength(2);
+      expect(result.current.events[1].title).toBe("Event 2");
+    });
   });
 });
