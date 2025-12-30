@@ -64,7 +64,11 @@ const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_F
  *
  * @returns The Time Off Management React element.
  */
-export function TimeOffView() {
+interface TimeOffViewProps {
+  isActive?: boolean;
+}
+
+export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   const {
     events,
     addEvent,
@@ -283,6 +287,10 @@ export function TimeOffView() {
   }, [canRedo, redo, toast]);
 
   useEffect(() => {
+    if (!isActive) {
+      return;
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
       if (
@@ -324,7 +332,7 @@ export function TimeOffView() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleRedo, handleUndo]);
+  }, [handleRedo, handleUndo, isActive]);
 
   const previewLine = buildPreviewLine({
     eventType,
