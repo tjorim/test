@@ -341,11 +341,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
         target instanceof HTMLInputElement ||
         target instanceof HTMLTextAreaElement ||
         target instanceof HTMLSelectElement ||
-        (target instanceof HTMLElement && target.contentEditable === "true") ||
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.tagName === "SELECT" ||
-        target?.contentEditable === "true"
+        (target instanceof HTMLElement && target.isContentEditable)
       ) {
         return;
       }
