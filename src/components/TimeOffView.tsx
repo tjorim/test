@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
@@ -65,7 +65,18 @@ const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_F
  * @returns The Time Off Management React element.
  */
 export function TimeOffView() {
-  const { events, addEvent, updateEvent, deleteEvent, importHday, exportHday } = useEventStore();
+  const {
+    events,
+    addEvent,
+    updateEvent,
+    deleteEvent,
+    importHday,
+    exportHday,
+    canUndo,
+    canRedo,
+    undo,
+    redo,
+  } = useEventStore();
   const toast = useToast();
 
   // Modal state
@@ -259,6 +270,62 @@ export function TimeOffView() {
     toast.showSuccess("Exported timeoff.hday", "📤");
   };
 
+  const handleUndo = useCallback(() => {
+    if (!canUndo) return;
+    undo();
+    toast.showSuccess("Undo successful", "↩️");
+  }, [canUndo, undo, toast]);
+
+  const handleRedo = useCallback(() => {
+    if (!canRedo) return;
+    redo();
+    toast.showSuccess("Redo successful", "↪️");
+  }, [canRedo, redo, toast]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        (target instanceof HTMLElement && target.contentEditable === "true") ||
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.tagName === "SELECT" ||
+        target?.contentEditable === "true"
+      ) {
+        return;
+      }
+
+      if (!event.key) {
+        return;
+      }
+
+      if (event.ctrlKey || event.metaKey) {
+        const key = event.key.toLowerCase();
+        if (key === "z") {
+          event.preventDefault?.();
+          if (event.shiftKey) {
+            handleRedo();
+          } else {
+            handleUndo();
+          }
+        }
+        if (key === "y") {
+          event.preventDefault?.();
+          handleRedo();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleRedo, handleUndo]);
+
   const previewLine = buildPreviewLine({
     eventType,
     start: eventStart,
@@ -299,6 +366,28 @@ export function TimeOffView() {
             Time Off Management
           </h5>
           <div>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={handleUndo}
+              className="me-2"
+              disabled={!canUndo}
+              aria-label="Undo last change"
+            >
+              <i className="bi bi-arrow-counterclockwise me-1"></i>
+              Undo
+            </Button>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={handleRedo}
+              className="me-2"
+              disabled={!canRedo}
+              aria-label="Redo last change"
+            >
+              <i className="bi bi-arrow-clockwise me-1"></i>
+              Redo
+            </Button>
             <Button variant="outline-primary" size="sm" onClick={handleImport} className="me-2">
               <i className="bi bi-download me-1"></i>
               Import

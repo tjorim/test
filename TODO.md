@@ -120,7 +120,7 @@ Critical features and improvements that significantly impact user experience.
   - ❌ **No event duplication** - must manually recreate similar events
   - ✅ Single event add/edit/delete works
 - **Features Missing in Worktime**:
-  - **Undo/Redo functionality** 🔴 - History tracking with undo/redo buttons (Ctrl+Z, Ctrl+Y)
+  - ✅ **Undo/Redo functionality** - History tracking with undo/redo buttons + shortcuts (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)
   - Checkbox-based event selection
   - Bulk delete (select multiple, delete all at once)
   - Event duplication (copy event to new date)
@@ -140,7 +140,7 @@ Critical features and improvements that significantly impact user experience.
   - Can leverage libraries like [immer](https://immerjs.github.io/immer/) for efficient structural sharing
   - Enables potential for partial undo (individual event changes, not whole-document)
 - **Estimated Effort**: 5–6 hours (undo/redo complexity, but optimized foundation reduces implementation time)
-- **Status**: 🔲 Planned (High Priority - User Request)
+- **Status**: 🟡 In Progress (Undo/redo restored, bulk operations still pending)
 
 **4.4 Raw .hday Content Editor/Viewer** 🔴 **[CRITICAL - User Request]**
 
@@ -203,7 +203,8 @@ Critical features and improvements that significantly impact user experience.
 - 🔴 **CRITICAL Missing Features** (User Requests):
   - ❌ **MonthGrid Calendar View** - Visual month calendar with event overlays (only table view exists)
   - ❌ **View/Edit Raw .hday Content** - No way to view or paste .hday text in UI (must use external file)
-  - ❌ **Undo/Redo** - No history tracking, accidental deletes are permanent
+- ✅ **Restored in Worktime**:
+  - ✅ **Undo/Redo** - History tracking with undo/redo buttons and keyboard shortcuts
 - ❌ **Missing Core UI**: Statistics dashboard (vacation allowance tracking)
 - ❌ **Missing UX**: Bulk operations (multi-select, duplicate), advanced keyboard nav
 - 📊 **Total Estimated Effort**: 22–30 hours to achieve feature parity

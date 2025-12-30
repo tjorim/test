@@ -438,4 +438,82 @@ d5 # Every Friday`;
       expect(stored).toBeNull();
     });
   });
+
+  describe("undo/redo", () => {
+    it("should undo and redo changes", () => {
+      const { result } = renderHook(() => useEventStore(), { wrapper });
+
+      act(() => {
+        result.current.addEvent({
+          type: "range",
+          start: "2025/01/15",
+          end: "2025/01/15",
+          flags: ["holiday"],
+          title: "First",
+        });
+      });
+
+      expect(result.current.events).toHaveLength(1);
+      expect(result.current.canUndo).toBe(true);
+      expect(result.current.canRedo).toBe(false);
+
+      act(() => {
+        result.current.undo();
+      });
+
+      expect(result.current.events).toHaveLength(0);
+      expect(result.current.canUndo).toBe(false);
+      expect(result.current.canRedo).toBe(true);
+
+      act(() => {
+        result.current.redo();
+      });
+
+      expect(result.current.events).toHaveLength(1);
+      expect(result.current.events[0].title).toBe("First");
+      expect(result.current.canUndo).toBe(true);
+      expect(result.current.canRedo).toBe(false);
+    });
+
+    it("should clear redo stack after new changes", () => {
+      const { result } = renderHook(() => useEventStore(), { wrapper });
+
+      act(() => {
+        result.current.addEvent({
+          type: "range",
+          start: "2025/01/15",
+          end: "2025/01/15",
+          flags: ["holiday"],
+          title: "First",
+        });
+        result.current.addEvent({
+          type: "range",
+          start: "2025/01/16",
+          end: "2025/01/16",
+          flags: ["holiday"],
+          title: "Second",
+        });
+      });
+
+      act(() => {
+        result.current.undo();
+      });
+
+      expect(result.current.events).toHaveLength(1);
+      expect(result.current.canRedo).toBe(true);
+
+      act(() => {
+        result.current.addEvent({
+          type: "range",
+          start: "2025/01/17",
+          end: "2025/01/17",
+          flags: ["holiday"],
+          title: "Third",
+        });
+      });
+
+      expect(result.current.events).toHaveLength(2);
+      expect(result.current.canRedo).toBe(false);
+    });
+  });
 });

@@ -23,7 +23,15 @@ type EventStoreAction =
   | { type: "UPDATE_EVENT"; payload: { index: number; event: HdayEvent } }
   | { type: "DELETE_EVENT"; payload: number }
   | { type: "IMPORT_HDAY"; payload: string }
-  | { type: "CLEAR_ALL" };
+  | { type: "CLEAR_ALL" }
+  | { type: "UNDO" }
+  | { type: "REDO" };
+
+interface EventStoreState {
+  events: HdayEvent[];
+  history: HdayEvent[][];
+  future: HdayEvent[][];
+}
 
 interface EventStoreContextType {
   /** Raw .hday text content */
@@ -52,6 +60,18 @@ interface EventStoreContextType {
 
   /** Clear all events */
   clearAll: () => void;
+
+  /** Whether there is history to undo */
+  canUndo: boolean;
+
+  /** Whether there is history to redo */
+  canRedo: boolean;
+
+  /** Undo the last event change */
+  undo: () => void;
+
+  /** Redo the last undone change */
+  redo: () => void;
 }
 
 const EventStoreContext = createContext<EventStoreContextType | undefined>(undefined);
@@ -67,40 +87,86 @@ interface EventStoreProviderProps {
  * @param action - Action describing the mutation to perform (ADD_EVENT, UPDATE_EVENT, DELETE_EVENT, IMPORT_HDAY, CLEAR_ALL)
  * @returns The updated HdayEvent array after applying the action; returns the original `state` for unknown actions or when an invalid index is provided
  */
-function eventsReducer(state: HdayEvent[], action: EventStoreAction): HdayEvent[] {
+const HISTORY_LIMIT = 50;
+
+function applyWithHistory(
+  state: EventStoreState,
+  nextEvents: HdayEvent[],
+): EventStoreState {
+  if (nextEvents === state.events) {
+    return state;
+  }
+
+  const nextHistory = [...state.history, state.events].slice(-HISTORY_LIMIT);
+  return {
+    events: nextEvents,
+    history: nextHistory,
+    future: [],
+  };
+}
+
+function eventsReducer(state: EventStoreState, action: EventStoreAction): EventStoreState {
   switch (action.type) {
     case "ADD_EVENT": {
-      const newEvents = [...state, action.payload];
-      return sortEvents(newEvents);
+      const newEvents = sortEvents([...state.events, action.payload]);
+      return applyWithHistory(state, newEvents);
     }
 
     case "UPDATE_EVENT": {
       const { index, event } = action.payload;
-      if (index < 0 || index >= state.length) {
+      if (index < 0 || index >= state.events.length) {
         console.error(`Invalid event index: ${index}`);
         return state;
       }
-      const newEvents = [...state];
+      const newEvents = [...state.events];
       newEvents[index] = event;
-      return sortEvents(newEvents);
+      return applyWithHistory(state, sortEvents(newEvents));
     }
 
     case "DELETE_EVENT": {
-      if (action.payload < 0 || action.payload >= state.length) {
+      if (action.payload < 0 || action.payload >= state.events.length) {
         console.error(`Invalid event index: ${action.payload}`);
         return state;
       }
-      const filtered = state.filter((_, i) => i !== action.payload);
-      return sortEvents(filtered);
+      const filtered = state.events.filter((_, i) => i !== action.payload);
+      return applyWithHistory(state, sortEvents(filtered));
     }
 
     case "IMPORT_HDAY": {
       const parsed = action.payload.trim() ? parseHday(action.payload) : [];
-      return parsed;
+      return applyWithHistory(state, parsed);
     }
 
-    case "CLEAR_ALL":
-      return [];
+    case "CLEAR_ALL": {
+      if (state.events.length === 0) {
+        return state;
+      }
+      return applyWithHistory(state, []);
+    }
+
+    case "UNDO": {
+      if (state.history.length === 0) {
+        return state;
+      }
+      const previous = state.history[state.history.length - 1];
+      return {
+        events: previous,
+        history: state.history.slice(0, -1),
+        future: [state.events, ...state.future],
+      };
+    }
+
+    case "REDO": {
+      if (state.future.length === 0) {
+        return state;
+      }
+      const [next, ...remaining] = state.future;
+      return {
+        events: next,
+        history: [...state.history, state.events].slice(-HISTORY_LIMIT),
+        future: remaining,
+      };
+    }
 
     default:
       return state;
@@ -118,27 +184,37 @@ function eventsReducer(state: HdayEvent[], action: EventStoreAction): HdayEvent[
  */
 export function EventStoreProvider({ children }: EventStoreProviderProps) {
   // Load and parse events from localStorage on mount (parse once, managed by reducer)
-  const [events, dispatch] = useReducer(eventsReducer, [], () => {
-    if (typeof window === "undefined") return [];
-    try {
+  const [state, dispatch] = useReducer(
+    eventsReducer,
+    { events: [], history: [], future: [] },
+    () => {
+      if (typeof window === "undefined") {
+        return { events: [], history: [], future: [] };
+      }
+      try {
       const stored = localStorage.getItem(STORAGE_KEY) || "";
-      return stored.trim() ? parseHday(stored) : [];
-    } catch (error) {
-      console.error("Failed to load .hday content from localStorage:", error);
-      return [];
-    }
-  });
+      return {
+        events: stored.trim() ? parseHday(stored) : [],
+        history: [],
+        future: [],
+      };
+      } catch (error) {
+        console.error("Failed to load .hday content from localStorage:", error);
+        return { events: [], history: [], future: [] };
+      }
+    },
+  );
 
   // Derive raw text from events (for export and backward compatibility)
   const rawText = useMemo(() => {
-    if (events.length === 0) return "";
+    if (state.events.length === 0) return "";
     try {
-      return events.map((e) => toLine(e)).join("\n") + "\n";
+      return state.events.map((e) => toLine(e)).join("\n") + "\n";
     } catch (error) {
       console.error("Failed to serialize events:", error);
       return "";
     }
-  }, [events]);
+  }, [state.events]);
 
   // Persist to localStorage whenever events change
   useEffect(() => {
@@ -161,7 +237,7 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
     (startDate: Date, endDate: Date): CalendarEvent[] => {
       const calendarEvents: CalendarEvent[] = [];
 
-      events.forEach((event, index) => {
+      state.events.forEach((event, index) => {
         const converted = hdayToCalendarEvents(event, startDate, endDate, index);
         calendarEvents.push(...converted);
       });
@@ -171,7 +247,7 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
       const endStr = dayjs(endDate).format("YYYY-MM-DD");
       return filterEventsInRange(calendarEvents, startStr, endStr);
     },
-    [events],
+    [state.events],
   );
 
   /**
@@ -216,10 +292,18 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
     dispatch({ type: "CLEAR_ALL" });
   }, []);
 
+  const undo = useCallback(() => {
+    dispatch({ type: "UNDO" });
+  }, []);
+
+  const redo = useCallback(() => {
+    dispatch({ type: "REDO" });
+  }, []);
+
   const contextValue: EventStoreContextType = useMemo(
     () => ({
       rawText,
-      events,
+      events: state.events,
       getEventsInRange,
       addEvent,
       updateEvent,
@@ -227,10 +311,14 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
       importHday,
       exportHday,
       clearAll,
+      canUndo: state.history.length > 0,
+      canRedo: state.future.length > 0,
+      undo,
+      redo,
     }),
     [
       rawText,
-      events,
+      state.events,
       getEventsInRange,
       addEvent,
       updateEvent,
@@ -238,6 +326,10 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
       importHday,
       exportHday,
       clearAll,
+      state.history.length,
+      state.future.length,
+      undo,
+      redo,
     ],
   );
 
