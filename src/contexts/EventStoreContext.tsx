@@ -201,6 +201,9 @@ function eventsReducer(state: EventStoreState, action: EventStoreAction): EventS
         return state;
       }
       const previous = state.history[state.history.length - 1];
+      if (!previous) {
+        return state;
+      }
       return {
         events: previous,
         history: state.history.slice(0, -1),
@@ -213,6 +216,9 @@ function eventsReducer(state: EventStoreState, action: EventStoreAction): EventS
         return state;
       }
       const [next, ...remaining] = state.future;
+      if (!next) {
+        return state;
+      }
       return {
         events: next,
         history: [...state.history, state.events].slice(-HISTORY_LIMIT),
