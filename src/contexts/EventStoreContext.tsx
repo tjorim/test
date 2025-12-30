@@ -101,10 +101,7 @@ interface EventStoreProviderProps {
  */
 const HISTORY_LIMIT = 50;
 
-function applyWithHistory(
-  state: EventStoreState,
-  nextEvents: HdayEvent[],
-): EventStoreState {
+function applyWithHistory(state: EventStoreState, nextEvents: HdayEvent[]): EventStoreState {
   if (nextEvents === state.events) {
     return state;
   }
@@ -168,7 +165,10 @@ function eventsReducer(state: EventStoreState, action: EventStoreAction): EventS
       if (!event) {
         return state;
       }
-      const duplicated: HdayEvent = { ...event };
+      const duplicated: HdayEvent = {
+        ...event,
+        flags: event.flags ? [...event.flags] : undefined,
+      };
       return applyWithHistory(state, sortEvents([...state.events, duplicated]));
     }
 
@@ -176,9 +176,7 @@ function eventsReducer(state: EventStoreState, action: EventStoreAction): EventS
       if (action.payload.length === 0) {
         return state;
       }
-      const indices = action.payload.filter(
-        (index) => index >= 0 && index < state.events.length,
-      );
+      const indices = action.payload.filter((index) => index >= 0 && index < state.events.length);
       if (indices.length === 0) {
         console.error("Invalid event indices:", action.payload);
         return state;
@@ -188,6 +186,7 @@ function eventsReducer(state: EventStoreState, action: EventStoreAction): EventS
         .filter((event): event is HdayEvent => Boolean(event))
         .map((event) => ({
           ...event,
+          flags: event.flags ? [...event.flags] : undefined,
         }));
       if (duplicates.length === 0) {
         return state;
@@ -261,12 +260,12 @@ export function EventStoreProvider({ children }: EventStoreProviderProps) {
         return { events: [], history: [], future: [] };
       }
       try {
-      const stored = localStorage.getItem(STORAGE_KEY) || "";
-      return {
-        events: stored.trim() ? parseHday(stored) : [],
-        history: [],
-        future: [],
-      };
+        const stored = localStorage.getItem(STORAGE_KEY) || "";
+        return {
+          events: stored.trim() ? parseHday(stored) : [],
+          history: [],
+          future: [],
+        };
       } catch (error) {
         console.error("Failed to load .hday content from localStorage:", error);
         return { events: [], history: [], future: [] };

@@ -439,7 +439,12 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
             <Button
               variant="outline-danger"
               size="sm"
-              onClick={() => setShowBulkDeleteConfirm(true)}
+              onClick={() => {
+                if (selectedIndices.length === 0) {
+                  return;
+                }
+                setShowBulkDeleteConfirm(true);
+              }}
               className="me-2"
               disabled={selectedIndices.length === 0}
               aria-label="Delete selected events"

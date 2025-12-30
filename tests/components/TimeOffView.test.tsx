@@ -367,4 +367,93 @@ describe("TimeOffView", () => {
       expect(screen.getByRole("columnheader", { name: /Actions/i })).toBeInTheDocument();
     });
   });
+
+  describe("Bulk Actions", () => {
+    it("should toggle bulk selection using the header checkbox", async () => {
+      render(
+        <AllProviders>
+          <TimeOffView />
+        </AllProviders>,
+      );
+
+      const user = userEvent.setup();
+
+      await user.click(screen.getByRole("button", { name: /Add Event/i }));
+      const startInput = screen.getByLabelText(/Start \(YYYY\/MM\/DD\)/i);
+      await user.clear(startInput);
+      await user.type(startInput, "2025-01-15");
+      await user.click(screen.getByRole("button", { name: /^Add$/i }));
+
+      const headerCheckbox = screen.getByRole("checkbox", { name: /Select all events/i });
+      const rowCheckbox = screen.getByRole("checkbox", { name: /Select Holiday/i });
+
+      expect(headerCheckbox).not.toBeChecked();
+      expect(rowCheckbox).not.toBeChecked();
+
+      await user.click(headerCheckbox);
+
+      expect(headerCheckbox).toBeChecked();
+      expect(rowCheckbox).toBeChecked();
+
+      await user.click(headerCheckbox);
+
+      expect(headerCheckbox).not.toBeChecked();
+      expect(rowCheckbox).not.toBeChecked();
+    });
+
+    it("should enable undo and redo buttons after adding and undoing", async () => {
+      render(
+        <AllProviders>
+          <TimeOffView />
+        </AllProviders>,
+      );
+
+      const user = userEvent.setup();
+
+      const undoButton = screen.getByRole("button", { name: /Undo last change/i });
+      const redoButton = screen.getByRole("button", { name: /Redo last change/i });
+
+      expect(undoButton).toBeDisabled();
+      expect(redoButton).toBeDisabled();
+
+      await user.click(screen.getByRole("button", { name: /Add Event/i }));
+      const startInput = screen.getByLabelText(/Start \(YYYY\/MM\/DD\)/i);
+      await user.clear(startInput);
+      await user.type(startInput, "2025-01-15");
+      await user.click(screen.getByRole("button", { name: /^Add$/i }));
+
+      expect(undoButton).toBeEnabled();
+      expect(redoButton).toBeDisabled();
+
+      await user.click(undoButton);
+
+      expect(redoButton).toBeEnabled();
+    });
+
+    it("should bulk delete selected events after confirmation", async () => {
+      render(
+        <AllProviders>
+          <TimeOffView />
+        </AllProviders>,
+      );
+
+      const user = userEvent.setup();
+
+      await user.click(screen.getByRole("button", { name: /Add Event/i }));
+      const startInput = screen.getByLabelText(/Start \(YYYY\/MM\/DD\)/i);
+      await user.clear(startInput);
+      await user.type(startInput, "2025-01-15");
+      await user.click(screen.getByRole("button", { name: /^Add$/i }));
+
+      expect(screen.getByText("2025/01/15")).toBeInTheDocument();
+
+      await user.click(screen.getByRole("checkbox", { name: /Select Holiday/i }));
+      await user.click(screen.getByRole("button", { name: /Delete Selected/i }));
+
+      const dialog = await screen.findByRole("dialog");
+      await user.click(within(dialog).getByRole("button", { name: /Delete/i }));
+
+      expect(screen.getByText(/No time-off events yet/i)).toBeInTheDocument();
+    });
+  });
 });
