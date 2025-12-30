@@ -238,16 +238,13 @@ describe("TimeOffView", () => {
       await user.type(startInput, "2025-01-15");
       await user.click(screen.getByRole("button", { name: /^Add$/i }));
 
-      // Click delete button
-      const deleteButtons = screen.getAllByRole("button");
-      const deleteButton = deleteButtons.find((btn) => btn.querySelector(".bi-trash"));
-      if (deleteButton) {
-        await user.click(deleteButton);
-      }
+      const deleteButton = screen.getByRole("button", { name: /Delete Holiday/i });
+      await user.click(deleteButton);
 
       // Confirmation dialog should appear
-      expect(screen.getByText(/Delete Event/i)).toBeInTheDocument();
-      expect(screen.getByText(/Are you sure/i)).toBeInTheDocument();
+      const dialog = await screen.findByRole("dialog");
+      expect(within(dialog).getByText(/Delete Event/i)).toBeInTheDocument();
+      expect(within(dialog).getByText(/Are you sure/i)).toBeInTheDocument();
     });
 
     it("should delete event when confirmed", async () => {
@@ -270,15 +267,11 @@ describe("TimeOffView", () => {
 
       expect(screen.getByText("To be deleted")).toBeInTheDocument();
 
-      // Click delete button
-      const deleteButtons = screen.getAllByRole("button");
-      const deleteButton = deleteButtons.find((btn) => btn.querySelector(".bi-trash"));
-      if (deleteButton) {
-        await user.click(deleteButton);
-      }
+      const deleteButton = screen.getByRole("button", { name: /Delete To be deleted/i });
+      await user.click(deleteButton);
 
       // Confirm deletion - scope to modal to avoid matching table delete buttons
-      const modal = screen.getByRole("dialog");
+      const modal = await screen.findByRole("dialog");
       const confirmButton = within(modal).getByRole("button", { name: /Delete/i });
       await user.click(confirmButton);
 
