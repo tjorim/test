@@ -677,7 +677,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
       <ConfirmationDialog
         isOpen={showBulkDeleteConfirm}
         title="Delete Selected Events"
-        message={`Are you sure you want to delete ${selectedIndices.length} selected events? This action cannot be undone.`}
+        message={`Are you sure you want to delete ${selectedIndices.length} selected events? This action can be undone.`}
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variant="danger"

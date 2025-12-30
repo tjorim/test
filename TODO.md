@@ -140,7 +140,7 @@ Critical features and improvements that significantly impact user experience.
   - Can leverage libraries like [immer](https://immerjs.github.io/immer/) for efficient structural sharing
   - Enables potential for partial undo (individual event changes, not whole-document)
 - **Estimated Effort**: 5–6 hours (undo/redo complexity, but optimized foundation reduces implementation time)
-- **Status**: 🟡 In Progress (Undo/redo restored, bulk operations still pending)
+- **Status**: ✅ Done (Undo/redo and bulk operations restored)
 
 **4.4 Raw .hday Content Editor/Viewer** 🔴 **[CRITICAL - User Request]**
 
