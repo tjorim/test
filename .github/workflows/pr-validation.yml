@@ -125,7 +125,8 @@ jobs:
               const criticalFunctions = [
                 'calculateShift',
                 'getNextShift',
-                'getShiftForDate'
+                'getCurrentShiftDay',
+                'getAllTeamsShifts'
               ];
 
               let missing = [];
