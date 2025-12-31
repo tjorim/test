@@ -56,6 +56,150 @@ Critical features and improvements that significantly impact user experience.
 - **Estimated Effort**: 30 minutes
 - **Status**: 🔲 Planned
 
+#### 4. Missing HdayPlanner Features (v4.0 Integration Gaps) ⚠️
+
+**CRITICAL**: Features from HdayPlanner that were NOT merged into Worktime during the v4.0 rebrand/integration. These features are essential for users migrating from HdayPlanner.
+
+**Integration Status:**
+- ✅ **Successfully Merged**: .hday parser (139 tests), import/export files, event modal (create/edit/delete), all event flags/types (holiday, business, sick, training, etc.)
+- ❌ **Missing Core UI**: Month calendar grid view, vacation statistics dashboard
+- ❌ **Missing UX Features**: View/edit raw .hday content, undo/redo, bulk operations, event duplication
+- 📊 **Total Effort to Achieve Parity**: 20–27 hours
+
+---
+
+**4.1 Month Calendar Grid View** 🌟 **[CRITICAL]**
+- **Component**: Visual calendar with event overlays
+- **Source**: `HdayPlanner/frontend/src/components/MonthGrid.tsx`, `MonthViewCard.tsx`
+- **Use Cases**:
+  - Visual month view with events displayed on dates
+  - Keyboard navigation (arrow keys, Home, End)
+  - Public holiday/payday indicators (🎉 🏫 💶)
+  - Highlight today, weekends, special dates
+  - Click day to view/add events
+- **Current Worktime**: Only table view of events
+- **Implementation**: Create MonthCalendar component
+- **Files to Create**:
+  - `src/components/timeoff/MonthCalendar.tsx` - Calendar grid component
+  - `src/components/timeoff/DayCell.tsx` - Individual day cell with events
+- **Files to Modify**:
+  - `src/components/TimeOffView.tsx` - Add calendar view toggle
+- **Estimated Effort**: 6–8 hours
+- **Status**: 🔲 Planned (High Priority)
+
+**4.2 Vacation Statistics Dashboard** 🌟
+- **Component**: Vacation allowance tracking and analytics
+- **Source**: `HdayPlanner/frontend/src/components/StatisticsCard.tsx`
+- **Use Cases**:
+  - Annual vacation allowance configuration (days or hours)
+  - Days used vs. remaining
+  - Breakdown by event type (Holiday, Business, Sick, Training, etc.)
+  - Year-specific statistics
+  - Hours-to-days conversion
+- **Current Worktime**: No statistics tracking
+- **Implementation**: Add StatisticsCard accordion to TimeOffView
+- **Files to Create**:
+  - `src/components/timeoff/VacationStats.tsx` - Statistics component
+  - `src/utils/vacationCalculations.ts` - Allowance calculations
+- **Files to Modify**:
+  - `src/components/TimeOffView.tsx` - Add statistics section
+  - `src/contexts/SettingsContext.tsx` - Add vacation allowance settings
+- **Estimated Effort**: 5–6 hours
+- **Status**: 🔲 Planned (High Priority)
+
+**4.3 Event Bulk Operations + Undo/Redo** 🔴 **[CRITICAL - User Request]**
+- **Component**: Multi-event management with history tracking
+- **Source**: `HdayPlanner/frontend/src/components/EventsCard.tsx`
+- **Current Gap**:
+  - ❌ **No Undo/Redo** - if you accidentally delete an event, it's gone forever
+  - ❌ **No bulk operations** - must delete/edit events one at a time
+  - ❌ **No event duplication** - must manually recreate similar events
+  - ✅ Single event add/edit/delete works
+- **Features Missing in Worktime**:
+  - **Undo/Redo functionality** 🔴 - History tracking with undo/redo buttons (Ctrl+Z, Ctrl+Y)
+  - Checkbox-based event selection
+  - Bulk delete (select multiple, delete all at once)
+  - Event duplication (copy event to new date)
+  - "Select All" / "Clear All" buttons
+- **Implementation**: Add selection state, bulk action toolbar, and history tracking
+- **Files to Modify**:
+  - `src/components/TimeOffView.tsx` - Add checkbox column, bulk actions toolbar, undo/redo buttons
+  - `src/contexts/EventStoreContext.tsx` - Add history state, bulkDelete, duplicateEvent, undo, redo
+- **Technical Requirements**:
+  - History stack for undo/redo (store previous states)
+  - Keyboard shortcuts (Ctrl+Z for undo, Ctrl+Y/Ctrl+Shift+Z for redo)
+  - Visual indication of undo/redo availability (disabled buttons when stack empty)
+- **Estimated Effort**: 5–6 hours (increased due to undo/redo complexity)
+- **Status**: 🔲 Planned (High Priority - User Request)
+
+**4.4 Raw .hday Content Editor/Viewer** 🔴 **[CRITICAL - User Request]**
+- **Component**: View and edit raw .hday file content
+- **Source**: `HdayPlanner/frontend/src/components/RawContentAccordion.tsx`
+- **Current Gap**:
+  - ❌ **No way to VIEW raw .hday content in UI** - users must export to file, open in notepad
+  - ❌ **No way to PASTE/EDIT raw content** - users can't copy/paste .hday text into the app
+  - ✅ Export downloads .hday file (but can't see content in UI)
+  - ✅ Import reads .hday file (but can't paste text directly)
+- **Use Cases**:
+  - View entire .hday content as formatted text in UI
+  - Copy raw .hday content to clipboard
+  - Paste entire .hday file content from clipboard
+  - Parse button to convert pasted text to events
+  - Flag reference guide embedded in UI
+  - Advanced users prefer text editing over forms
+  - Quick sharing of events via text (copy/paste into email, chat)
+- **Implementation**: Add collapsible accordion with textarea showing exportHday() output
+- **Files to Modify**:
+  - `src/components/TimeOffView.tsx` - Add "View Raw Content" accordion section
+- **Files to Create**:
+  - `src/components/timeoff/RawContentEditor.tsx` - Textarea with view/edit/parse logic
+- **Estimated Effort**: 2–3 hours
+- **Status**: 🔲 Planned (High Priority - User Request)
+
+**4.5 Missing Utility Functions**
+- **Component**: Helper functions from HdayPlanner
+- **Source**: `HdayPlanner/frontend/src/lib/hday.ts`
+- **Functions**:
+  - `sortEvents()` - Sort events by date and type (stable ordering)
+  - `getEventClass()` - Map event flags to CSS class names
+- **Current Worktime**: buildPreviewLine exists, but sorting/class mapping missing
+- **Implementation**: Port utility functions to Worktime
+- **Files to Modify**:
+  - `src/lib/hday/utils.ts` - Add sortEvents and getEventClass
+  - `src/components/TimeOffView.tsx` - Use sortEvents for table display
+- **Estimated Effort**: 1–2 hours
+- **Status**: 🔲 Planned
+
+**4.6 Enhanced Keyboard Navigation**
+- **Component**: Calendar-specific keyboard shortcuts
+- **Source**: `HdayPlanner/frontend/src/components/MonthGrid.tsx` (roving tabindex)
+- **Use Cases**:
+  - Arrow keys navigate calendar grid
+  - Home/End jump to month bounds
+  - Enter opens day for editing
+  - Escape closes modals
+- **Current Worktime**: Basic keyboard support in modals only
+- **Implementation**: Add keyboard handlers to calendar component
+- **Dependencies**: Requires 4.1 (Month Calendar Grid View) first
+- **Estimated Effort**: 2–3 hours
+- **Status**: 🔲 Future (depends on calendar view)
+
+**Summary of HdayPlanner Integration Gaps:**
+- ✅ **Successfully Merged**: .hday parser (139 tests), import/export files, event modal (create/edit/delete), all flags/types
+- 🔴 **CRITICAL Missing Features** (User Requests):
+  - ❌ **MonthGrid Calendar View** - Visual month calendar with event overlays (only table view exists)
+  - ❌ **View/Edit Raw .hday Content** - No way to view or paste .hday text in UI (must use external file)
+  - ❌ **Undo/Redo** - No history tracking, accidental deletes are permanent
+- ❌ **Missing Core UI**: Statistics dashboard (vacation allowance tracking)
+- ❌ **Missing UX**: Bulk operations (multi-select, duplicate), advanced keyboard nav
+- 📊 **Total Estimated Effort**: 22–30 hours to achieve feature parity
+- 🎯 **Priority Order**:
+  1. Raw .hday viewer/editor (2-3h) - Quick win, high user value
+  2. MonthGrid calendar view (6-8h) - Core visualization feature
+  3. Undo/Redo (5-6h) - Safety net for user mistakes
+  4. Statistics dashboard (5-6h) - Vacation tracking
+  5. Bulk operations (3-4h) - Efficiency improvements
+
 ### 🎯 Medium-Priority Items
 
 Features that enhance functionality with moderate development effort.

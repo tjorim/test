@@ -28,22 +28,26 @@ vi.mock('../../src/hooks/useCountdown', () => ({
 
 vi.mock('../../src/utils/dateTimeUtils', async (importOriginal) => {
   const actual = await importOriginal();
-  return {
-    ...actual,
-    dayjs: vi.fn(() => ({
-      startOf: vi.fn(() => ({
-        toISOString: vi.fn(() => '2024-01-15T00:00:00.000Z'),
-      })),
-      isSame: vi.fn(() => false),
-      format: vi.fn(() => '2024-01-15'),
-      hour: vi.fn(() => ({
-        minute: vi.fn(() => ({
-          second: vi.fn(() => 'mockDateTime'),
+  const mockDayjsObj = {
+    startOf: vi.fn(() => ({
+      toISOString: vi.fn(() => '2024-01-15T00:00:00.000Z'),
+    })),
+    isSame: vi.fn(() => false),
+    format: vi.fn(() => '2024-01-15'),
+    hour: vi.fn(() => ({
+      minute: vi.fn(() => ({
+        second: vi.fn(() => ({
+          isBefore: vi.fn(() => false),
+          isAfter: vi.fn(() => true),
         })),
       })),
-      add: vi.fn(),
-      subtract: vi.fn(),
     })),
+    add: vi.fn(() => mockDayjsObj),
+    subtract: vi.fn(() => mockDayjsObj),
+  };
+  return {
+    ...actual,
+    dayjs: vi.fn(() => mockDayjsObj),
     formatYYWWD: vi.fn(() => '2430.1'),
     formatTimeByPreference: vi.fn(() => '17:01'),
   };
@@ -196,7 +200,7 @@ describe('CurrentStatus Component', () => {
         ),
       ).toBeInTheDocument();
       expect(
-        screen.getByText('Select your team for countdown timers and personalized notifications'),
+        screen.getByText('💡 Select your team above for personalized shift tracking'),
       ).toBeInTheDocument();
     });
 

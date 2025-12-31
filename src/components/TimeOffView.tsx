@@ -296,11 +296,11 @@ export function TimeOffView() {
           </h5>
           <div>
             <Button variant="outline-primary" size="sm" onClick={handleImport} className="me-2">
-              <i className="bi bi-upload me-1"></i>
+              <i className="bi bi-download me-1"></i>
               Import
             </Button>
             <Button variant="outline-primary" size="sm" onClick={handleExport} className="me-2">
-              <i className="bi bi-download me-1"></i>
+              <i className="bi bi-upload me-1"></i>
               Export
             </Button>
             <Button variant="primary" size="sm" onClick={handleOpenAddModal}>
@@ -356,7 +356,7 @@ export function TimeOffView() {
                           </>
                         )}
                         {event.type === 'weekly' &&
-                          `Every ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][event.weekday! - 1]}`}
+                          `Every ${event.weekday ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][event.weekday - 1] : 'Unknown'}`}
                         {event.type === 'unknown' && (
                           <span className="text-muted">Unknown format</span>
                         )}

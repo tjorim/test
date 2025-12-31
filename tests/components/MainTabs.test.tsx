@@ -58,6 +58,7 @@ describe('MainTabs', () => {
       expect(screen.getByRole('tab', { name: 'Today' })).toBeInTheDocument();
       expect(screen.getByRole('tab', { name: 'Schedule' })).toBeInTheDocument();
       expect(screen.getByRole('tab', { name: 'Transfers' })).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: 'Time Off' })).toBeInTheDocument();
     });
 
     it('shows Today tab content by default', () => {

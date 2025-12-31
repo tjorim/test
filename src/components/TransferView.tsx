@@ -28,9 +28,6 @@ interface TransferViewProps {
  * @returns The rendered TransferView element.
  */
 export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: TransferViewProps) {
-  // Generate unique ID for tooltips
-  const handoverTooltipId = useId();
-  const takeoverTooltipId = useId();
   // Generate unique IDs for form elements
   const otherTeamSelectId = useId();
   const showPastCheckboxId = useId();
@@ -269,11 +266,7 @@ export function TransferView({ myTeam: inputMyTeam, initialOtherTeam }: Transfer
                               placement="top"
                               overlay={
                                 <Tooltip
-                                  id={
-                                    transfer.type === 'handover'
-                                      ? handoverTooltipId
-                                      : takeoverTooltipId
-                                  }
+                                  id={`tooltip-${transfer.date.toISOString()}-${transfer.fromTeam}-${transfer.toTeam}`}
                                 >
                                   {transfer.type === 'handover'
                                     ? 'Your team transfers to them'

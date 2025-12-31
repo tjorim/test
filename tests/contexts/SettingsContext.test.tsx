@@ -100,7 +100,8 @@ describe('SettingsContext unified user state', () => {
     // Check the unified storage key
     const userStateStored = window.localStorage.getItem('worktime_user_state');
     expect(userStateStored).not.toBeNull();
-    expect(JSON.parse(userStateStored || '{}')).toEqual({
+    const parsedState = JSON.parse(userStateStored || '{}');
+    expect(parsedState).toEqual({
       hasCompletedOnboarding: false,
       myTeam: null,
       settings: {
@@ -110,8 +111,9 @@ describe('SettingsContext unified user state', () => {
       },
     });
 
-    // Check that old keys are null
+    // Check that all old/legacy keys are null (not written by the implementation)
     expect(window.localStorage.getItem('hasCompletedOnboarding')).toBeNull();
+    expect(window.localStorage.getItem('worktime_user_preferences')).toBeNull();
     expect(window.localStorage.getItem('userSettings')).toBeNull();
   });
 

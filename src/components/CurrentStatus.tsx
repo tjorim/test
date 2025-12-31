@@ -87,19 +87,72 @@ export function CurrentStatus({ myTeam, onChangeTeam, onShowWhoIsWorking }: Curr
     return getNextShift(today, validatedTeam);
   }, [validatedTeam, todayMinuteKey]);
 
+  // Calculate next shift change across all teams when no team is selected
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Using minute-based ISO string to limit recalculation to once per minute instead of every render
+  const nextShiftAnyTeam = useMemo((): (UpcomingShiftResult & { teamNumber: number }) | null => {
+    if (validatedTeam) return null;
+
+    const now = today;
+    let earliestShift: (UpcomingShiftResult & { teamNumber: number }) | null = null;
+    let earliestStartTime: ReturnType<typeof dayjs> | null = null;
+
+    // Check shifts for today and next few days to find the next shift change
+    for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+      const checkDate = now.add(dayOffset, 'day');
+      const allTeamsShifts = getAllTeamsShifts(checkDate);
+
+      for (const teamShift of allTeamsShifts) {
+        if (!teamShift.shift.isWorking || !teamShift.shift.start) continue;
+
+        const shiftStartTime = teamShift.date
+          .hour(teamShift.shift.start)
+          .minute(0)
+          .second(0);
+
+        // Only consider shifts that start in the future
+        if (!shiftStartTime.isAfter(now)) continue;
+
+        if (!earliestShift || !earliestStartTime || shiftStartTime.isBefore(earliestStartTime)) {
+          earliestShift = {
+            date: teamShift.date,
+            shift: teamShift.shift,
+            code: teamShift.code,
+            teamNumber: teamShift.teamNumber,
+          };
+          earliestStartTime = shiftStartTime;
+        }
+      }
+
+      // If we found a shift, no need to check further days
+      if (earliestShift) break;
+    }
+
+    return earliestShift;
+  }, [validatedTeam, todayMinuteKey]);
+
   // Find which team is currently working
   // biome-ignore lint/correctness/useExhaustiveDependencies: Using minute-based ISO string to limit recalculation to once per minute instead of every render
   const currentWorkingTeam = useMemo((): ShiftResult | null => {
-    const allTeamsToday = getAllTeamsShifts(today);
     const now = today;
 
-    // Find team that is working right now based on current time
-    const workingTeam = allTeamsToday.find((teamShift) => {
+    // Check today's shifts
+    const allTeamsToday = getAllTeamsShifts(today);
+    const workingToday = allTeamsToday.find((teamShift) => {
       if (!teamShift.shift.isWorking) return false;
       return isCurrentlyWorking(teamShift.shift, teamShift.date, now);
     });
 
-    return workingTeam || null;
+    if (workingToday) return workingToday;
+
+    // Also check yesterday's shifts (for night shifts spanning midnight)
+    const yesterday = today.subtract(1, 'day');
+    const allTeamsYesterday = getAllTeamsShifts(yesterday);
+    const workingYesterday = allTeamsYesterday.find((teamShift) => {
+      if (!teamShift.shift.isWorking) return false;
+      return isCurrentlyWorking(teamShift.shift, teamShift.date, now);
+    });
+
+    return workingYesterday || null;
   }, [todayMinuteKey]);
 
   // Calculate off-day progress when team is off
@@ -111,14 +164,15 @@ export function CurrentStatus({ myTeam, onChangeTeam, onShowWhoIsWorking }: Curr
 
   // Calculate next shift start time for countdown
   const nextShiftStartTime = useMemo(() => {
-    if (!nextShift || !nextShift.shift.start) return null;
+    const shift = validatedTeam ? nextShift : nextShiftAnyTeam;
+    if (!shift || !shift.shift.start) return null;
 
     // Create datetime for the shift start
-    const shiftDate = nextShift.date;
-    const startTime = shiftDate.hour(nextShift.shift.start).minute(0).second(0);
+    const shiftDate = shift.date;
+    const startTime = shiftDate.hour(shift.shift.start).minute(0).second(0);
 
     return startTime;
-  }, [nextShift]);
+  }, [nextShift, nextShiftAnyTeam, validatedTeam]);
 
   // Countdown to next shift
   const countdown = useCountdown(nextShiftStartTime);
@@ -331,26 +385,36 @@ export function CurrentStatus({ myTeam, onChangeTeam, onShowWhoIsWorking }: Curr
                       </div>
                     ) : validatedTeam ? (
                       <div>Next shift information not available</div>
-                    ) : (
+                    ) : nextShiftAnyTeam ? (
                       <div>
-                        {currentWorkingTeam ? (
-                          <div>
-                            <div className="fw-semibold">Next shift change coming soon</div>
-                            <div className="small">
-                              Check the timeline above or view all teams in the "Today" tab
-                            </div>
-                          </div>
-                        ) : (
-                          <div>
-                            <div className="fw-semibold">Next shift starts tomorrow</div>
-                            <div className="small">
-                              View the schedule in other tabs for detailed timing
-                            </div>
-                          </div>
+                        <div className="fw-semibold">
+                          Team {nextShiftAnyTeam.teamNumber}: {nextShiftAnyTeam.date.format('ddd, MMM D')} -{' '}
+                          {nextShiftAnyTeam.shift.name}
+                        </div>
+                        <div className="small text-muted">
+                          {nextShiftAnyTeam.shift.start && nextShiftAnyTeam.shift.end
+                            ? getLocalizedShiftTime(
+                                nextShiftAnyTeam.shift.start,
+                                nextShiftAnyTeam.shift.end,
+                                settings.timeFormat,
+                              )
+                            : nextShiftAnyTeam.shift.hours}
+                        </div>
+                        {countdown && !countdown.isExpired && nextShiftStartTime && (
+                          <Badge bg="info" className="mt-2">
+                            ⏰ Starts in {countdown.formatted}
+                          </Badge>
                         )}
                         <hr className="my-3" />
                         <div className="small text-muted">
-                          Select your team for countdown timers and personalized notifications
+                          💡 Select your team above for personalized shift tracking
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="fw-semibold">No upcoming shifts found</div>
+                        <div className="small text-muted">
+                          View the schedule in other tabs for detailed timing
                         </div>
                       </div>
                     )}

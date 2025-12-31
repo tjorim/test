@@ -93,7 +93,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
   return (
     <ToastContext.Provider value={contextValue}>
       {children}
-      <ToastContainer position="top-end" className="p-3" style={{ zIndex: 1100 }}>
+      <ToastContainer position="top-end" className="p-3 position-fixed" style={{ zIndex: 1100 }}>
         {toasts.map((toast) => (
           <Toast
             key={toast.id}
@@ -105,7 +105,9 @@ export function ToastProvider({ children }: ToastProviderProps) {
           >
             <Toast.Body className="d-flex align-items-center">
               {toast.icon && <span className="me-2 toast-icon">{toast.icon}</span>}
-              <span className="text-white">{toast.message}</span>
+              <span className={toast.variant === 'warning' ? 'text-dark' : 'text-white'}>
+                {toast.message}
+              </span>
             </Toast.Body>
           </Toast>
         ))}

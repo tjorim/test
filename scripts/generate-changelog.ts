@@ -71,7 +71,7 @@ ${Object.entries(futurePlans)
 
   // Generate version links for Keep a Changelog format
   const versionLinks = [
-    '[Unreleased]: https://github.com/tjorim/worktime/compare/v3.2.0...HEAD',
+    `[Unreleased]: https://github.com/tjorim/worktime/compare/v${changelogData[0].version}...HEAD`,
     ...changelogData.slice(0, -1).map((version, index) => {
       const nextVersion = changelogData[index + 1];
       return `[${version.version}]: https://github.com/tjorim/worktime/compare/v${nextVersion.version}...v${version.version}`;

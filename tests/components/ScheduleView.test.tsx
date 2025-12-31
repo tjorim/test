@@ -13,23 +13,6 @@ vi.mock('../../src/hooks/useKeyboardShortcuts', () => ({
   useKeyboardShortcuts: vi.fn(),
 }));
 
-vi.mock('../../src/utils/shiftCalculations', () => ({
-  calculateShift: vi.fn((date: string, teamNumber: number) => ({
-    teamNumber,
-    shift: {
-      type: 'M',
-      code: 'M',
-      name: 'Morning',
-      start: 7,
-      end: 15,
-      isWorking: true,
-      className: 'shift-morning',
-    },
-    date: dayjs(date),
-    dateCode: '2503.1M',
-  })),
-}));
-
 vi.mock('../../src/utils/dateTimeUtils', () => {
   let callCount = 0;
   return {

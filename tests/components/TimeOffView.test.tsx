@@ -332,8 +332,8 @@ describe('TimeOffView', () => {
 
       await user.click(screen.getByRole('button', { name: /Export/i }));
 
-      // Toast should show error (via ToastContext)
-      // Note: This would require mocking the toast or checking DOM
+      // Verify error toast appears
+      expect(screen.getByText('No events to export')).toBeInTheDocument();
     });
   });
 

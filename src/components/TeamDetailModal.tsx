@@ -45,6 +45,10 @@ export function TeamDetailModal({
   const calendarTooltipId = useId();
   const transfersDisabledTooltipId = useId();
   const transfersTooltipId = useId();
+
+  // Current date string (updates daily at midnight)
+  const currentDateKey = dayjs().format('YYYY-MM-DD');
+
   // Generate 7-day schedule for the team
   const weekSchedule = useMemo(() => {
     const today = dayjs();
@@ -64,7 +68,7 @@ export function TeamDetailModal({
     }
 
     return schedule;
-  }, [teamNumber]);
+  }, [teamNumber, currentDateKey]);
 
   // Calculate team statistics
   const stats = useMemo(() => {

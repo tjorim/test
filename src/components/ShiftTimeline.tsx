@@ -30,6 +30,15 @@ function computeShiftTimeline(today: Dayjs, currentWorkingTeam: ShiftResult): Ti
     (team) => team.teamNumber === currentWorkingTeam.teamNumber,
   );
 
+  // Handle case when current team is not found in timeline (should not happen in normal operation)
+  if (currentIndex === -1) {
+    return {
+      prevShift: null,
+      currentShift: currentWorkingTeam,
+      nextShift: null,
+    };
+  }
+
   let prevShift: ShiftResult | null = null;
 
   // Check if there's a previous shift in today's timeline

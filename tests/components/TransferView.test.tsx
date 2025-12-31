@@ -326,7 +326,7 @@ describe('TransferView', () => {
       expect(screen.getAllByText(/Takeover/).length).toBeGreaterThan(0);
     });
 
-    it('shows maximum 20 transfers message when applicable', () => {
+    it('renders team badges when displaying limited transfers', () => {
       // Create 21 mock transfers to test the limit
       const mockTransfers = Array.from({ length: 21 }, (_, i) => ({
         date: dayjs('2025-01-15').add(i, 'day'),

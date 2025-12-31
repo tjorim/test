@@ -5,26 +5,20 @@ import { SettingsPanel } from './SettingsPanel';
 
 interface HeaderProps {
   onShowAbout?: () => void;
-  onToggleTerminal?: () => void;
 }
 
 /**
  * Displays the top navigation bar for the Worktime application.
  *
- * The header shows the app title and action buttons for Terminal view, About modal, and Settings.
+ * The header shows the app title and action buttons for About modal and Settings.
  *
  * @param onShowAbout - Optional callback invoked when the About button is clicked
- * @param onToggleTerminal - Optional callback invoked when the Terminal button is clicked to toggle terminal view mode
  */
-export function Header({ onShowAbout, onToggleTerminal }: HeaderProps = {}) {
+export function Header({ onShowAbout }: HeaderProps = {}) {
   const [showSettings, setShowSettings] = useState(false);
 
   const handleShowAbout = () => {
     onShowAbout?.();
-  };
-
-  const handleToggleTerminal = () => {
-    onToggleTerminal?.();
   };
 
   return (
@@ -37,16 +31,6 @@ export function Header({ onShowAbout, onToggleTerminal }: HeaderProps = {}) {
               <h1 className="h4 mb-0 fw-bold">Worktime</h1>
             </div>
             <div className="d-flex align-items-center header-button-spacing">
-              <Button
-                variant="outline-light"
-                size="sm"
-                onClick={handleToggleTerminal}
-                aria-label="Terminal View"
-                className="header-button"
-              >
-                <i className="bi bi-terminal"></i>
-                <span className="d-none d-lg-inline ms-1">Terminal</span>
-              </Button>
               <Button
                 variant="outline-light"
                 size="sm"

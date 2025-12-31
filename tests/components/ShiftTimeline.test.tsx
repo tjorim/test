@@ -72,7 +72,7 @@ describe('ShiftTimeline', () => {
     expect(currentBadge?.textContent).toBe('T3');
   });
 
-  it('shows tooltip on hover for current team', async () => {
+  it('applies timeline-current-badge class to current team', () => {
     const currentWorkingTeam = createMockShiftResult(2, 'N', today);
 
     renderWithProviders(<ShiftTimeline currentWorkingTeam={currentWorkingTeam} today={today} />);
@@ -81,8 +81,6 @@ describe('ShiftTimeline', () => {
     const badges = screen.getAllByText('T2');
     const currentBadge = badges.find((badge) => badge.className.includes('timeline-current-badge'));
     expect(currentBadge).toBeInTheDocument();
-
-    // Tooltip content is tested through overlay trigger functionality
     expect(currentBadge?.className.includes('timeline-current-badge')).toBe(true);
   });
 

@@ -10,6 +10,18 @@ Worktime is a Team Shift Tracker and Time-Off Manager for continuous (24/7) 5-te
 
 **Note**: Previously known as NextShift. Rebranded to Worktime with v4.0.0 after merging HdayPlanner's time-off management capabilities.
 
+## Developer Workflow Preferences
+
+**Git Workflow**:
+- **Do NOT commit automatically** - The user (Jorim) handles all git commits
+- Only create commits when explicitly requested by the user
+- Focus on implementation and testing, let the user control version control timing and commit messages
+
+**Language & Spelling**:
+- Use **American English** spelling throughout the codebase
+- Examples: "color" (not "colour"), "organization" (not "organisation"), "license" (not "licence"), "optimize" (not "optimise")
+- Aligns with programming conventions and React/TypeScript ecosystem standards
+
 ## File Structure
 
 ```text
@@ -29,13 +41,7 @@ Worktime/
 │   │   ├── ShiftTimeline.tsx    # Today's shift timeline component (extracted from CurrentStatus)
 │   │   ├── TeamSelector.tsx     # Team selection modal
 │   │   ├── TodayView.tsx        # Today's schedule for all teams
-│   │   ├── TransferView.tsx     # Team handover/transfer analysis
-│   │   └── terminal/            # Terminal web interface components
-│   │       ├── TerminalView.tsx        # Main terminal container
-│   │       ├── TerminalHeader.tsx      # Terminal header with live time
-│   │       ├── TerminalTeamList.tsx    # Team shift display
-│   │       ├── TerminalNextShift.tsx   # Next shift information
-│   │       └── TerminalTransfers.tsx   # Transfer analysis
+│   │   └── TransferView.tsx     # Team handover/transfer analysis
 │   ├── contexts/          # React contexts for global state
 │   │   └── ToastContext.tsx        # Global toast notification system with React Context
 │   ├── data/              # Static data and configurations
@@ -52,8 +58,7 @@ Worktime/
 │   │   ├── shiftCalculations.ts # Core shift calculation functions
 │   │   └── shiftStyles.ts      # Shift styling utilities
 │   └── styles/
-│       ├── main.scss      # Custom styles and shift color coding (Sass)
-│       └── terminal.css   # Terminal web interface styles
+│       └── main.scss      # Custom styles and shift color coding (Sass)
 ├── tests/                 # Test files
 │   ├── components/        # Component tests
 │   ├── hooks/            # Hook tests
@@ -148,7 +153,6 @@ These variables anchor all shift calculations. If not configured, defaults to `2
 - **Time Off Management**: Import/export .hday files for vacation and time-off tracking with event overlays on schedule
 - **Date Navigation**: Today button, date picker, previous/next day
 - **Date Format**: Display in YYWW.D format (e.g., 2520.2M = year 2025, week 20, Tuesday Morning)
-- **Terminal Web Interface**: Browser-based terminal-style UI with keyboard navigation (accessible via `?view=terminal`)
 
 ## Recent Improvements (v3.1+)
 
@@ -284,57 +288,6 @@ This application uses Vite for modern development and build processes:
    npm run generate-changelog  # Generate CHANGELOG.md from data
    npm run generate-icons      # Generate favicon icons
    ```
-
-## Terminal Web Interface
-
-Worktime includes a terminal-styled web interface that provides all shift tracking functionality in a retro terminal aesthetic.
-
-### Features
-
-- **Browser-Based**: Runs in any web browser, no terminal needed
-- **Terminal Aesthetic**: Monospace fonts, terminal colors, retro styling
-- **Keyboard Navigation**: Full keyboard control for efficient operation
-- **Integrated**: No additional dependencies beyond the main app; uses custom CSS for styling
-- **Mobile Accessible**: Works on all devices (keyboard shortcuts optional)
-- **URL Parameter**: Access via `?view=terminal`
-
-### Access
-
-**Via UI Button:**
-
-- Click "Terminal" button in header to enter terminal view
-- Click "[Exit Terminal]" button or press Escape/q to exit
-
-**Via URL:**
-
-```bash
-# Production
-https://yourapp.com/?view=terminal
-
-# Development
-http://localhost:8000/?view=terminal
-```
-
-### Keyboard Shortcuts
-
-- **1-5**: Select team (Team 1 through Team 5)
-- **↑/↓**: Switch between teams (up/down through vertical list)
-- **Tab**: Cycle through views (Today → Next Shift → Transfers)
-- **j/k** or **←/→**: Navigate dates (left=past, right=future)
-- **t**: Jump to today's date
-- **q** or **Esc**: Exit terminal view (return to normal UI)
-
-### Implementation
-
-- **Location**: `src/components/terminal/`
-- **Styling**: `src/styles/terminal.css`
-- **Components**:
-  - `TerminalView.tsx` - Main container with keyboard navigation
-  - `TerminalHeader.tsx` - Header with live time
-  - `TerminalTeamList.tsx` - Team shift display
-  - `TerminalNextShift.tsx` - Next shift information
-  - `TerminalTransfers.tsx` - Transfer analysis
-- **Integration**: URL parameter `?view=terminal` in App.tsx
 
 ## Future Extensions
 

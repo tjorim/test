@@ -15,7 +15,7 @@ function renderWithSettings(ui: React.ReactElement) {
 }
 
 describe('TeamDetailModal', () => {
-  it('disables View Transfers button and shows tooltip when viewing own team', async () => {
+  beforeEach(() => {
     // Set user state with the unified storage structure
     window.localStorage.setItem(
       'worktime_user_state',
@@ -29,6 +29,13 @@ describe('TeamDetailModal', () => {
         },
       }),
     );
+  });
+
+  afterEach(() => {
+    window.localStorage.clear();
+  });
+
+  it('disables View Transfers button and shows tooltip when viewing own team', async () => {
     renderWithSettings(
       <TeamDetailModal show={true} onHide={() => {}} teamNumber={2} onViewTransfers={vi.fn()} />,
     );
@@ -49,18 +56,6 @@ describe('TeamDetailModal', () => {
   });
 
   it('enables View Transfers button for other teams', () => {
-    window.localStorage.setItem(
-      'worktime_user_state',
-      JSON.stringify({
-        hasCompletedOnboarding: true,
-        myTeam: 2,
-        settings: {
-          timeFormat: '24h',
-          theme: 'auto',
-          notifications: 'off',
-        },
-      }),
-    );
     renderWithSettings(
       <TeamDetailModal show={true} onHide={() => {}} teamNumber={3} onViewTransfers={vi.fn()} />,
     );

@@ -68,8 +68,8 @@ export class ErrorBoundary extends Component<Props, State> {
               <Alert variant="danger">
                 <Alert.Heading>Application Error</Alert.Heading>
                 <p>
-                  We're sorry, but something unexpected happened. The error has been logged and our
-                  team has been notified.
+                  We're sorry, but something unexpected happened. Please try refreshing the page or
+                  contact support if the problem persists.
                 </p>
                 <hr />
                 <div className="d-flex gap-2">

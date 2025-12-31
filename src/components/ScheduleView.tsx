@@ -8,7 +8,6 @@ import Form from 'react-bootstrap/Form';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Table from 'react-bootstrap/Table';
 import Tooltip from 'react-bootstrap/Tooltip';
-import { useEventStore } from '../contexts/EventStoreContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { CONFIG } from '../utils/config';
@@ -81,7 +80,6 @@ export function ScheduleView({
   });
 
   const { settings } = useSettings();
-  const { getEventsInRange } = useEventStore();
 
   return (
     <Card>
@@ -203,13 +201,6 @@ export function ScheduleView({
                     const shift = calculateShift(day, teamNumber);
                     const isToday = day.isSame(dayjs(), 'day');
 
-                    // Get events for this specific day
-                    const dayStart = day.toDate();
-                    const dayEnd = day.toDate();
-                    const dayEvents = getEventsInRange(dayStart, dayEnd).filter(
-                      (e) => e.type === 'holiday',
-                    );
-
                     return (
                       <td
                         key={day.format('YYYY-MM-DD')}
@@ -225,9 +216,9 @@ export function ScheduleView({
                               >
                                 <strong>Shift: {shift.code}</strong>
                                 <br />
-                                {shift.code === 'M' && 'Morning shift ('}
-                                {shift.code === 'E' && 'Evening shift ('}
-                                {shift.code === 'N' && 'Night shift ('}
+                                {shift.code === 'M' && 'Morning shift'}
+                                {shift.code === 'E' && 'Evening shift'}
+                                {shift.code === 'N' && 'Night shift'}
                                 <br />
                                 <em>
                                   {shift.name} -{' '}
@@ -246,32 +237,6 @@ export function ScheduleView({
                               {shift.code}
                             </Badge>
                           </OverlayTrigger>
-                        )}
-                        {dayEvents.length > 0 && (
-                          <div className="event-indicators">
-                            {dayEvents.map((event) => (
-                              <OverlayTrigger
-                                key={event.id}
-                                placement="bottom"
-                                overlay={
-                                  <Tooltip id={`event-tooltip-${event.id}`}>
-                                    {event.label || 'Time off'}
-                                  </Tooltip>
-                                }
-                              >
-                                <span
-                                  className="event-dot cursor-help"
-                                  style={{
-                                    backgroundColor:
-                                      event.meta && 'color' in event.meta
-                                        ? event.meta.color || '#EC0000'
-                                        : '#EC0000',
-                                  }}
-                                  aria-label={event.label || 'Time off event'}
-                                />
-                              </OverlayTrigger>
-                            ))}
-                          </div>
                         )}
                       </td>
                     );
