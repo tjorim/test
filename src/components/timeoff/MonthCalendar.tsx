@@ -3,9 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import { dayjs, formatHdayDate, getWeekdayName } from "../../utils/dateTimeUtils";
 import type { HdayEvent } from "../../lib/hday/types";
-import type { PublicHolidayInfo } from "../../hooks/usePublicHolidays";
-import type { SchoolHolidayInfo } from "../../hooks/useSchoolHolidays";
-import type { PaydayInfo } from "../../utils/paydayUtils";
+import type { PublicHolidayInfo } from "../../types/publicHolidays";
+import type { SchoolHolidayInfo } from "../../types/schoolHolidays";
+import type { PaydayInfo } from "../../types/paydays";
 import { DayCell } from "./DayCell";
 
 type DayEvent = {

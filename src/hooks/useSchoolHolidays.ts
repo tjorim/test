@@ -2,9 +2,7 @@ import { useMemo } from "react";
 import { dayjs, formatHdayDate } from "../utils/dateTimeUtils";
 import { useOpenHolidays } from "./useOpenHolidays";
 
-export interface SchoolHolidayInfo {
-  name: string;
-}
+import type { SchoolHolidayInfo } from "../types/schoolHolidays";
 
 export interface SchoolHolidayName {
   language: string;
