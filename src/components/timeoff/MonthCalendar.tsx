@@ -96,11 +96,14 @@ export function MonthCalendar({
           current = current.add(1, "day");
         }
       } else if (event.type === "weekly" && event.weekday) {
-        days.forEach((day) => {
-          if (day.isoWeekday() === event.weekday) {
-            addEvent(day, { event, index });
-          }
-        });
+        const firstOccurrence = days.find((day) => day.isoWeekday() === event.weekday);
+        if (!firstOccurrence) return;
+        let current = firstOccurrence;
+        const lastDay = days[days.length - 1];
+        while (current.isBefore(lastDay) || current.isSame(lastDay, "day")) {
+          addEvent(current, { event, index });
+          current = current.add(7, "day");
+        }
       }
     });
 
