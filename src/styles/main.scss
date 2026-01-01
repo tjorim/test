@@ -487,6 +487,56 @@
   }
 }
 
+[data-bs-theme="dark"] .month-calendar {
+  background: #1f242a;
+}
+
+[data-bs-theme="dark"] .month-calendar-weekday {
+  color: #9aa4b2;
+}
+
+[data-bs-theme="dark"] .month-calendar-day {
+  border-color: #2f353d;
+  background: #1b1f24;
+  color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .month-calendar-day.is-other-month {
+  background: #15181c;
+  color: #6c757d;
+}
+
+[data-bs-theme="dark"] .month-calendar-day.is-weekend {
+  background: #231c1c;
+}
+
+[data-bs-theme="dark"] .month-calendar-day.is-today {
+  border-color: #6ea8fe;
+  box-shadow: 0 0 0 2px rgb(110 168 254 / 0.25);
+}
+
+[data-bs-theme="dark"] .month-calendar-day-button {
+  color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .month-calendar-day-button:focus-visible {
+  outline-color: #6ea8fe;
+}
+
+[data-bs-theme="dark"] .month-calendar-event {
+  background: rgba(110, 168, 254, 0.18);
+  color: #e9edf1;
+}
+
+[data-bs-theme="dark"] .month-calendar-event:hover {
+  background: rgba(110, 168, 254, 0.28);
+}
+
+[data-bs-theme="dark"] .month-calendar-event-overflow,
+[data-bs-theme="dark"] .month-calendar-event-empty {
+  color: #8b949e;
+}
+
 /* Header styling */
 .header-icon {
   font-size: 1.25rem;
