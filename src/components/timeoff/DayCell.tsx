@@ -22,6 +22,7 @@ interface DayCellProps {
 }
 
 const MAX_EVENTS = 3;
+const PAYDAY_KEYWORDS = ["payday", "pay day", "salary"];
 
 const getIndicatorIcons = (events: DayEvent[]) => {
   const icons = new Set<string>();
@@ -35,7 +36,7 @@ const getIndicatorIcons = (events: DayEvent[]) => {
       icons.add("🎉");
     }
     const title = event.title?.toLowerCase();
-    if (title && (title.includes("payday") || title.includes("salary") || title.includes("pay day"))) {
+    if (title && PAYDAY_KEYWORDS.some((keyword) => title.includes(keyword))) {
       icons.add("💶");
     }
   });
