@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import { dayjs, formatHdayDate, getWeekdayName } from "../../utils/dateTimeUtils";
 import type { HdayEvent } from "../../lib/hday/types";
-import type { HolidayInfo } from "../../types/holidays";
+import type { PublicHolidayInfo } from "../../types/holidays";
 import type { PaydayInfo } from "../../types/payday";
 import type { SchoolHolidayInfo } from "../../types/schoolHolidays";
 import { DayCell } from "./DayCell";
@@ -16,7 +16,7 @@ type DayEvent = {
 interface MonthCalendarProps {
   events: HdayEvent[];
   month: dayjs.Dayjs;
-  holidays?: Map<string, HolidayInfo>;
+  publicHolidays?: Map<string, PublicHolidayInfo>;
   schoolHolidays?: Map<string, SchoolHolidayInfo>;
   paydayMap?: Map<string, PaydayInfo>;
   onMonthChange: (month: dayjs.Dayjs) => void;
@@ -46,7 +46,7 @@ const buildCalendarDays = (month: dayjs.Dayjs) => {
 export function MonthCalendar({
   events,
   month,
-  holidays = new Map(),
+  publicHolidays = new Map(),
   schoolHolidays = new Map(),
   paydayMap = new Map(),
   onMonthChange,
@@ -219,7 +219,7 @@ export function MonthCalendar({
               isToday={day.isSame(today, "day")}
               isWeekend={day.isoWeekday() >= 6}
               isFocused={focusedDateKey === key}
-              holiday={holidays.get(dayKey)}
+              publicHoliday={publicHolidays.get(dayKey)}
               schoolHoliday={schoolHolidays.get(dayKey)}
               paydayInfo={paydayMap.get(dayKey)}
               events={cellEvents}

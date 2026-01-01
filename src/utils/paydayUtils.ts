@@ -1,11 +1,11 @@
-import type { HolidayInfo } from "../types/holidays";
+import type { PublicHolidayInfo } from "../types/holidays";
 import type { PaydayInfo } from "../types/payday";
 import { dayjs, formatHdayDate, getISOWeekday, pad2 } from "./dateTimeUtils";
 
 const PAYDAY_LABEL = "Payday";
 const PAYDAY_DAY_OF_MONTH = 25;
 
-const isBusinessDay = (date: dayjs.Dayjs, holidayMap: Map<string, HolidayInfo>) => {
+const isBusinessDay = (date: dayjs.Dayjs, holidayMap: Map<string, PublicHolidayInfo>) => {
   const isoWeekday = getISOWeekday(date);
   const isWeekend = isoWeekday === 6 || isoWeekday === 7;
   const isHoliday = holidayMap.has(formatHdayDate(date));
@@ -15,7 +15,7 @@ const isBusinessDay = (date: dayjs.Dayjs, holidayMap: Map<string, HolidayInfo>) 
 const getPaydayForMonth = (
   year: number,
   month: number,
-  holidayMap: Map<string, HolidayInfo>,
+  holidayMap: Map<string, PublicHolidayInfo>,
 ) => {
   const scheduledPayday = dayjs(`${year}-${pad2(month)}-${PAYDAY_DAY_OF_MONTH}`);
   const isWeekend = getISOWeekday(scheduledPayday) >= 6;
@@ -33,7 +33,7 @@ const getPaydayForMonth = (
 
 export const getMonthlyPaydayMap = (
   year: number,
-  holidayMap: Map<string, HolidayInfo>,
+  holidayMap: Map<string, PublicHolidayInfo>,
   label: string = PAYDAY_LABEL,
 ): Map<string, PaydayInfo> => {
   const map = new Map<string, PaydayInfo>();

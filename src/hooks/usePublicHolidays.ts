@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { HolidayInfo } from "../types/holidays";
+import type { PublicHolidayInfo } from "../types/holidays";
 import { dayjs, formatHdayDate } from "../utils/dateTimeUtils";
 import { useOpenHolidays } from "./useOpenHolidays";
 
@@ -34,7 +34,7 @@ export function getPublicHolidayName(
 }
 
 const toHolidayMap = (holidays: PublicHoliday[], language: string) => {
-  const map = new Map<string, HolidayInfo>();
+  const map = new Map<string, PublicHolidayInfo>();
 
   holidays.forEach((holiday) => {
     const start = dayjs(holiday.startDate);
@@ -81,7 +81,7 @@ export function usePublicHolidays(
   });
 
   const holidayMap = useMemo(
-    () => (isEnabled ? toHolidayMap(holidays, language) : new Map<string, HolidayInfo>()),
+    () => (isEnabled ? toHolidayMap(holidays, language) : new Map<string, PublicHolidayInfo>()),
     [holidays, isEnabled, language],
   );
 
