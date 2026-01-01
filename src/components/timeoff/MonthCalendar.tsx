@@ -6,12 +6,7 @@ import type { HdayEvent } from "../../lib/hday/types";
 import type { PublicHolidayInfo } from "../../types/publicHolidays";
 import type { SchoolHolidayInfo } from "../../types/schoolHolidays";
 import type { PaydayInfo } from "../../types/paydays";
-import { DayCell } from "./DayCell";
-
-type DayEvent = {
-  event: HdayEvent;
-  index: number;
-};
+import { DayCell, type DayEvent } from "./DayCell";
 
 interface MonthCalendarProps {
   events: HdayEvent[];

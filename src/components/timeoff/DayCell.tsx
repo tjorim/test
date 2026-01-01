@@ -6,7 +6,7 @@ import type { PaydayInfo } from "../../types/paydays";
 import { dayjs } from "../../utils/dateTimeUtils";
 import { getEventColor, getEventTypeLabel, getTimeLocationSymbol } from "../../lib/hday/parser";
 
-type DayEvent = {
+export type DayEvent = {
   event: HdayEvent;
   index: number;
 };

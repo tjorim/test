@@ -438,6 +438,16 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     }
   };
 
+  const getEventRowKey = (event: HdayEvent, index: number) => {
+    if (event.type === "range") {
+      return `range-${event.start ?? "unknown"}-${event.end ?? "unknown"}-${event.title ?? ""}-${index}`;
+    }
+    if (event.type === "weekly") {
+      return `weekly-${event.weekday ?? "unknown"}-${event.title ?? ""}-${index}`;
+    }
+    return `unknown-${event.raw ?? index}`;
+  };
+
   return (
     <div className="time-off-view py-3">
       <Card>
@@ -623,7 +633,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
                       event.type === "unknown" ? `unknown-event-${index}` : undefined;
 
                     return (
-                      <tr key={index} aria-describedby={unknownDescriptionId}>
+                      <tr key={getEventRowKey(event, index)} aria-describedby={unknownDescriptionId}>
                         <td>
                           <input
                             type="checkbox"
