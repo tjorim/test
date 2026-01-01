@@ -63,6 +63,20 @@ export const getISOWeekday = (date: string | Date | dayjs.Dayjs): number => {
 };
 
 /**
+ * Format a date as YYYY/MM/DD for .hday-style date strings.
+ */
+export const formatHdayDate = (date: string | Date | dayjs.Dayjs): string => {
+  return dayjs(date).format("YYYY/MM/DD");
+};
+
+/**
+ * Pad a number to two digits.
+ */
+export const pad2 = (value: number): string => {
+  return value.toString().padStart(2, "0");
+};
+
+/**
  * Formats a date into the YYWW.D format using ISO week numbering
  * Note: Year is represented as 2 digits (00-99), valid for years 2000-2099
  * Uses ISO week numbering, where weeks start on Monday and end on Sunday

@@ -366,6 +366,16 @@
   background: #fff7f7;
 }
 
+.month-calendar-day.is-public-holiday {
+  border-color: #ffb703;
+  background: #fff4db;
+}
+
+.month-calendar-day.is-payday {
+  border-color: #198754;
+  background: #e9f7ef;
+}
+
 .month-calendar-day.is-today {
   border-color: #0d6efd;
   box-shadow: 0 0 0 2px rgb(13 110 253 / 0.2);
@@ -397,6 +407,11 @@
   font-size: 0.95rem;
   display: inline-flex;
   gap: 0.2rem;
+  align-items: center;
+}
+
+.month-calendar-day-indicator {
+  line-height: 1;
 }
 
 .month-calendar-events {

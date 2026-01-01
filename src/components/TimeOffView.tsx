@@ -16,6 +16,10 @@ import { isValidDate } from "../lib/hday/validation";
 import { useEventStore } from "../contexts/EventStoreContext";
 import { useToast } from "../contexts/ToastContext";
 import { dayjs } from "../utils/dateTimeUtils";
+import type { PublicHolidayInfo } from "../types/holidays";
+import type { PaydayInfo } from "../types/payday";
+import { getMonthlyPaydayMap } from "../utils/paydayUtils";
+import { fetchPublicHolidays } from "../utils/publicHolidayUtils";
 import { EventModal } from "./EventModal";
 import { ConfirmationDialog } from "./ConfirmationDialog";
 import { MonthCalendar } from "./timeoff/MonthCalendar";
@@ -91,6 +95,10 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
 
   const [viewMode, setViewMode] = useState<"calendar" | "table">("calendar");
   const [calendarMonth, setCalendarMonth] = useState(() => dayjs());
+  const [publicHolidayMap, setPublicHolidayMap] = useState<Map<string, PublicHolidayInfo>>(
+    new Map(),
+  );
+  const [paydayMap, setPaydayMap] = useState<Map<string, PaydayInfo>>(new Map());
 
   // Modal state
   const [showEventModal, setShowEventModal] = useState(false);
@@ -386,6 +394,26 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     };
   }, [handleRedo, handleUndo, isActive]);
 
+  useEffect(() => {
+    let isMounted = true;
+    const year = calendarMonth.year();
+    fetchPublicHolidays(year)
+      .then((map) => {
+        if (!isMounted) return;
+        setPublicHolidayMap(map);
+        setPaydayMap(getMonthlyPaydayMap(year, map));
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setPublicHolidayMap(new Map());
+        setPaydayMap(new Map());
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [calendarMonth]);
+
   const previewLine = buildPreviewLine({
     eventType,
     start: eventStart,
@@ -535,6 +563,8 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
               <MonthCalendar
                 events={events}
                 month={calendarMonth}
+                publicHolidays={publicHolidayMap}
+                paydayMap={paydayMap}
                 onMonthChange={setCalendarMonth}
                 onAddEvent={handleAddEventForDate}
                 onEditEvent={handleOpenEditModal}

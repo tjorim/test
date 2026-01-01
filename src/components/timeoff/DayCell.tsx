@@ -1,5 +1,7 @@
 import type { KeyboardEvent } from "react";
 import type { HdayEvent } from "../../lib/hday/types";
+import type { PublicHolidayInfo } from "../../types/holidays";
+import type { PaydayInfo } from "../../types/payday";
 import { dayjs } from "../../utils/dateTimeUtils";
 import { getEventColor, getEventTypeLabel, getTimeLocationSymbol } from "../../lib/hday/parser";
 
@@ -14,6 +16,8 @@ interface DayCellProps {
   isToday: boolean;
   isWeekend: boolean;
   isFocused: boolean;
+  publicHoliday?: PublicHolidayInfo;
+  paydayInfo?: PaydayInfo;
   events: DayEvent[];
   onAddEvent: (date: dayjs.Dayjs) => void;
   onEditEvent: (index: number) => void;
@@ -22,7 +26,6 @@ interface DayCellProps {
 }
 
 const MAX_EVENTS = 3;
-const PAYDAY_KEYWORDS = ["payday", "pay day", "salary"];
 
 const getIndicatorIcons = (events: DayEvent[]) => {
   const icons = new Set<string>();
@@ -32,16 +35,34 @@ const getIndicatorIcons = (events: DayEvent[]) => {
     if (flags.includes("course")) {
       icons.add("🏫");
     }
-    if (flags.includes("holiday")) {
-      icons.add("🎉");
-    }
-    const title = event.title?.toLowerCase();
-    if (title && PAYDAY_KEYWORDS.some((keyword) => title.includes(keyword))) {
-      icons.add("💶");
-    }
   });
 
   return Array.from(icons);
+};
+
+const getIndicatorDetails = (
+  publicHoliday?: PublicHolidayInfo,
+  paydayInfo?: PaydayInfo,
+) => {
+  return [
+    publicHoliday && {
+      key: "public-holiday",
+      emoji: "🎉",
+      title: publicHoliday.localName,
+      label: publicHoliday.name,
+    },
+    paydayInfo && {
+      key: "payday",
+      emoji: "💶",
+      title: paydayInfo.name,
+      label: paydayInfo.name,
+    },
+  ].filter(Boolean) as Array<{
+    key: string;
+    emoji: string;
+    title: string;
+    label: string;
+  }>;
 };
 
 export function DayCell({
@@ -50,6 +71,8 @@ export function DayCell({
   isToday,
   isWeekend,
   isFocused,
+  publicHoliday,
+  paydayInfo,
   events,
   onAddEvent,
   onEditEvent,
@@ -59,6 +82,17 @@ export function DayCell({
   const visibleEvents = events.slice(0, MAX_EVENTS);
   const hiddenCount = Math.max(events.length - visibleEvents.length, 0);
   const indicators = getIndicatorIcons(events);
+  const holidayIndicators = getIndicatorDetails(publicHoliday, paydayInfo);
+  const ariaLabelParts = [date.format("dddd, MMMM D, YYYY")];
+  if (isToday) {
+    ariaLabelParts.push("Today");
+  }
+  if (publicHoliday) {
+    ariaLabelParts.push(publicHoliday.name);
+  }
+  if (paydayInfo) {
+    ariaLabelParts.push(paydayInfo.name);
+  }
 
   return (
     <div
@@ -67,6 +101,8 @@ export function DayCell({
         isCurrentMonth ? "is-current-month" : "is-other-month",
         isToday ? "is-today" : "",
         isWeekend ? "is-weekend" : "",
+        publicHoliday ? "is-public-holiday" : "",
+        paydayInfo ? "is-payday" : "",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -78,14 +114,25 @@ export function DayCell({
         onKeyDown={(event) => onKeyDown(event, date)}
         ref={buttonRef}
         tabIndex={isFocused ? 0 : -1}
-        aria-label={date.format("dddd, MMMM D, YYYY")}
+        aria-label={ariaLabelParts.join(" - ")}
       >
         <span className="month-calendar-day-number">{date.date()}</span>
-        {indicators.length > 0 && (
-          <span className="month-calendar-day-indicators" aria-hidden="true">
-            {indicators.join(" ")}
-          </span>
-        )}
+        <span className="month-calendar-day-indicators" aria-hidden="true">
+          {indicators.map((indicator) => (
+            <span key={indicator} className="month-calendar-day-indicator">
+              {indicator}
+            </span>
+          ))}
+          {holidayIndicators.map((indicator) => (
+            <span
+              key={indicator.key}
+              className="month-calendar-day-indicator"
+              title={indicator.title}
+            >
+              {indicator.emoji}
+            </span>
+          ))}
+        </span>
       </button>
       <div className="month-calendar-events">
         {visibleEvents.map(({ event, index }) => {
