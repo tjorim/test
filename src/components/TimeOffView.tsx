@@ -16,7 +16,7 @@ import { isValidDate } from "../lib/hday/validation";
 import { useEventStore } from "../contexts/EventStoreContext";
 import { useToast } from "../contexts/ToastContext";
 import { dayjs } from "../utils/dateTimeUtils";
-import type { PublicHolidayInfo } from "../types/holidays";
+import type { HolidayInfo } from "../types/holidays";
 import type { PaydayInfo } from "../types/payday";
 import type { SchoolHolidayInfo } from "../types/schoolHolidays";
 import { getMonthlyPaydayMap } from "../utils/paydayUtils";
@@ -394,7 +394,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     };
   }, [handleRedo, handleUndo, isActive]);
 
-  const publicHolidayMap = useMemo<Map<string, PublicHolidayInfo>>(
+  const holidayMapMemo = useMemo<Map<string, HolidayInfo>>(
     () => holidayMap,
     [holidayMap],
   );
@@ -403,8 +403,8 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     [schoolHolidayMap],
   );
   const paydayMapForYear = useMemo<Map<string, PaydayInfo>>(
-    () => getMonthlyPaydayMap(calendarMonth.year(), publicHolidayMap),
-    [calendarMonth, publicHolidayMap],
+    () => getMonthlyPaydayMap(calendarMonth.year(), holidayMapMemo),
+    [calendarMonth, holidayMapMemo],
   );
 
   const previewLine = buildPreviewLine({
@@ -556,7 +556,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
               <MonthCalendar
                 events={events}
                 month={calendarMonth}
-                publicHolidays={publicHolidayMap}
+                holidays={holidayMapMemo}
                 schoolHolidays={schoolHolidayMapMemo}
                 paydayMap={paydayMapForYear}
                 onMonthChange={setCalendarMonth}

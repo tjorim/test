@@ -1,4 +1,4 @@
-export interface PublicHolidayInfo {
+export interface HolidayInfo {
   name: string;
   localName: string;
 }

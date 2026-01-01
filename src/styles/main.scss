@@ -366,7 +366,7 @@
   background: #fff7f7;
 }
 
-.month-calendar-day.is-public-holiday {
+.month-calendar-day.is-holiday {
   border-color: #ffb703;
   background: #fff4db;
 }
@@ -376,7 +376,7 @@
   background: #f5f0ff;
 }
 
-.month-calendar-day.is-public-holiday.is-school-holiday {
+.month-calendar-day.is-holiday.is-school-holiday {
   background: linear-gradient(135deg, #fff4db, #f5f0ff);
 }
 
@@ -582,7 +582,7 @@
   background-color: var(--bs-table-bg, #23272b);
 }
 
-[data-bs-theme="dark"] .month-calendar-day.is-public-holiday {
+[data-bs-theme="dark"] .month-calendar-day.is-holiday {
   border-color: #d4a017;
   background: #4a3800;
 }
@@ -592,6 +592,6 @@
   background: #1f2b44;
 }
 
-[data-bs-theme="dark"] .month-calendar-day.is-public-holiday.is-school-holiday {
+[data-bs-theme="dark"] .month-calendar-day.is-holiday.is-school-holiday {
   background: linear-gradient(135deg, #4a3800, #1f2b44);
 }
