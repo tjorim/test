@@ -1,6 +1,9 @@
-import type { PublicHolidayInfo } from "../types/holidays";
-import type { PaydayInfo } from "../types/payday";
+import type { PublicHolidayInfo } from "../hooks/usePublicHolidays";
 import { dayjs, formatHdayDate, getISOWeekday, pad2 } from "./dateTimeUtils";
+
+export type PaydayInfo = {
+  name: string;
+};
 
 const PAYDAY_LABEL = "Payday";
 const PAYDAY_DAY_OF_MONTH = 25;

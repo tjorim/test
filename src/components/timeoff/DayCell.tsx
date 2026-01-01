@@ -1,8 +1,8 @@
 import type { KeyboardEvent } from "react";
 import type { HdayEvent } from "../../lib/hday/types";
-import type { PublicHolidayInfo } from "../../types/holidays";
-import type { PaydayInfo } from "../../types/payday";
-import type { SchoolHolidayInfo } from "../../types/schoolHolidays";
+import type { PublicHolidayInfo } from "../../hooks/usePublicHolidays";
+import type { SchoolHolidayInfo } from "../../hooks/useSchoolHolidays";
+import type { PaydayInfo } from "../../utils/paydayUtils";
 import { dayjs } from "../../utils/dateTimeUtils";
 import { getEventColor, getEventTypeLabel, getTimeLocationSymbol } from "../../lib/hday/parser";
 
