@@ -18,8 +18,10 @@ import { useToast } from "../contexts/ToastContext";
 import { dayjs } from "../utils/dateTimeUtils";
 import type { PublicHolidayInfo } from "../types/holidays";
 import type { PaydayInfo } from "../types/payday";
+import type { SchoolHolidayInfo } from "../types/schoolHolidays";
 import { getMonthlyPaydayMap } from "../utils/paydayUtils";
 import { usePublicHolidays } from "../hooks/usePublicHolidays";
+import { useSchoolHolidays } from "../hooks/useSchoolHolidays";
 import { EventModal } from "./EventModal";
 import { ConfirmationDialog } from "./ConfirmationDialog";
 import { MonthCalendar } from "./timeoff/MonthCalendar";
@@ -96,6 +98,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   const [viewMode, setViewMode] = useState<"calendar" | "table">("calendar");
   const [calendarMonth, setCalendarMonth] = useState(() => dayjs());
   const { holidayMap } = usePublicHolidays(calendarMonth.year());
+  const { schoolHolidayMap } = useSchoolHolidays(calendarMonth.year());
 
   // Modal state
   const [showEventModal, setShowEventModal] = useState(false);
@@ -395,6 +398,10 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     () => holidayMap,
     [holidayMap],
   );
+  const schoolHolidayMapMemo = useMemo<Map<string, SchoolHolidayInfo>>(
+    () => schoolHolidayMap,
+    [schoolHolidayMap],
+  );
   const paydayMapForYear = useMemo<Map<string, PaydayInfo>>(
     () => getMonthlyPaydayMap(calendarMonth.year(), publicHolidayMap),
     [calendarMonth, publicHolidayMap],
@@ -550,6 +557,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
                 events={events}
                 month={calendarMonth}
                 publicHolidays={publicHolidayMap}
+                schoolHolidays={schoolHolidayMapMemo}
                 paydayMap={paydayMapForYear}
                 onMonthChange={setCalendarMonth}
                 onAddEvent={handleAddEventForDate}

@@ -371,6 +371,11 @@
   background: #fff4db;
 }
 
+.month-calendar-day.is-school-holiday {
+  border-color: #6f42c1;
+  background: #f5f0ff;
+}
+
 .month-calendar-day.is-payday {
   border-color: #198754;
   background: #e9f7ef;

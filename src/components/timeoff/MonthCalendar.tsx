@@ -5,6 +5,7 @@ import { dayjs, formatHdayDate, getWeekdayName } from "../../utils/dateTimeUtils
 import type { HdayEvent } from "../../lib/hday/types";
 import type { PublicHolidayInfo } from "../../types/holidays";
 import type { PaydayInfo } from "../../types/payday";
+import type { SchoolHolidayInfo } from "../../types/schoolHolidays";
 import { DayCell } from "./DayCell";
 
 type DayEvent = {
@@ -16,6 +17,7 @@ interface MonthCalendarProps {
   events: HdayEvent[];
   month: dayjs.Dayjs;
   publicHolidays?: Map<string, PublicHolidayInfo>;
+  schoolHolidays?: Map<string, SchoolHolidayInfo>;
   paydayMap?: Map<string, PaydayInfo>;
   onMonthChange: (month: dayjs.Dayjs) => void;
   onAddEvent: (date: dayjs.Dayjs) => void;
@@ -45,6 +47,7 @@ export function MonthCalendar({
   events,
   month,
   publicHolidays = new Map(),
+  schoolHolidays = new Map(),
   paydayMap = new Map(),
   onMonthChange,
   onAddEvent,
@@ -217,6 +220,7 @@ export function MonthCalendar({
               isWeekend={day.isoWeekday() >= 6}
               isFocused={focusedDateKey === key}
               publicHoliday={publicHolidays.get(dayKey)}
+              schoolHoliday={schoolHolidays.get(dayKey)}
               paydayInfo={paydayMap.get(dayKey)}
               events={cellEvents}
               onAddEvent={onAddEvent}

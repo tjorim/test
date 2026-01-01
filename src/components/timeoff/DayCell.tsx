@@ -2,6 +2,7 @@ import type { KeyboardEvent } from "react";
 import type { HdayEvent } from "../../lib/hday/types";
 import type { PublicHolidayInfo } from "../../types/holidays";
 import type { PaydayInfo } from "../../types/payday";
+import type { SchoolHolidayInfo } from "../../types/schoolHolidays";
 import { dayjs } from "../../utils/dateTimeUtils";
 import { getEventColor, getEventTypeLabel, getTimeLocationSymbol } from "../../lib/hday/parser";
 
@@ -18,6 +19,7 @@ interface DayCellProps {
   isFocused: boolean;
   publicHoliday?: PublicHolidayInfo;
   paydayInfo?: PaydayInfo;
+  schoolHoliday?: SchoolHolidayInfo;
   events: DayEvent[];
   onAddEvent: (date: dayjs.Dayjs) => void;
   onEditEvent: (index: number) => void;
@@ -43,6 +45,7 @@ const getIndicatorIcons = (events: DayEvent[]) => {
 const getIndicatorDetails = (
   publicHoliday?: PublicHolidayInfo,
   paydayInfo?: PaydayInfo,
+  schoolHoliday?: SchoolHolidayInfo,
 ) => {
   return [
     publicHoliday && {
@@ -50,6 +53,12 @@ const getIndicatorDetails = (
       emoji: "🎉",
       title: publicHoliday.localName,
       label: publicHoliday.name,
+    },
+    schoolHoliday && {
+      key: "school-holiday",
+      emoji: "🏫",
+      title: schoolHoliday.name,
+      label: schoolHoliday.name,
     },
     paydayInfo && {
       key: "payday",
@@ -73,6 +82,7 @@ export function DayCell({
   isFocused,
   publicHoliday,
   paydayInfo,
+  schoolHoliday,
   events,
   onAddEvent,
   onEditEvent,
@@ -82,13 +92,16 @@ export function DayCell({
   const visibleEvents = events.slice(0, MAX_EVENTS);
   const hiddenCount = Math.max(events.length - visibleEvents.length, 0);
   const indicators = getIndicatorIcons(events);
-  const holidayIndicators = getIndicatorDetails(publicHoliday, paydayInfo);
+  const holidayIndicators = getIndicatorDetails(publicHoliday, paydayInfo, schoolHoliday);
   const ariaLabelParts = [date.format("dddd, MMMM D, YYYY")];
   if (isToday) {
     ariaLabelParts.push("Today");
   }
   if (publicHoliday) {
     ariaLabelParts.push(publicHoliday.name);
+  }
+  if (schoolHoliday) {
+    ariaLabelParts.push(`School Holiday: ${schoolHoliday.name}`);
   }
   if (paydayInfo) {
     ariaLabelParts.push(paydayInfo.name);
@@ -102,6 +115,7 @@ export function DayCell({
         isToday ? "is-today" : "",
         isWeekend ? "is-weekend" : "",
         publicHoliday ? "is-public-holiday" : "",
+        schoolHoliday ? "is-school-holiday" : "",
         paydayInfo ? "is-payday" : "",
       ]
         .filter(Boolean)
