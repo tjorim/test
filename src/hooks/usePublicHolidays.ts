@@ -81,10 +81,10 @@ export function usePublicHolidays(
     unknownError: "Failed to fetch holidays",
   });
 
-  const holidayMap = useMemo(
+  const publicHolidayMap = useMemo(
     () => (isEnabled ? toHolidayMap(holidays, language) : new Map<string, PublicHolidayInfo>()),
     [holidays, isEnabled, language],
   );
 
-  return { holidayMap, loading, error };
+  return { publicHolidayMap, loading, error };
 }

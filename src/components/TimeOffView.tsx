@@ -97,7 +97,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
 
   const [viewMode, setViewMode] = useState<"calendar" | "table">("calendar");
   const [calendarMonth, setCalendarMonth] = useState(() => dayjs());
-  const { holidayMap } = usePublicHolidays(calendarMonth.year());
+  const { publicHolidayMap } = usePublicHolidays(calendarMonth.year());
   const { schoolHolidayMap } = useSchoolHolidays(calendarMonth.year());
 
   // Modal state
@@ -394,17 +394,17 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     };
   }, [handleRedo, handleUndo, isActive]);
 
-  const publicHolidayMap = useMemo<Map<string, PublicHolidayInfo>>(
-    () => holidayMap,
-    [holidayMap],
+  const publicHolidayMapMemo = useMemo<Map<string, PublicHolidayInfo>>(
+    () => publicHolidayMap,
+    [publicHolidayMap],
   );
   const schoolHolidayMapMemo = useMemo<Map<string, SchoolHolidayInfo>>(
     () => schoolHolidayMap,
     [schoolHolidayMap],
   );
   const paydayMapForYear = useMemo<Map<string, PaydayInfo>>(
-    () => getMonthlyPaydayMap(calendarMonth.year(), publicHolidayMap),
-    [calendarMonth, publicHolidayMap],
+    () => getMonthlyPaydayMap(calendarMonth.year(), publicHolidayMapMemo),
+    [calendarMonth, publicHolidayMapMemo],
   );
 
   const previewLine = buildPreviewLine({
@@ -556,7 +556,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
               <MonthCalendar
                 events={events}
                 month={calendarMonth}
-                publicHolidays={publicHolidayMap}
+                publicHolidays={publicHolidayMapMemo}
                 schoolHolidays={schoolHolidayMapMemo}
                 paydayMap={paydayMapForYear}
                 onMonthChange={setCalendarMonth}
