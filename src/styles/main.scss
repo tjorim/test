@@ -376,6 +376,10 @@
   background: #f5f0ff;
 }
 
+.month-calendar-day.is-public-holiday.is-school-holiday {
+  background: linear-gradient(135deg, #fff4db, #f5f0ff);
+}
+
 .month-calendar-day.is-payday {
   border-color: #198754;
   background: #e9f7ef;
@@ -576,4 +580,18 @@
 
 [data-bs-theme="dark"] .schedule-table td:first-child {
   background-color: var(--bs-table-bg, #23272b);
+}
+
+[data-bs-theme="dark"] .month-calendar-day.is-public-holiday {
+  border-color: #d4a017;
+  background: #4a3800;
+}
+
+[data-bs-theme="dark"] .month-calendar-day.is-school-holiday {
+  border-color: #8f7bd9;
+  background: #1f2b44;
+}
+
+[data-bs-theme="dark"] .month-calendar-day.is-public-holiday.is-school-holiday {
+  background: linear-gradient(135deg, #4a3800, #1f2b44);
 }
