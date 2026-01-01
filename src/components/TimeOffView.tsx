@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import type { EventFlag, HdayEvent, TimeLocationFlag, TypeFlag } from "../lib/hday/types";
@@ -14,8 +15,10 @@ import {
 import { isValidDate } from "../lib/hday/validation";
 import { useEventStore } from "../contexts/EventStoreContext";
 import { useToast } from "../contexts/ToastContext";
+import { dayjs } from "../utils/dateTimeUtils";
 import { EventModal } from "./EventModal";
 import { ConfirmationDialog } from "./ConfirmationDialog";
+import { MonthCalendar } from "./timeoff/MonthCalendar";
 
 const TYPE_FLAG_OPTIONS: Array<[TypeFlag | "none", string]> = [
   ["none", "Holiday (default)"],
@@ -85,6 +88,9 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     redo,
   } = useEventStore();
   const toast = useToast();
+
+  const [viewMode, setViewMode] = useState<"calendar" | "table">("calendar");
+  const [calendarMonth, setCalendarMonth] = useState(() => dayjs());
 
   // Modal state
   const [showEventModal, setShowEventModal] = useState(false);
@@ -156,6 +162,15 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   const handleOpenAddModal = () => {
     resetForm();
     setEditIndex(-1);
+    setShowEventModal(true);
+  };
+
+  const handleAddEventForDate = (date: dayjs.Dayjs) => {
+    resetForm();
+    setEditIndex(-1);
+    setEventType("range");
+    setEventStart(date.format("YYYY/MM/DD"));
+    setEventEnd(date.format("YYYY/MM/DD"));
     setShowEventModal(true);
   };
 
@@ -493,134 +508,180 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
           </div>
         </Card.Header>
         <Card.Body>
-          {events.length === 0 ? (
-            <div className="text-center text-muted py-5">
-              <i className="bi bi-calendar-x display-4 d-block mb-3"></i>
-              <p>No time-off events yet.</p>
-              <p className="small">
-                Click "Add Event" to create your first event, or "Import" to load an existing .hday
-                file.
-              </p>
-            </div>
-          ) : (
-            <Table responsive hover>
-              <thead>
-                <tr>
-                  <th>
-                    <input
-                      type="checkbox"
-                      aria-label="Select all events"
-                      checked={events.length > 0 && selectedIndices.length === events.length}
-                      onChange={(event) => {
-                        if (event.target.checked) {
-                          handleSelectAll();
-                        } else {
-                          handleClearSelection();
-                        }
-                      }}
-                    />
-                  </th>
-                  <th>Type</th>
-                  <th>Date / Pattern</th>
-                  <th>Title</th>
-                  <th>Flags</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {events.map((event, index) => {
-                  const eventColor = event.type !== "unknown" ? getEventColor(event.flags) : "#ccc";
-                  const eventLabel =
-                    event.type !== "unknown" ? getEventTypeLabel(event.flags) : "Unknown";
-                  const symbol = event.type !== "unknown" ? getTimeLocationSymbol(event.flags) : "";
+          <div className="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
+            <ButtonGroup aria-label="Toggle time off view">
+              <Button
+                variant={viewMode === "calendar" ? "primary" : "outline-primary"}
+                size="sm"
+                onClick={() => setViewMode("calendar")}
+              >
+                Calendar
+              </Button>
+              <Button
+                variant={viewMode === "table" ? "primary" : "outline-primary"}
+                size="sm"
+                onClick={() => setViewMode("table")}
+              >
+                Table
+              </Button>
+            </ButtonGroup>
+            <span className="text-muted small">
+              Click a day to add events, or select an event to edit.
+            </span>
+          </div>
 
-                  const unknownDescriptionId =
-                    event.type === "unknown" ? `unknown-event-${index}` : undefined;
-
-                  return (
-                    <tr key={index} aria-describedby={unknownDescriptionId}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          aria-label={`Select ${event.title || eventLabel}`}
-                          checked={selectedIndices.includes(index)}
-                          onChange={() => handleToggleSelection(index)}
-                        />
-                      </td>
-                      <td>
-                        <span
-                          className="badge"
-                          style={{ backgroundColor: eventColor, color: "#000" }}
-                        >
-                          {symbol && `${symbol} `}
-                          {eventLabel}
-                        </span>
-                      </td>
-                      <td>
-                        {event.type === "range" && (
-                          <>
-                            {event.start}
-                            {event.end && event.end !== event.start && ` → ${event.end}`}
-                          </>
-                        )}
-                        {event.type === "weekly" &&
-                          `Every ${event.weekday ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][event.weekday - 1] : "Unknown"}`}
-                        {event.type === "unknown" && (
-                          <>
-                            <span className="text-muted">Unknown format</span>
-                            <span id={unknownDescriptionId} className="visually-hidden">
-                              Unknown event format. Remove or re-import this entry to resolve the
-                              issue.
-                            </span>
-                          </>
-                        )}
-                      </td>
-                      <td>{event.title || <span className="text-muted">—</span>}</td>
-                      <td>
-                        {event.flags && event.flags.length > 0 ? (
-                          <span className="text-muted small">{event.flags.join(", ")}</span>
-                        ) : (
-                          <span className="text-muted">—</span>
-                        )}
-                      </td>
-                      <td>
-                        {event.type !== "unknown" && (
-                          <>
-                            <Button
-                              variant="outline-secondary"
-                              size="sm"
-                              onClick={() => handleOpenEditModal(index)}
-                              className="me-2"
-                              aria-label={`Edit ${event.title || eventLabel}`}
-                            >
-                              <i className="bi bi-pencil" aria-hidden="true"></i>
-                            </Button>
-                            <Button
-                              variant="outline-secondary"
-                              size="sm"
-                              onClick={() => handleDuplicate(index)}
-                              className="me-2"
-                              aria-label={`Duplicate ${event.title || eventLabel}`}
-                            >
-                              <i className="bi bi-files" aria-hidden="true"></i>
-                            </Button>
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              onClick={() => handleDeleteClick(index)}
-                              aria-label={`Delete ${event.title || eventLabel}`}
-                            >
-                              <i className="bi bi-trash" aria-hidden="true"></i>
-                            </Button>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+          {viewMode === "calendar" && (
+            <>
+              <MonthCalendar
+                events={events}
+                month={calendarMonth}
+                onMonthChange={setCalendarMonth}
+                onAddEvent={handleAddEventForDate}
+                onEditEvent={handleOpenEditModal}
+              />
+              {events.length === 0 && (
+                <div className="text-center text-muted mt-4">
+                  <i className="bi bi-calendar-x display-6 d-block mb-2"></i>
+                  <p className="mb-0">No time-off events yet.</p>
+                  <p className="small">
+                    Click a day to add your first event, or use "Import" to load a .hday file.
+                  </p>
+                </div>
+              )}
+            </>
           )}
+
+          {viewMode === "table" &&
+            (events.length === 0 ? (
+              <div className="text-center text-muted py-5">
+                <i className="bi bi-calendar-x display-4 d-block mb-3"></i>
+                <p>No time-off events yet.</p>
+                <p className="small">
+                  Click "Add Event" to create your first event, or "Import" to load an existing
+                  .hday file.
+                </p>
+              </div>
+            ) : (
+              <Table responsive hover>
+                <thead>
+                  <tr>
+                    <th>
+                      <input
+                        type="checkbox"
+                        aria-label="Select all events"
+                        checked={events.length > 0 && selectedIndices.length === events.length}
+                        onChange={(event) => {
+                          if (event.target.checked) {
+                            handleSelectAll();
+                          } else {
+                            handleClearSelection();
+                          }
+                        }}
+                      />
+                    </th>
+                    <th>Type</th>
+                    <th>Date / Pattern</th>
+                    <th>Title</th>
+                    <th>Flags</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {events.map((event, index) => {
+                    const eventColor =
+                      event.type !== "unknown" ? getEventColor(event.flags) : "#ccc";
+                    const eventLabel =
+                      event.type !== "unknown" ? getEventTypeLabel(event.flags) : "Unknown";
+                    const symbol =
+                      event.type !== "unknown" ? getTimeLocationSymbol(event.flags) : "";
+
+                    const unknownDescriptionId =
+                      event.type === "unknown" ? `unknown-event-${index}` : undefined;
+
+                    return (
+                      <tr key={index} aria-describedby={unknownDescriptionId}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            aria-label={`Select ${event.title || eventLabel}`}
+                            checked={selectedIndices.includes(index)}
+                            onChange={() => handleToggleSelection(index)}
+                          />
+                        </td>
+                        <td>
+                          <span
+                            className="badge"
+                            style={{ backgroundColor: eventColor, color: "#000" }}
+                          >
+                            {symbol && `${symbol} `}
+                            {eventLabel}
+                          </span>
+                        </td>
+                        <td>
+                          {event.type === "range" && (
+                            <>
+                              {event.start}
+                              {event.end && event.end !== event.start && ` → ${event.end}`}
+                            </>
+                          )}
+                          {event.type === "weekly" &&
+                            `Every ${event.weekday ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][event.weekday - 1] : "Unknown"}`}
+                          {event.type === "unknown" && (
+                            <>
+                              <span className="text-muted">Unknown format</span>
+                              <span id={unknownDescriptionId} className="visually-hidden">
+                                Unknown event format. Remove or re-import this entry to resolve the
+                                issue.
+                              </span>
+                            </>
+                          )}
+                        </td>
+                        <td>{event.title || <span className="text-muted">—</span>}</td>
+                        <td>
+                          {event.flags && event.flags.length > 0 ? (
+                            <span className="text-muted small">{event.flags.join(", ")}</span>
+                          ) : (
+                            <span className="text-muted">—</span>
+                          )}
+                        </td>
+                        <td>
+                          {event.type !== "unknown" && (
+                            <>
+                              <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                onClick={() => handleOpenEditModal(index)}
+                                className="me-2"
+                                aria-label={`Edit ${event.title || eventLabel}`}
+                              >
+                                <i className="bi bi-pencil" aria-hidden="true"></i>
+                              </Button>
+                              <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                onClick={() => handleDuplicate(index)}
+                                className="me-2"
+                                aria-label={`Duplicate ${event.title || eventLabel}`}
+                              >
+                                <i className="bi bi-files" aria-hidden="true"></i>
+                              </Button>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => handleDeleteClick(index)}
+                                aria-label={`Delete ${event.title || eventLabel}`}
+                              >
+                                <i className="bi bi-trash" aria-hidden="true"></i>
+                              </Button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            ))}
         </Card.Body>
       </Card>
 
