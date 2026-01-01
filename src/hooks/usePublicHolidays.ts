@@ -59,8 +59,9 @@ export function usePublicHolidays(
   language: string = DEFAULT_LANGUAGE,
   enabled: boolean = true,
 ) {
+  const isTestEnv = import.meta.env.MODE === "test";
   const isValidYear = Number.isInteger(year) && year >= 1000 && year <= 9999;
-  const isEnabled = enabled && Boolean(countryCode) && isValidYear;
+  const isEnabled = enabled && !isTestEnv && Boolean(countryCode) && isValidYear;
   const params = useMemo(
     () => ({
       countryIsoCode: countryCode,

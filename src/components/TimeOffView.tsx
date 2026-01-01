@@ -95,7 +95,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   } = useEventStore();
   const toast = useToast();
 
-  const [viewMode, setViewMode] = useState<"calendar" | "table">("calendar");
+  const [viewMode, setViewMode] = useState<"calendar" | "table">("table");
   const [calendarMonth, setCalendarMonth] = useState(() => dayjs());
   const { publicHolidayMap } = usePublicHolidays(calendarMonth.year());
   const { schoolHolidayMap } = useSchoolHolidays(calendarMonth.year());

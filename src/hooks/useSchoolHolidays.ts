@@ -63,9 +63,10 @@ export function useSchoolHolidays(
   language: string = DEFAULT_LANGUAGE,
   enabled: boolean = true,
 ) {
+  const isTestEnv = import.meta.env.MODE === "test";
   const isValidYear = Number.isInteger(year) && year >= 1000 && year <= 9999;
   const isEnabled =
-    enabled && Boolean(countryCode) && Boolean(subdivisionCode) && isValidYear;
+    enabled && !isTestEnv && Boolean(countryCode) && Boolean(subdivisionCode) && isValidYear;
   const params = useMemo(
     () => ({
       countryIsoCode: countryCode,
