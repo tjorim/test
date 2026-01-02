@@ -127,8 +127,8 @@ export function MonthCalendar({
       return map;
     }
 
-    const visibleStart = days[0];
-    const visibleEnd = days[days.length - 1];
+    const visibleStart = days[0]!;
+    const visibleEnd = days[days.length - 1]!;
     const dayKeys = new Set(days.map((day) => day.format(DAY_FORMAT)));
 
     const addEvent = (date: dayjs.Dayjs, entry: DayEvent) => {
@@ -155,7 +155,7 @@ export function MonthCalendar({
           return;
         }
 
-        let current = rangeStart;
+        let current: dayjs.Dayjs = rangeStart;
         while (current.isBefore(rangeEnd) || current.isSame(rangeEnd, "day")) {
           addEvent(current, { event, index });
           current = current.add(1, "day");
@@ -164,7 +164,7 @@ export function MonthCalendar({
         const firstOccurrence = days.find((day) => day.isoWeekday() === event.weekday);
         if (!firstOccurrence) return;
         let current = firstOccurrence;
-        const lastDay = days[days.length - 1];
+        const lastDay = days[days.length - 1]!;
         while (current.isBefore(lastDay) || current.isSame(lastDay, "day")) {
           addEvent(current, { event, index });
           current = current.add(7, "day");
