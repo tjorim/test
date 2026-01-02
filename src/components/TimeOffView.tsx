@@ -16,8 +16,6 @@ import { isValidDate } from "../lib/hday/validation";
 import { useEventStore } from "../contexts/EventStoreContext";
 import { useToast } from "../contexts/ToastContext";
 import { dayjs } from "../utils/dateTimeUtils";
-import type { PublicHolidayInfo } from "../types/publicHolidays";
-import type { SchoolHolidayInfo } from "../types/schoolHolidays";
 import type { PaydayInfo } from "../types/paydays";
 import { getMonthlyPaydayMap } from "../utils/paydayUtils";
 import { usePublicHolidays } from "../hooks/usePublicHolidays";
