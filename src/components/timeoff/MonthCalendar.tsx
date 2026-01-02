@@ -21,11 +21,53 @@ interface MonthCalendarProps {
 
 const DAY_FORMAT = "YYYY-MM-DD";
 
+/**
+ * MonthCalendar displays a monthly calendar grid view for .hday time-off events.
+ * 
+ * Features:
+ * - Visual month overview with event chips on each day
+ * - Maps both range events (spanning multiple days) and weekly recurring events
+ * - Keyboard navigation with arrow keys, Home, and End
+ * - Highlights weekends, today, and public/school holidays
+ * - Visual indicators for courses, holidays, and paydays
+ * - Click-to-add events on any day, click-to-edit existing events
+ * - Month navigation buttons (previous, today, next)
+ * 
+ * Accessibility:
+ * - ARIA labels for all interactive elements
+ * - Focus management with keyboard navigation
+ * - Screen reader announcements for month changes
+ * - Semantic calendar grid structure
+ * 
+ * @param props - Component props
+ * @param props.events - Array of .hday events to display
+ * @param props.month - The currently displayed month
+ * @param props.publicHolidays - Map of public holidays by date key
+ * @param props.schoolHolidays - Map of school holidays by date key
+ * @param props.paydayMap - Map of paydays by date key
+ * @param props.onMonthChange - Callback when month navigation occurs
+ * @param props.onAddEvent - Callback when user clicks to add event on a date
+ * @param props.onEditEvent - Callback when user clicks to edit an existing event
+ */
+
+/**
+ * Parses an .hday date string (YYYY/MM/DD) to a dayjs object.
+ * Converts slashes to hyphens for compatibility with dayjs.
+ * @param value - The date string in YYYY/MM/DD format
+ * @returns A dayjs object, or null if the input is undefined
+ */
 const parseHdayDate = (value?: string) => {
   if (!value) return null;
   return dayjs(value.replace(/\//g, "-"));
 };
 
+/**
+ * Builds a complete calendar grid for the given month.
+ * Includes days from adjacent months to fill complete weeks (Sunday to Saturday).
+ * This ensures the calendar displays a consistent 5-7 week grid.
+ * @param month - The target month as a dayjs object
+ * @returns An array of dayjs objects representing all days to display in the grid
+ */
 const buildCalendarDays = (month: dayjs.Dayjs) => {
   const start = month.startOf("month").startOf("week");
   const end = month.endOf("month").endOf("week");
@@ -72,13 +114,21 @@ export function MonthCalendar({
 
   useEffect(() => {
     const ref = dayRefs.current.get(focusedDateKey);
-    if (ref) {
+    if (ref && ref.isConnected) {
       ref.focus();
     }
   }, [focusedDateKey]);
 
   const dayEvents = useMemo(() => {
     const map = new Map<string, DayEvent[]>();
+    
+    // If there are no days to display, return empty map
+    if (days.length === 0) {
+      return map;
+    }
+
+    const visibleStart = days[0];
+    const visibleEnd = days[days.length - 1];
     const dayKeys = new Set(days.map((day) => day.format(DAY_FORMAT)));
 
     const addEvent = (date: dayjs.Dayjs, entry: DayEvent) => {
@@ -94,8 +144,19 @@ export function MonthCalendar({
         const start = parseHdayDate(event.start);
         const end = parseHdayDate(event.end ?? event.start);
         if (!start || !end) return;
-        let current = start;
-        while (current.isBefore(end) || current.isSame(end, "day")) {
+
+        // Clamp the event range to the currently visible calendar window
+        // This prevents performance issues with very long-range events
+        const rangeStart = start.isBefore(visibleStart) ? visibleStart : start;
+        const rangeEnd = end.isAfter(visibleEnd) ? visibleEnd : end;
+
+        if (rangeStart.isAfter(rangeEnd)) {
+          // Event does not intersect the visible range
+          return;
+        }
+
+        let current = rangeStart;
+        while (current.isBefore(rangeEnd) || current.isSame(rangeEnd, "day")) {
           addEvent(current, { event, index });
           current = current.add(1, "day");
         }
@@ -190,14 +251,14 @@ export function MonthCalendar({
             <i className="bi bi-chevron-right" aria-hidden="true"></i>
           </Button>
         </div>
-        <div className="month-calendar-title">
+        <div className="month-calendar-title" aria-live="polite">
           <span>{month.format("MMMM YYYY")}</span>
         </div>
       </div>
 
-      <div className="month-calendar-grid">
+      <div className="month-calendar-grid" role="grid" aria-label="Month calendar">
         {weekDays.map((label) => (
-          <div key={label} className="month-calendar-weekday">
+          <div key={label} className="month-calendar-weekday" role="columnheader">
             {label}
           </div>
         ))}
