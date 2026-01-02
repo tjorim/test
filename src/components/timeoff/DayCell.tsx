@@ -35,7 +35,7 @@ const getIndicatorIcons = (events: DayEvent[]) => {
   events.forEach(({ event }) => {
     const flags = event.flags ?? [];
     if (flags.includes("course")) {
-      icons.add("🏫");
+      icons.add("📘");
     }
   });
 
