@@ -207,6 +207,10 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     const event = events[index];
     if (!event) return;
 
+    openModalForEvent(event, index);
+  };
+
+  const openModalForEvent = (event: HdayEvent, index: number) => {
     setEditIndex(index);
 
     if (event.type === "range") {
@@ -307,26 +311,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   const handleDuplicate = (index: number) => {
     const event = events[index];
     if (!event) return;
-
-    setEditIndex(-1);
-
-    if (event.type === "range") {
-      setEventType("range");
-      setEventStart(event.start || "");
-      setEventEnd(event.end || "");
-      setEventWeekday(1);
-    } else if (event.type === "weekly") {
-      setEventType("weekly");
-      setEventWeekday(event.weekday || 1);
-      setEventStart("");
-      setEventEnd("");
-    }
-
-    setEventTitle(event.title || "");
-    setEventFlags(event.flags || []);
-    setStartDateError("");
-    setEndDateError("");
-    setShowEventModal(true);
+    openModalForEvent(event, -1);
   };
 
   const handleBulkDuplicate = () => {
