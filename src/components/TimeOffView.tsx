@@ -203,16 +203,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     setShowEventModal(true);
   };
 
-  const handleOpenEditModal = (index: number) => {
-    const event = events[index];
-    if (!event) return;
-
-    openModalForEvent(event, index);
-  };
-
-  const openModalForEvent = (event: HdayEvent, index: number) => {
-    setEditIndex(index);
-
+  const prefillFormFromEvent = (event: HdayEvent) => {
     if (event.type === "range") {
       setEventType("range");
       setEventStart(event.start || "");
@@ -229,6 +220,14 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     setEventFlags(event.flags || []);
     setStartDateError("");
     setEndDateError("");
+  };
+
+  const handleOpenEditModal = (index: number) => {
+    const event = events[index];
+    if (!event) return;
+
+    setEditIndex(index);
+    prefillFormFromEvent(event);
     setShowEventModal(true);
   };
 
@@ -311,7 +310,10 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   const handleDuplicate = (index: number) => {
     const event = events[index];
     if (!event) return;
-    openModalForEvent(event, -1);
+
+    setEditIndex(-1);
+    prefillFormFromEvent(event);
+    setShowEventModal(true);
   };
 
   const handleBulkDuplicate = () => {
