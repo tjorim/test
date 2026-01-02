@@ -401,6 +401,7 @@
   width: 100%;
   font-weight: 600;
   color: inherit;
+  cursor: pointer;
 }
 
 .month-calendar-day-button:focus-visible {
@@ -442,6 +443,7 @@
   font-size: 0.75rem;
   text-align: left;
   color: #1f2d3d;
+  cursor: pointer;
 }
 
 .month-calendar-event:hover {

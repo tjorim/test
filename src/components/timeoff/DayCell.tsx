@@ -29,6 +29,14 @@ interface DayCellProps {
 
 const MAX_EVENTS = 3;
 
+/**
+ * Determines which visual indicator icons to display for a day based on event flags.
+ * Currently supports:
+ * - 📘 Course/training indicator for events with "course" flag
+ * 
+ * @param events - Array of DayEvent objects for the day
+ * @returns Array of emoji strings to display as indicators
+ */
 const getIndicatorIcons = (events: DayEvent[]) => {
   const icons = new Set<string>();
 
@@ -74,6 +82,38 @@ const getIndicatorDetails = (
   }>;
 };
 
+/**
+ * DayCell renders an individual day in the month calendar grid.
+ * 
+ * Features:
+ * - Displays up to 3 event chips with color coding and labels
+ * - Shows overflow count when more than 3 events exist
+ * - Visual indicators for courses, public holidays, school holidays, and paydays
+ * - Highlights for weekends, today, and holidays
+ * - Click-to-add new event on the day, click-to-edit existing events
+ * - Keyboard navigation support via arrow keys
+ * 
+ * Accessibility:
+ * - ARIA labels with full date and holiday information
+ * - Focus management for keyboard navigation
+ * - Color indicators supplemented with emoji symbols
+ * - Semantic button elements for all interactive areas
+ * 
+ * @param props - Component props
+ * @param props.date - The date this cell represents
+ * @param props.isCurrentMonth - Whether this day is in the currently displayed month
+ * @param props.isToday - Whether this day is today
+ * @param props.isWeekend - Whether this day is Saturday or Sunday
+ * @param props.isFocused - Whether this cell currently has keyboard focus
+ * @param props.publicHoliday - Public holiday info if this day is a holiday
+ * @param props.paydayInfo - Payday info if this day is a payday
+ * @param props.schoolHoliday - School holiday info if this day is a school holiday
+ * @param props.events - Array of events occurring on this day
+ * @param props.onAddEvent - Callback when user clicks to add event
+ * @param props.onEditEvent - Callback when user clicks to edit an event
+ * @param props.onKeyDown - Callback for keyboard navigation
+ * @param props.buttonRef - Ref callback for focus management
+ */
 export function DayCell({
   date,
   isCurrentMonth,
@@ -109,9 +149,10 @@ export function DayCell({
 
   return (
     <div
+      role="gridcell"
       className={[
         "month-calendar-day",
-        isCurrentMonth ? "is-current-month" : "is-other-month",
+        !isCurrentMonth ? "is-other-month" : "",
         isToday ? "is-today" : "",
         isWeekend ? "is-weekend" : "",
         publicHoliday ? "is-public-holiday" : "",
@@ -156,7 +197,7 @@ export function DayCell({
 
           return (
             <button
-              key={`${index}-${label}`}
+              key={`${date.format("YYYY-MM-DD")}-${index}-${label}`}
               type="button"
               className="month-calendar-event"
               onClick={(eventClick) => {
