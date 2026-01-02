@@ -100,6 +100,7 @@ interface TimeOffViewProps {
 }
 
 export function TimeOffView({ isActive = true }: TimeOffViewProps) {
+  const DEFAULT_WEEKDAY = 1;
   const {
     events,
     addEvent,
@@ -127,7 +128,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
 
   // Event form state
   const [eventType, setEventType] = useState<"range" | "weekly">("range");
-  const [eventWeekday, setEventWeekday] = useState(1);
+  const [eventWeekday, setEventWeekday] = useState(DEFAULT_WEEKDAY);
   const [eventStart, setEventStart] = useState("");
   const [eventEnd, setEventEnd] = useState("");
   const [eventTitle, setEventTitle] = useState("");
@@ -149,7 +150,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
 
   const resetForm = () => {
     setEventType("range");
-    setEventWeekday(1);
+    setEventWeekday(DEFAULT_WEEKDAY);
     setEventStart("");
     setEventEnd("");
     setEventTitle("");
@@ -208,10 +209,10 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
       setEventType("range");
       setEventStart(event.start || "");
       setEventEnd(event.end || "");
-      setEventWeekday(1);
+      setEventWeekday(DEFAULT_WEEKDAY);
     } else if (event.type === "weekly") {
       setEventType("weekly");
-      setEventWeekday(event.weekday || 1);
+      setEventWeekday(event.weekday || DEFAULT_WEEKDAY);
       setEventStart("");
       setEventEnd("");
     }
