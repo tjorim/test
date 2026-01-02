@@ -1,6 +1,6 @@
 # Worktime Development Roadmap
 
-**Current Version**: 4.0.0
+**Current Version**: 4.2.0
 **Branch**: `main`
 **Status**: Active Development
 
@@ -62,32 +62,12 @@ Critical features and improvements that significantly impact user experience.
 
 **Integration Status:**
 
-- ✅ **Successfully Merged**: .hday parser (139 tests), import/export files, event modal (create/edit/delete), all event flags/types (holiday, business, sick, training, etc.)
-- ❌ **Missing Core UI**: Month calendar grid view, vacation statistics dashboard
-- ❌ **Missing UX Features**: View/edit raw .hday content, undo/redo, bulk operations, event duplication
-- 📊 **Total Effort to Achieve Parity**: 20–27 hours
+- ✅ **Successfully Merged**: .hday parser (139 tests), import/export files, event modal (create/edit/delete), all event flags/types (holiday, business, sick, training, etc.), month calendar grid view (v4.2.0), undo/redo (v4.1.0), bulk operations (v4.1.0), event duplication (v4.1.0)
+- ❌ **Missing Core UI**: Vacation statistics dashboard
+- ❌ **Missing UX Features**: View/edit raw .hday content
+- 📊 **Total Effort to Achieve Parity**: ~11–13 hours (significantly reduced)
 
 ---
-
-**4.1 Month Calendar Grid View** 🌟 **[CRITICAL]**
-
-- **Component**: Visual calendar with event overlays
-- **Source**: `HdayPlanner/frontend/src/components/MonthGrid.tsx`, `MonthViewCard.tsx`
-- **Use Cases**:
-  - Visual month view with events displayed on dates
-  - Keyboard navigation (arrow keys, Home, End)
-  - Public holiday/payday indicators (🎉 🏫 💶)
-  - Highlight today, weekends, special dates
-  - Click day to view/add events
-- **Current Worktime**: Only table view of events
-- **Implementation**: Create MonthCalendar component
-- **Files to Create**:
-  - `src/components/timeoff/MonthCalendar.tsx` - Calendar grid component
-  - `src/components/timeoff/DayCell.tsx` - Individual day cell with events
-- **Files to Modify**:
-  - `src/components/TimeOffView.tsx` - Add calendar view toggle
-- **Estimated Effort**: 6–8 hours
-- **Status**: 🔲 Planned (High Priority)
 
 **4.2 Vacation Statistics Dashboard** 🌟
 

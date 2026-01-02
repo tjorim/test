@@ -3,6 +3,53 @@
 
 /* Worktime Custom Styles */
 
+/* Month calendar CSS variables */
+:root {
+  --month-calendar-bg: #fff;
+  --month-calendar-border: #e9ecef;
+  --month-calendar-day-bg: #fdfdfd;
+  --month-calendar-day-other: #f8f9fa;
+  --month-calendar-day-other-text: #adb5bd;
+  --month-calendar-day-weekend: #fff7f7;
+  --month-calendar-event-bg: rgba(13, 110, 253, 0.08);
+  --month-calendar-event-hover: rgba(13, 110, 253, 0.16);
+  --month-calendar-event-text: #1f2d3d;
+  --month-calendar-weekday-text: #6c757d;
+  --month-calendar-today-border: #0d6efd;
+  --month-calendar-today-bg: rgba(13, 110, 253, 0.05);
+  --month-calendar-today-shadow: rgb(13 110 253 / 0.4);
+  --month-calendar-focus-outline: #0d6efd;
+  --month-calendar-public-holiday-border: #ffb703;
+  --month-calendar-public-holiday-bg: #fff4db;
+  --month-calendar-school-holiday-border: #6f42c1;
+  --month-calendar-school-holiday-bg: #f5f0ff;
+  --month-calendar-payday-border: #198754;
+  --month-calendar-payday-bg: #e9f7ef;
+}
+
+[data-bs-theme="dark"] {
+  --month-calendar-bg: #1f242a;
+  --month-calendar-border: #2f353d;
+  --month-calendar-day-bg: #1b1f24;
+  --month-calendar-day-other: #15181c;
+  --month-calendar-day-other-text: #6c757d;
+  --month-calendar-day-weekend: #231c1c;
+  --month-calendar-event-bg: rgba(110, 168, 254, 0.18);
+  --month-calendar-event-hover: rgba(110, 168, 254, 0.28);
+  --month-calendar-event-text: #e9edf1;
+  --month-calendar-weekday-text: #9aa4b2;
+  --month-calendar-today-border: #6ea8fe;
+  --month-calendar-today-bg: rgba(110, 168, 254, 0.12);
+  --month-calendar-today-shadow: rgb(110 168 254 / 0.5);
+  --month-calendar-focus-outline: #6ea8fe;
+  --month-calendar-public-holiday-border: #d4930a;
+  --month-calendar-public-holiday-bg: rgba(212, 147, 10, 0.15);
+  --month-calendar-school-holiday-border: #9d73d4;
+  --month-calendar-school-holiday-bg: rgba(157, 115, 212, 0.15);
+  --month-calendar-payday-border: #4db380;
+  --month-calendar-payday-bg: rgba(77, 179, 128, 0.15);
+}
+
 /* Today column highlighting for schedule table */
 .today-column {
   background-color: var(--bs-primary-bg-subtle) !important;
@@ -265,6 +312,10 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+.event-type-badge {
+  color: #000;
+}
+
 /* Connection status */
 .connection-offline {
   background-color: #dc3545 !important;
@@ -310,10 +361,184 @@
 }
 
 @media (width >= 768px) {
-  .install-prompt {
-    left: auto;
-    right: 1rem;
-    max-width: 300px;
+.install-prompt {
+  left: auto;
+  right: 1rem;
+  max-width: 300px;
+}
+}
+
+/* Time-off month calendar */
+.month-calendar {
+  background: var(--month-calendar-bg);
+  border-radius: 0.75rem;
+}
+
+.month-calendar-header {
+  gap: 1rem;
+}
+
+.month-calendar-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.month-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.month-calendar-weekday {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--month-calendar-weekday-text);
+}
+
+.month-calendar-day {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.75rem;
+  border: 1px solid var(--month-calendar-border);
+  background: var(--month-calendar-day-bg);
+  min-height: 140px;
+  padding: 0.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.month-calendar-day.is-other-month {
+  background: var(--month-calendar-day-other);
+  color: var(--month-calendar-day-other-text);
+}
+
+.month-calendar-day.is-weekend {
+  background: var(--month-calendar-day-weekend);
+}
+
+.month-calendar-day.is-public-holiday {
+  border-color: var(--month-calendar-public-holiday-border);
+  background: var(--month-calendar-public-holiday-bg);
+}
+
+.month-calendar-day.is-school-holiday {
+  border-color: var(--month-calendar-school-holiday-border);
+  background: var(--month-calendar-school-holiday-bg);
+}
+
+.month-calendar-day.is-public-holiday.is-school-holiday {
+  background: linear-gradient(135deg, var(--month-calendar-public-holiday-bg), var(--month-calendar-school-holiday-bg));
+}
+
+.month-calendar-day.is-payday {
+  border-color: var(--month-calendar-payday-border);
+  background: var(--month-calendar-payday-bg);
+}
+
+.month-calendar-day.is-today {
+  border-color: var(--month-calendar-today-border);
+  background: var(--month-calendar-today-bg);
+  border-width: 2px;
+  box-shadow: 0 0 0 3px var(--month-calendar-today-shadow);
+}
+
+.month-calendar-day-button {
+  border: none;
+  background: transparent;
+  padding: 0.35rem 0.4rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+}
+
+.month-calendar-day-button:focus-visible {
+  outline: 2px solid var(--month-calendar-focus-outline);
+  outline-offset: 2px;
+}
+
+.month-calendar-day-number {
+  font-size: 0.95rem;
+}
+
+.month-calendar-day-indicators {
+  font-size: 0.95rem;
+  display: inline-flex;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+.month-calendar-day-indicator {
+  line-height: 1;
+}
+
+.month-calendar-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.25rem 0.35rem 0.5rem;
+  flex: 1;
+}
+
+.month-calendar-event {
+  border: none;
+  background: var(--month-calendar-event-bg);
+  border-radius: 0.5rem;
+  padding: 0.2rem 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  text-align: left;
+  color: var(--month-calendar-event-text);
+  cursor: pointer;
+}
+
+.month-calendar-event:hover {
+  background: var(--month-calendar-event-hover);
+}
+
+.month-calendar-event-color {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.month-calendar-event-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.month-calendar-event-symbol {
+  font-size: 0.7rem;
+}
+
+.month-calendar-event-overflow,
+.month-calendar-event-empty {
+  font-size: 0.7rem;
+}
+
+@media (width <= 768px) {
+  .month-calendar-grid {
+    gap: 0.35rem;
+  }
+
+  .month-calendar-day {
+    min-height: 110px;
+  }
+
+  .month-calendar-events {
+    padding: 0.15rem 0.25rem 0.35rem;
   }
 }
 
@@ -411,3 +636,4 @@
 [data-bs-theme="dark"] .schedule-table td:first-child {
   background-color: var(--bs-table-bg, #23272b);
 }
+
