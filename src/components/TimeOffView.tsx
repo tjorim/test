@@ -394,17 +394,9 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     };
   }, [handleRedo, handleUndo, isActive]);
 
-  const publicHolidayMapMemo = useMemo<Map<string, PublicHolidayInfo>>(
-    () => publicHolidayMap,
-    [publicHolidayMap],
-  );
-  const schoolHolidayMapMemo = useMemo<Map<string, SchoolHolidayInfo>>(
-    () => schoolHolidayMap,
-    [schoolHolidayMap],
-  );
   const paydayMapForYear = useMemo<Map<string, PaydayInfo>>(
-    () => getMonthlyPaydayMap(calendarMonth.year(), publicHolidayMapMemo),
-    [calendarMonth, publicHolidayMapMemo],
+    () => getMonthlyPaydayMap(calendarMonth.year(), publicHolidayMap),
+    [calendarMonth, publicHolidayMap],
   );
 
   const previewLine = buildPreviewLine({
@@ -566,8 +558,8 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
               <MonthCalendar
                 events={events}
                 month={calendarMonth}
-                publicHolidays={publicHolidayMapMemo}
-                schoolHolidays={schoolHolidayMapMemo}
+                publicHolidays={publicHolidayMap}
+                schoolHolidays={schoolHolidayMap}
                 paydayMap={paydayMapForYear}
                 onMonthChange={setCalendarMonth}
                 onAddEvent={handleAddEventForDate}
