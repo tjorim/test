@@ -309,12 +309,10 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   };
 
   const handleDuplicate = (index: number) => {
-    const event = events[index];
-    if (!event) return;
-
+    // Reuse the existing edit modal initialization logic,
+    // then override editIndex to treat this as a new (duplicated) event.
+    handleOpenEditModal(index);
     setEditIndex(-1);
-    prefillFormFromEvent(event);
-    setShowEventModal(true);
   };
 
   const handleBulkDuplicate = () => {
