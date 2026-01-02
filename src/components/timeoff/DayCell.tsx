@@ -27,13 +27,29 @@ interface DayCellProps {
   buttonRef: (node: HTMLButtonElement | null) => void;
 }
 
+/**
+ * Maximum number of events to display per day before showing overflow count.
+ * Limit ensures calendar cells remain readable on all screen sizes.
+ */
 const MAX_EVENTS = 3;
+
+/**
+ * Accessible labels for time/location symbols displayed in events.
+ * Maps each symbol to a human-readable description for screen readers.
+ */
+const SYMBOL_LABELS: Record<string, string> = {
+  "◐": "Morning half-day event",
+  "◑": "Afternoon half-day event",
+  W: "Onsite support",
+  N: "Not able to fly",
+  F: "In principle able to fly",
+};
 
 /**
  * Determines which visual indicator icons to display for a day based on event flags.
  * Currently supports:
  * - 📘 Course/training indicator for events with "course" flag
- * 
+ *
  * @param events - Array of DayEvent objects for the day
  * @returns Array of emoji strings to display as indicators
  */
@@ -65,7 +81,7 @@ const getIndicatorDetails = (
     schoolHoliday && {
       key: "school-holiday",
       emoji: "🏫",
-      title: schoolHoliday.name,
+      title: schoolHoliday.localName,
       label: schoolHoliday.name,
     },
     paydayInfo && {
@@ -197,7 +213,7 @@ export function DayCell({
 
           return (
             <button
-              key={`${date.format("YYYY-MM-DD")}-${index}-${label}`}
+              key={`${date.format("YYYY-MM-DD")}-event-${index}`}
               type="button"
               className="month-calendar-event"
               onClick={(eventClick) => {
@@ -208,7 +224,15 @@ export function DayCell({
             >
               <span className="month-calendar-event-color" style={{ backgroundColor: color }} />
               <span className="month-calendar-event-label">
-                {symbol && <span className="month-calendar-event-symbol">{symbol}</span>}
+                {symbol && (
+                  <span
+                    className="month-calendar-event-symbol"
+                    role="img"
+                    aria-label={SYMBOL_LABELS[symbol]}
+                  >
+                    {symbol}
+                  </span>
+                )}
                 {label}
               </span>
             </button>

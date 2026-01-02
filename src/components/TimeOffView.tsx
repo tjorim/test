@@ -53,6 +53,26 @@ const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_F
 ).filter((f) => f !== "none") as EventFlag[];
 
 /**
+ * Empty state component for when no time-off events exist.
+ * Adapts styling and messaging based on the current view mode.
+ */
+function EmptyState({ mode }: { mode: "calendar" | "table" }) {
+  const isCalendar = mode === "calendar";
+
+  return (
+    <div className={`text-center text-muted ${isCalendar ? "mt-4" : "py-5"}`}>
+      <i className={`bi bi-calendar-x ${isCalendar ? "display-6" : "display-4"} d-block ${isCalendar ? "mb-2" : "mb-3"}`}></i>
+      <p className={isCalendar ? "mb-0" : ""}>No time-off events yet.</p>
+      <p className="small">
+        {isCalendar
+          ? "Click a day to add your first event, or use \"Import\" to load a .hday file."
+          : "Click \"Add Event\" to create your first event, or \"Import\" to load an existing .hday file."}
+      </p>
+    </div>
+  );
+}
+
+/**
  * Render the Time Off Management UI that lists time-off events and provides add, edit, import, export and delete flows.
  *
  * The component manages form state and validation, displays a responsive table of events, and shows modal dialogs for event editing and deletion confirmation. It uses the EventStore and Toast contexts for persistence and user feedback.
@@ -392,9 +412,10 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     };
   }, [handleRedo, handleUndo, isActive]);
 
+  const currentYear = calendarMonth.year();
   const paydayMapForYear = useMemo<Map<string, PaydayInfo>>(
-    () => getMonthlyPaydayMap(calendarMonth.year(), publicHolidayMap),
-    [calendarMonth, publicHolidayMap],
+    () => getMonthlyPaydayMap(currentYear, publicHolidayMap),
+    [currentYear, publicHolidayMap],
   );
 
   const previewLine = buildPreviewLine({
@@ -430,12 +451,12 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
 
   const getEventRowKey = (event: HdayEvent, index: number) => {
     if (event.type === "range") {
-      return `range-${event.start ?? "unknown"}-${event.end ?? "unknown"}-${event.title ?? ""}-${index}`;
+      return `range-${index}-${event.start ?? "unknown"}-${event.end ?? "unknown"}-${event.title ?? ""}`;
     }
     if (event.type === "weekly") {
-      return `weekly-${event.weekday ?? "unknown"}-${event.title ?? ""}-${index}`;
+      return `weekly-${index}-${event.weekday ?? "unknown"}-${event.title ?? ""}`;
     }
-    return `unknown-${event.raw ?? index}`;
+    return `unknown-${index}-${event.raw ?? ""}`;
   };
 
   return (
@@ -552,7 +573,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
           </div>
 
           {viewMode === "calendar" && (
-            <>
+            <div role="region" aria-label="Time off calendar view">
               <MonthCalendar
                 events={events}
                 month={calendarMonth}
@@ -563,28 +584,13 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
                 onAddEvent={handleAddEventForDate}
                 onEditEvent={handleOpenEditModal}
               />
-              {events.length === 0 && (
-                <div className="text-center text-muted mt-4">
-                  <i className="bi bi-calendar-x display-6 d-block mb-2"></i>
-                  <p className="mb-0">No time-off events yet.</p>
-                  <p className="small">
-                    Click a day to add your first event, or use "Import" to load a .hday file.
-                  </p>
-                </div>
-              )}
-            </>
+              {events.length === 0 && <EmptyState mode="calendar" />}
+            </div>
           )}
 
           {viewMode === "table" &&
             (events.length === 0 ? (
-              <div className="text-center text-muted py-5">
-                <i className="bi bi-calendar-x display-4 d-block mb-3"></i>
-                <p>No time-off events yet.</p>
-                <p className="small">
-                  Click "Add Event" to create your first event, or "Import" to load an existing
-                  .hday file.
-                </p>
-              </div>
+              <EmptyState mode="table" />
             ) : (
               <Table responsive hover>
                 <thead>

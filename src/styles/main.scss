@@ -3,6 +3,53 @@
 
 /* Worktime Custom Styles */
 
+/* Month calendar CSS variables */
+:root {
+  --month-calendar-bg: #fff;
+  --month-calendar-border: #e9ecef;
+  --month-calendar-day-bg: #fdfdfd;
+  --month-calendar-day-other: #f8f9fa;
+  --month-calendar-day-other-text: #adb5bd;
+  --month-calendar-day-weekend: #fff7f7;
+  --month-calendar-event-bg: rgba(13, 110, 253, 0.08);
+  --month-calendar-event-hover: rgba(13, 110, 253, 0.16);
+  --month-calendar-event-text: #1f2d3d;
+  --month-calendar-weekday-text: #6c757d;
+  --month-calendar-today-border: #0d6efd;
+  --month-calendar-today-bg: rgba(13, 110, 253, 0.05);
+  --month-calendar-today-shadow: rgb(13 110 253 / 0.4);
+  --month-calendar-focus-outline: #0d6efd;
+  --month-calendar-public-holiday-border: #ffb703;
+  --month-calendar-public-holiday-bg: #fff4db;
+  --month-calendar-school-holiday-border: #6f42c1;
+  --month-calendar-school-holiday-bg: #f5f0ff;
+  --month-calendar-payday-border: #198754;
+  --month-calendar-payday-bg: #e9f7ef;
+}
+
+[data-bs-theme="dark"] {
+  --month-calendar-bg: #1f242a;
+  --month-calendar-border: #2f353d;
+  --month-calendar-day-bg: #1b1f24;
+  --month-calendar-day-other: #15181c;
+  --month-calendar-day-other-text: #6c757d;
+  --month-calendar-day-weekend: #231c1c;
+  --month-calendar-event-bg: rgba(110, 168, 254, 0.18);
+  --month-calendar-event-hover: rgba(110, 168, 254, 0.28);
+  --month-calendar-event-text: #e9edf1;
+  --month-calendar-weekday-text: #9aa4b2;
+  --month-calendar-today-border: #6ea8fe;
+  --month-calendar-today-bg: rgba(110, 168, 254, 0.12);
+  --month-calendar-today-shadow: rgb(110 168 254 / 0.5);
+  --month-calendar-focus-outline: #6ea8fe;
+  --month-calendar-public-holiday-border: #d4930a;
+  --month-calendar-public-holiday-bg: rgba(212, 147, 10, 0.15);
+  --month-calendar-school-holiday-border: #9d73d4;
+  --month-calendar-school-holiday-bg: rgba(157, 115, 212, 0.15);
+  --month-calendar-payday-border: #4db380;
+  --month-calendar-payday-bg: rgba(77, 179, 128, 0.15);
+}
+
 /* Today column highlighting for schedule table */
 .today-column {
   background-color: var(--bs-primary-bg-subtle) !important;
@@ -319,7 +366,7 @@
 
 /* Time-off month calendar */
 .month-calendar {
-  background: #fff;
+  background: var(--month-calendar-bg);
   border-radius: 0.75rem;
 }
 
@@ -343,51 +390,53 @@
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-align: center;
-  color: #6c757d;
+  color: var(--month-calendar-weekday-text);
 }
 
 .month-calendar-day {
   display: flex;
   flex-direction: column;
   border-radius: 0.75rem;
-  border: 1px solid #e9ecef;
-  background: #fdfdfd;
+  border: 1px solid var(--month-calendar-border);
+  background: var(--month-calendar-day-bg);
   min-height: 140px;
   padding: 0.25rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .month-calendar-day.is-other-month {
-  background: #f8f9fa;
-  color: #adb5bd;
+  background: var(--month-calendar-day-other);
+  color: var(--month-calendar-day-other-text);
 }
 
 .month-calendar-day.is-weekend {
-  background: #fff7f7;
+  background: var(--month-calendar-day-weekend);
 }
 
 .month-calendar-day.is-public-holiday {
-  border-color: #ffb703;
-  background: #fff4db;
+  border-color: var(--month-calendar-public-holiday-border);
+  background: var(--month-calendar-public-holiday-bg);
 }
 
 .month-calendar-day.is-school-holiday {
-  border-color: #6f42c1;
-  background: #f5f0ff;
+  border-color: var(--month-calendar-school-holiday-border);
+  background: var(--month-calendar-school-holiday-bg);
 }
 
 .month-calendar-day.is-public-holiday.is-school-holiday {
-  background: linear-gradient(135deg, #fff4db, #f5f0ff);
+  background: linear-gradient(135deg, var(--month-calendar-public-holiday-bg), var(--month-calendar-school-holiday-bg));
 }
 
 .month-calendar-day.is-payday {
-  border-color: #198754;
-  background: #e9f7ef;
+  border-color: var(--month-calendar-payday-border);
+  background: var(--month-calendar-payday-bg);
 }
 
 .month-calendar-day.is-today {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 2px rgb(13 110 253 / 0.2);
+  border-color: var(--month-calendar-today-border);
+  background: var(--month-calendar-today-bg);
+  border-width: 2px;
+  box-shadow: 0 0 0 3px var(--month-calendar-today-shadow);
 }
 
 .month-calendar-day-button {
@@ -405,7 +454,7 @@
 }
 
 .month-calendar-day-button:focus-visible {
-  outline: 2px solid #0d6efd;
+  outline: 2px solid var(--month-calendar-focus-outline);
   outline-offset: 2px;
 }
 
@@ -434,7 +483,7 @@
 
 .month-calendar-event {
   border: none;
-  background: rgba(13, 110, 253, 0.08);
+  background: var(--month-calendar-event-bg);
   border-radius: 0.5rem;
   padding: 0.2rem 0.35rem;
   display: flex;
@@ -442,12 +491,12 @@
   gap: 0.35rem;
   font-size: 0.75rem;
   text-align: left;
-  color: #1f2d3d;
+  color: var(--month-calendar-event-text);
   cursor: pointer;
 }
 
 .month-calendar-event:hover {
-  background: rgba(13, 110, 253, 0.16);
+  background: var(--month-calendar-event-hover);
 }
 
 .month-calendar-event-color {
@@ -487,56 +536,6 @@
   .month-calendar-events {
     padding: 0.15rem 0.25rem 0.35rem;
   }
-}
-
-[data-bs-theme="dark"] .month-calendar {
-  background: #1f242a;
-}
-
-[data-bs-theme="dark"] .month-calendar-weekday {
-  color: #9aa4b2;
-}
-
-[data-bs-theme="dark"] .month-calendar-day {
-  border-color: #2f353d;
-  background: #1b1f24;
-  color: #e0e0e0;
-}
-
-[data-bs-theme="dark"] .month-calendar-day.is-other-month {
-  background: #15181c;
-  color: #6c757d;
-}
-
-[data-bs-theme="dark"] .month-calendar-day.is-weekend {
-  background: #231c1c;
-}
-
-[data-bs-theme="dark"] .month-calendar-day.is-today {
-  border-color: #6ea8fe;
-  box-shadow: 0 0 0 2px rgb(110 168 254 / 0.25);
-}
-
-[data-bs-theme="dark"] .month-calendar-day-button {
-  color: #e0e0e0;
-}
-
-[data-bs-theme="dark"] .month-calendar-day-button:focus-visible {
-  outline-color: #6ea8fe;
-}
-
-[data-bs-theme="dark"] .month-calendar-event {
-  background: rgba(110, 168, 254, 0.18);
-  color: #e9edf1;
-}
-
-[data-bs-theme="dark"] .month-calendar-event:hover {
-  background: rgba(110, 168, 254, 0.28);
-}
-
-[data-bs-theme="dark"] .month-calendar-event-overflow,
-[data-bs-theme="dark"] .month-calendar-event-empty {
-  color: #8b949e;
 }
 
 /* Header styling */

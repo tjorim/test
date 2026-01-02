@@ -45,10 +45,11 @@ const toSchoolHolidayMap = (holidays: SchoolHoliday[], language: string) => {
     const start = dayjs(holiday.startDate);
     const end = dayjs(holiday.endDate);
     const name = getSchoolHolidayName(holiday, language);
+    const localName = holiday.name[0]?.text ?? name;
 
     let current = start;
     while (current.isBefore(end) || current.isSame(end, "day")) {
-      map.set(formatHdayDate(current), { name });
+      map.set(formatHdayDate(current), { name, localName });
       current = current.add(1, "day");
     }
   });
