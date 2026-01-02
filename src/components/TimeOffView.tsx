@@ -106,7 +106,6 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     updateEvent,
     deleteEvent,
     deleteEvents,
-    duplicateEvent,
     duplicateEvents,
     importHday,
     exportHday,
@@ -214,13 +213,18 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
       setEventType("range");
       setEventStart(event.start || "");
       setEventEnd(event.end || "");
+      setEventWeekday(1);
     } else if (event.type === "weekly") {
       setEventType("weekly");
       setEventWeekday(event.weekday || 1);
+      setEventStart("");
+      setEventEnd("");
     }
 
     setEventTitle(event.title || "");
     setEventFlags(event.flags || []);
+    setStartDateError("");
+    setEndDateError("");
     setShowEventModal(true);
   };
 
@@ -301,8 +305,28 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   };
 
   const handleDuplicate = (index: number) => {
-    duplicateEvent(index);
-    toast.showSuccess("Event duplicated", "📄");
+    const event = events[index];
+    if (!event) return;
+
+    setEditIndex(-1);
+
+    if (event.type === "range") {
+      setEventType("range");
+      setEventStart(event.start || "");
+      setEventEnd(event.end || "");
+      setEventWeekday(1);
+    } else if (event.type === "weekly") {
+      setEventType("weekly");
+      setEventWeekday(event.weekday || 1);
+      setEventStart("");
+      setEventEnd("");
+    }
+
+    setEventTitle(event.title || "");
+    setEventFlags(event.flags || []);
+    setStartDateError("");
+    setEndDateError("");
+    setShowEventModal(true);
   };
 
   const handleBulkDuplicate = () => {
