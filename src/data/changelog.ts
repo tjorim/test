@@ -14,9 +14,42 @@ export interface ChangelogVersion {
 
 export const changelogData: ChangelogVersion[] = [
   {
+    version: "4.2.0",
+    date: "2026-01-02",
+    status: "current",
+    added: [
+      "Month Calendar Grid View: Visual calendar component with event overlays for time-off management",
+      "Calendar/Table View Toggle: Switch between calendar grid and table views",
+      "Keyboard Navigation: Arrow keys, Home, End for navigating calendar days with cross-month support",
+      "Visual Indicators: Public holidays (🎉), school holidays (🏫), and paydays (💶) displayed on calendar",
+      "DayCell Component: Dedicated component for individual calendar day cells with accessibility features",
+      "Event Type Badges: Colored badges in table view with consistent styling",
+      "Context-Aware Help Text: Different guidance shown for calendar vs table view modes",
+      "Comprehensive ARIA Labels: Full accessibility support with descriptive labels for screen readers",
+    ],
+    changed: [
+      "EmptyState Component: Simplified nested ternary operators for better readability",
+      "Inline Styles: Moved inline styling to SCSS for better maintainability",
+      "useOpenHolidays Hook: Memoized paramsKey calculation for improved performance",
+      "Error Message Dependencies: Removed unnecessary dependencies from useEffect",
+    ],
+    fixed: [
+      "December Payday Bug: Fixed incorrect payday calculation when Christmas falls on Saturday (now correctly Dec 23 instead of Dec 24)",
+      "Weekday Bounds Checking: Added validation to prevent undefined display for invalid weekday values",
+      "ARIA Grid Compatibility: Removed incompatible ARIA grid roles for CSS Grid layout",
+      "TypeScript Type Safety: Added undefined checks for optional weekday property",
+      "Hidden File Input: Added aria-label for accessibility compliance",
+    ],
+    technicalDetails: {
+      title: "Month Calendar Grid View Implementation",
+      description:
+        "Implemented comprehensive month calendar grid view for time-off management. Created MonthCalendar (299 lines) and DayCell (244 lines) components with full accessibility support including keyboard navigation, ARIA labels, and screen reader compatibility. Added view mode toggle to TimeOffView for switching between calendar and table views. Includes public holiday, school holiday, and payday indicators with emoji visualization. Added 45 comprehensive tests (20 MonthCalendar + 25 DayCell) covering rendering, navigation, events, accessibility, and keyboard interactions. Fixed December payday calculation bug and improved code quality with TypeScript documentation and SCSS organization. All 517 tests passing.",
+    },
+  },
+  {
     version: "4.1.0",
     date: "2025-12-30",
-    status: "current",
+    status: "released",
     added: [
       "Undo/Redo: History tracking with undo/redo buttons and keyboard shortcuts (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z)",
       "Bulk Operations: Select multiple events with checkboxes and perform bulk delete or duplicate",
