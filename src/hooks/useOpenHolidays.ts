@@ -23,6 +23,8 @@ export function useOpenHolidays<T>({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const paramsKey = JSON.stringify(params);
+
   useEffect(() => {
     if (!enabled) {
       setHolidays([]);
@@ -88,7 +90,15 @@ export function useOpenHolidays<T>({
     return () => {
       cancelled = true;
     };
-  }, [endpoint, params, enabled, responseErrorPrefix, timeoutError, networkError, unknownError]);
+  }, [
+    endpoint,
+    paramsKey,
+    enabled,
+    responseErrorPrefix,
+    timeoutError,
+    networkError,
+    unknownError,
+  ]);
 
   return { holidays, loading, error };
 }
