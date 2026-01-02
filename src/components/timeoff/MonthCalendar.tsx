@@ -22,35 +22,6 @@ interface MonthCalendarProps {
 const DAY_FORMAT = "YYYY-MM-DD";
 
 /**
- * MonthCalendar displays a monthly calendar grid view for .hday time-off events.
- * 
- * Features:
- * - Visual month overview with event chips on each day
- * - Maps both range events (spanning multiple days) and weekly recurring events
- * - Keyboard navigation with arrow keys, Home, and End
- * - Highlights weekends, today, and public/school holidays
- * - Visual indicators for courses, holidays, and paydays
- * - Click-to-add events on any day, click-to-edit existing events
- * - Month navigation buttons (previous, today, next)
- * 
- * Accessibility:
- * - ARIA labels for all interactive elements
- * - Focus management with keyboard navigation
- * - Screen reader announcements for month changes
- * - Semantic calendar grid structure
- * 
- * @param props - Component props
- * @param props.events - Array of .hday events to display
- * @param props.month - The currently displayed month
- * @param props.publicHolidays - Map of public holidays by date key
- * @param props.schoolHolidays - Map of school holidays by date key
- * @param props.paydayMap - Map of paydays by date key
- * @param props.onMonthChange - Callback when month navigation occurs
- * @param props.onAddEvent - Callback when user clicks to add event on a date
- * @param props.onEditEvent - Callback when user clicks to edit an existing event
- */
-
-/**
  * Parses an .hday date string (YYYY/MM/DD) to a dayjs object.
  * Converts slashes to hyphens for compatibility with dayjs.
  * @param value - The date string in YYYY/MM/DD format
@@ -80,6 +51,34 @@ const buildCalendarDays = (month: dayjs.Dayjs) => {
   return days;
 };
 
+/**
+ * MonthCalendar displays a monthly calendar grid view for .hday time-off events.
+ * 
+ * Features:
+ * - Visual month overview with event chips on each day
+ * - Maps both range events (spanning multiple days) and weekly recurring events
+ * - Keyboard navigation with arrow keys, Home, and End
+ * - Highlights weekends, today, and public/school holidays
+ * - Visual indicators for courses, holidays, and paydays
+ * - Click-to-add events on any day, click-to-edit existing events
+ * - Month navigation buttons (previous, today, next)
+ * 
+ * Accessibility:
+ * - ARIA labels for all interactive elements
+ * - Focus management with keyboard navigation
+ * - Screen reader announcements for month changes
+ * - Semantic calendar grid structure
+ * 
+ * @param props - Component props
+ * @param props.events - Array of .hday events to display
+ * @param props.month - The currently displayed month
+ * @param props.publicHolidays - Map of public holidays by date key
+ * @param props.schoolHolidays - Map of school holidays by date key
+ * @param props.paydayMap - Map of paydays by date key
+ * @param props.onMonthChange - Callback when month navigation occurs
+ * @param props.onAddEvent - Callback when user clicks to add event on a date
+ * @param props.onEditEvent - Callback when user clicks to edit an existing event
+ */
 export function MonthCalendar({
   events,
   month,

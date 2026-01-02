@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DayCell, type DayEvent } from "../../../src/components/timeoff/DayCell";
@@ -323,13 +323,11 @@ describe("DayCell", () => {
       expect(mockButtonRef.mock.calls[0][0]).toBeInstanceOf(HTMLButtonElement);
     });
 
-    it("should render with cursor pointer for interactivity", () => {
+    it("should render day button with correct CSS class", () => {
       const { container } = render(<DayCell {...defaultProps} />);
       
       const dayButton = container.querySelector(".month-calendar-day-button");
       expect(dayButton).toBeInTheDocument();
-      
-      // Note: In JSDOM, CSS might not be fully applied, but the class should be present
       expect(dayButton).toHaveClass("month-calendar-day-button");
     });
   });

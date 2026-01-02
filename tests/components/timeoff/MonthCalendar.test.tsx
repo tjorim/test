@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MonthCalendar } from "../../../src/components/timeoff/MonthCalendar";
@@ -109,9 +109,9 @@ describe("MonthCalendar", () => {
 
       render(<MonthCalendar {...defaultProps} events={events} />);
       
-      // Event should appear on all three days
+      // Event should appear on all three days (15, 16, 17)
       const eventButtons = screen.getAllByRole("button", { name: /Edit Test vacation/i });
-      expect(eventButtons.length).toBeGreaterThanOrEqual(3);
+      expect(eventButtons.length).toBe(3);
     });
 
     it("should render weekly recurring events", () => {
@@ -126,9 +126,9 @@ describe("MonthCalendar", () => {
 
       render(<MonthCalendar {...defaultProps} events={events} />);
       
-      // Should appear on multiple Mondays
+      // Should appear on all Mondays in the visible calendar (5 Mondays in Jan 2025 grid)
       const eventButtons = screen.getAllByRole("button", { name: /Edit Weekly meeting/i });
-      expect(eventButtons.length).toBeGreaterThan(1);
+      expect(eventButtons.length).toBeGreaterThanOrEqual(4);
     });
 
     it("should show event type label when no title provided", () => {
@@ -158,10 +158,9 @@ describe("MonthCalendar", () => {
       ];
 
       // Should render without hanging or errors
-      const { container } = render(<MonthCalendar {...defaultProps} events={events} />);
+      render(<MonthCalendar {...defaultProps} events={events} />);
       
       // Event should only appear on days visible in January 2025
-      expect(container).toBeInTheDocument();
       const eventButtons = screen.getAllByRole("button", { name: /Edit Long event/i });
       // Should be limited to days in the visible calendar grid (including a few days from Dec/Feb)
       // January has 31 days, but grid includes some Dec/Feb days, typically 35-42 total cells
@@ -220,21 +219,19 @@ describe("MonthCalendar", () => {
         btn.getAttribute("aria-label")?.includes("Wednesday, January 15")
       );
       
-      if (targetButton) {
-        targetButton.focus();
-        expect(targetButton).toHaveFocus();
-        
-        // Press ArrowRight
-        await user.keyboard("{ArrowRight}");
-        
-        // Focus should move to next day
-        const nextButton = dayButtons.find((btn) => 
-          btn.getAttribute("aria-label")?.includes("Thursday, January 16")
-        );
-        if (nextButton) {
-          expect(nextButton).toHaveFocus();
-        }
-      }
+      expect(targetButton).toBeDefined();
+      targetButton!.focus();
+      expect(targetButton).toHaveFocus();
+      
+      // Press ArrowRight
+      await user.keyboard("{ArrowRight}");
+      
+      // Focus should move to next day
+      const nextButton = dayButtons.find((btn) => 
+        btn.getAttribute("aria-label")?.includes("Thursday, January 16")
+      );
+      expect(nextButton).toBeDefined();
+      expect(nextButton).toHaveFocus();
     });
 
     it("should navigate to next month when pressing arrow beyond month boundary", async () => {
@@ -247,15 +244,14 @@ describe("MonthCalendar", () => {
         btn.getAttribute("aria-label")?.includes("Friday, January 31, 2025")
       );
       
-      if (lastDayButton) {
-        lastDayButton.focus();
-        
-        // Press ArrowRight to move to next month
-        await user.keyboard("{ArrowRight}");
-        
-        // Should call onMonthChange
-        expect(mockOnMonthChange).toHaveBeenCalled();
-      }
+      expect(lastDayButton).toBeDefined();
+      lastDayButton!.focus();
+      
+      // Press ArrowRight to move to next month
+      await user.keyboard("{ArrowRight}");
+      
+      // Should call onMonthChange
+      expect(mockOnMonthChange).toHaveBeenCalled();
     });
 
     it("should handle Home key to jump to first day of month", async () => {
@@ -269,23 +265,21 @@ describe("MonthCalendar", () => {
         btn.getAttribute("tabindex") === "-1"
       );
       
-      if (someButton) {
-        someButton.focus();
-        expect(someButton).toHaveFocus();
-        
-        // Press Home
-        await user.keyboard("{Home}");
-        
-        // Focus should move to first day of month (January 1)
-        // Find the first day button after Home press
-        const firstDayButton = dayButtons.find((btn) => 
-          btn.getAttribute("aria-label")?.includes("Wednesday, January 1, 2025")
-        );
-        if (firstDayButton) {
-          // The component should have updated the focused state
-          expect(firstDayButton.getAttribute("tabindex")).toBe("0");
-        }
-      }
+      expect(someButton).toBeDefined();
+      someButton!.focus();
+      expect(someButton).toHaveFocus();
+      
+      // Press Home
+      await user.keyboard("{Home}");
+      
+      // Focus should move to first day of month (January 1)
+      // Find the first day button after Home press
+      const firstDayButton = dayButtons.find((btn) => 
+        btn.getAttribute("aria-label")?.includes("Wednesday, January 1, 2025")
+      );
+      expect(firstDayButton).toBeDefined();
+      // The component should have updated the focused state
+      expect(firstDayButton!.getAttribute("tabindex")).toBe("0");
     });
 
     it("should handle End key to jump to last day of month", async () => {
@@ -298,20 +292,18 @@ describe("MonthCalendar", () => {
         btn.getAttribute("aria-label")?.includes("January 15")
       );
       
-      if (someButton) {
-        someButton.focus();
-        
-        // Press End
-        await user.keyboard("{End}");
-        
-        // Focus should move to last day of month
-        const lastDayButton = dayButtons.find((btn) => 
-          btn.getAttribute("aria-label")?.includes("Friday, January 31, 2025")
-        );
-        if (lastDayButton) {
-          expect(lastDayButton).toHaveFocus();
-        }
-      }
+      expect(someButton).toBeDefined();
+      someButton!.focus();
+      
+      // Press End
+      await user.keyboard("{End}");
+      
+      // Focus should move to last day of month
+      const lastDayButton = dayButtons.find((btn) => 
+        btn.getAttribute("aria-label")?.includes("Friday, January 31, 2025")
+      );
+      expect(lastDayButton).toBeDefined();
+      expect(lastDayButton).toHaveFocus();
     });
   });
 
