@@ -58,10 +58,14 @@ const TIME_LOCATION_FLAGS_AS_EVENT_FLAGS: readonly EventFlag[] = TIME_LOCATION_F
  */
 function EmptyState({ mode }: { mode: "calendar" | "table" }) {
   const isCalendar = mode === "calendar";
+  const containerClasses = isCalendar ? "text-center text-muted mt-4" : "text-center text-muted py-5";
+  const iconClasses = isCalendar
+    ? "bi bi-calendar-x display-6 d-block mb-2"
+    : "bi bi-calendar-x display-4 d-block mb-3";
 
   return (
-    <div className={`text-center text-muted ${isCalendar ? "mt-4" : "py-5"}`}>
-      <i className={`bi bi-calendar-x ${isCalendar ? "display-6" : "display-4"} d-block ${isCalendar ? "mb-2" : "mb-3"}`}></i>
+    <div className={containerClasses}>
+      <i className={iconClasses}></i>
       <p className={isCalendar ? "mb-0" : ""}>No time-off events yet.</p>
       <p className="small">
         {isCalendar
@@ -568,7 +572,9 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
               </Button>
             </ButtonGroup>
             <span className="text-muted small">
-              Click a day to add events, or select an event to edit.
+              {viewMode === "calendar"
+                ? "Click a day to add events, or select an event to edit."
+                : "Select events from the table to edit, duplicate, or delete."}
             </span>
           </div>
 
@@ -640,8 +646,8 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
                         </td>
                         <td>
                           <span
-                            className="badge"
-                            style={{ backgroundColor: eventColor, color: "#000" }}
+                            className="badge event-type-badge"
+                            style={{ backgroundColor: eventColor }}
                           >
                             {symbol && `${symbol} `}
                             {eventLabel}
@@ -655,7 +661,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
                             </>
                           )}
                           {event.type === "weekly" &&
-                            `Every ${event.weekday ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][event.weekday - 1] : "Unknown"}`}
+                            `Every ${event.weekday !== undefined && event.weekday >= 1 && event.weekday <= 7 ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][event.weekday - 1] : "Unknown"}`}
                           {event.type === "unknown" && (
                             <>
                               <span className="text-muted">Unknown format</span>
@@ -720,7 +726,8 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
         ref={fileInputRef}
         type="file"
         accept=".hday,text/plain"
-        style={{ display: "none" }}
+        className="d-none"
+        aria-label="Import .hday file"
         onChange={handleFileChange}
       />
 

@@ -33,12 +33,6 @@ describe("DayCell", () => {
       expect(screen.getByText("15")).toBeInTheDocument();
     });
 
-    it("should have gridcell role for accessibility", () => {
-      const { container } = render(<DayCell {...defaultProps} />);
-      const gridcell = container.querySelector('[role="gridcell"]');
-      expect(gridcell).toBeInTheDocument();
-    });
-
     it("should have accessible aria-label with full date", () => {
       render(<DayCell {...defaultProps} />);
       const button = screen.getByRole("button", { name: /Wednesday, January 15, 2025/i });
@@ -128,19 +122,21 @@ describe("DayCell", () => {
       expect(symbol?.textContent).toBe("◐");
     });
 
-    it("should use unique keys for event chips (date + index + label)", () => {
+    it("should render multiple events with the same title", () => {
       const events: DayEvent[] = [
         { event: { type: "range", start: "2025/01/15", title: "Same Event", flags: [] }, index: 0 },
         { event: { type: "range", start: "2025/01/15", title: "Same Event", flags: [] }, index: 1 },
       ];
 
       render(<DayCell {...defaultProps} events={events} />);
-      
-      // Both events should render without key conflicts
+
+      // Both events should render as separate DOM elements
+      // Note: React keys are internal and not testable via DOM queries.
+      // Key conflicts would produce console warnings during development.
       const eventButtons = screen.getAllByRole("button", { name: "Edit Same Event" });
       expect(eventButtons).toHaveLength(2);
-      
-      // Check keys are unique
+
+      // Verify they are distinct DOM elements
       const firstButton = eventButtons[0];
       const secondButton = eventButtons[1];
       expect(firstButton).not.toBe(secondButton);

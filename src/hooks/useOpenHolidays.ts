@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface UseOpenHolidaysOptions {
   endpoint: string;
@@ -23,7 +23,7 @@ export function useOpenHolidays<T>({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const paramsKey = JSON.stringify(params);
+  const paramsKey = useMemo(() => JSON.stringify(params), [params]);
 
   useEffect(() => {
     if (!enabled) {
@@ -33,7 +33,8 @@ export function useOpenHolidays<T>({
       return;
     }
 
-    let cancelled = false;
+    const abortController = new AbortController();
+    const timeoutSignal = AbortSignal.timeout(10000);
 
     const fetchHolidays = async () => {
       setLoading(true);
@@ -45,50 +46,47 @@ export function useOpenHolidays<T>({
           headers: {
             Accept: "application/json",
           },
-          signal: AbortSignal.timeout(10000),
+          signal: AbortSignal.any([abortController.signal, timeoutSignal]),
         });
 
-        if (!cancelled && !response.ok) {
+        if (!response.ok) {
           throw new Error(`${responseErrorPrefix}: ${response.status} ${response.statusText}`);
         }
 
-        if (cancelled) {
-          return;
-        }
-
         const data: T[] = await response.json();
-
-        if (!cancelled) {
-          setHolidays(data);
-        }
+        setHolidays(data);
       } catch (err) {
-        if (!cancelled) {
-          if (err instanceof Error) {
-            if (err.name === "AbortError" || err.name === "TimeoutError") {
+        if (err instanceof Error) {
+          if (err.name === "AbortError" || err.name === "TimeoutError") {
+            // Check if it was a timeout (not a manual abort)
+            if (timeoutSignal.aborted && !abortController.signal.aborted) {
               setError(timeoutError);
-            } else if (err.message.startsWith(responseErrorPrefix)) {
-              setError(err.message);
-            } else if (err.message.includes("Failed to fetch")) {
-              setError(networkError);
-            } else {
-              setError(err.message);
+              setHolidays([]);
             }
-          } else {
-            setError(unknownError);
+            // If manually aborted (cleanup), don't set error - silent abort
+            return;
           }
-          setHolidays([]);
+          if (err.message.startsWith(responseErrorPrefix)) {
+            setError(err.message);
+          } else if (err instanceof TypeError) {
+            // TypeError is thrown for network failures across all browsers
+            setError(networkError);
+          } else {
+            setError(err.message);
+          }
+        } else {
+          setError(unknownError);
         }
+        setHolidays([]);
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     };
 
     fetchHolidays();
 
     return () => {
-      cancelled = true;
+      abortController.abort();
     };
   }, [
     endpoint,

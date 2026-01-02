@@ -29,6 +29,7 @@ export interface SchoolHoliday {
 const DEFAULT_LANGUAGE = "EN";
 const DEFAULT_COUNTRY = "NL";
 const DEFAULT_SUBDIVISION = "NL-NH";
+const NATIVE_LANGUAGE = "NL"; // Dutch is the native language for Netherlands
 
 export function getSchoolHolidayName(holiday: SchoolHoliday, language: string = DEFAULT_LANGUAGE) {
   const match = holiday.name.find((entry) => entry.language === language);
@@ -38,14 +39,19 @@ export function getSchoolHolidayName(holiday: SchoolHoliday, language: string = 
   return holiday.name[0]?.text ?? "School Holiday";
 }
 
-const toSchoolHolidayMap = (holidays: SchoolHoliday[], language: string) => {
+const toSchoolHolidayMap = (
+  holidays: SchoolHoliday[],
+  language: string,
+  nativeLanguage: string,
+) => {
   const map = new Map<string, SchoolHolidayInfo>();
 
   holidays.forEach((holiday) => {
     const start = dayjs(holiday.startDate);
     const end = dayjs(holiday.endDate);
     const name = getSchoolHolidayName(holiday, language);
-    const localName = holiday.name[0]?.text ?? name;
+    // Extract the local/native language name (e.g., "NL" for Netherlands = Dutch)
+    const localName = getSchoolHolidayName(holiday, nativeLanguage);
 
     let current = start;
     while (current.isBefore(end) || current.isSame(end, "day")) {
@@ -91,7 +97,9 @@ export function useSchoolHolidays(
 
   const schoolHolidayMap = useMemo(
     () =>
-      isEnabled ? toSchoolHolidayMap(holidays, language) : new Map<string, SchoolHolidayInfo>(),
+      isEnabled
+        ? toSchoolHolidayMap(holidays, language, NATIVE_LANGUAGE)
+        : new Map<string, SchoolHolidayInfo>(),
     [holidays, isEnabled, language],
   );
 

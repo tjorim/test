@@ -70,7 +70,21 @@ export const formatHdayDate = (date: string | Date | dayjs.Dayjs): string => {
 };
 
 /**
- * Pad a number to two digits.
+ * Pad a number to two digits with leading zeros.
+ *
+ * @param value - A non-negative integer in the range 0-99
+ * @returns The value as a zero-padded 2-character string
+ *
+ * @example
+ * pad2(5)  // "05"
+ * pad2(15) // "15"
+ * pad2(0)  // "00"
+ *
+ * @remarks
+ * - Values >= 100 are not padded (e.g., 150 → "150")
+ * - Negative numbers preserve the sign (e.g., -5 → "-5")
+ * - Non-integers are converted to strings as-is (e.g., 3.5 → "3.5")
+ * - For date/time formatting, ensure input is a valid integer 0-99
  */
 export const pad2 = (value: number): string => {
   return value.toString().padStart(2, "0");

@@ -165,7 +165,6 @@ export function DayCell({
 
   return (
     <div
-      role="gridcell"
       className={[
         "month-calendar-day",
         !isCurrentMonth ? "is-other-month" : "",
@@ -228,7 +227,7 @@ export function DayCell({
                   <span
                     className="month-calendar-event-symbol"
                     role="img"
-                    aria-label={SYMBOL_LABELS[symbol]}
+                    aria-label={SYMBOL_LABELS[symbol] || symbol}
                   >
                     {symbol}
                   </span>

@@ -22,6 +22,7 @@ export interface PublicHoliday {
 
 const DEFAULT_LANGUAGE = "EN";
 const DEFAULT_COUNTRY = "NL";
+const NATIVE_LANGUAGE = "NL"; // Dutch is the native language for Netherlands
 
 export function getPublicHolidayName(
   holiday: PublicHoliday,
@@ -34,14 +35,15 @@ export function getPublicHolidayName(
   return holiday.name[0]?.text ?? "Public Holiday";
 }
 
-const toHolidayMap = (holidays: PublicHoliday[], language: string) => {
+const toHolidayMap = (holidays: PublicHoliday[], language: string, nativeLanguage: string) => {
   const map = new Map<string, PublicHolidayInfo>();
 
   holidays.forEach((holiday) => {
     const start = dayjs(holiday.startDate);
     const end = dayjs(holiday.endDate);
     const name = getPublicHolidayName(holiday, language);
-    const localName = holiday.name[0]?.text ?? name;
+    // Extract the local/native language name (e.g., "NL" for Netherlands = Dutch)
+    const localName = getPublicHolidayName(holiday, nativeLanguage);
 
     let current = start;
     while (current.isBefore(end) || current.isSame(end, "day")) {
@@ -83,7 +85,10 @@ export function usePublicHolidays(
   });
 
   const publicHolidayMap = useMemo(
-    () => (isEnabled ? toHolidayMap(holidays, language) : new Map<string, PublicHolidayInfo>()),
+    () =>
+      isEnabled
+        ? toHolidayMap(holidays, language, NATIVE_LANGUAGE)
+        : new Map<string, PublicHolidayInfo>(),
     [holidays, isEnabled, language],
   );
 

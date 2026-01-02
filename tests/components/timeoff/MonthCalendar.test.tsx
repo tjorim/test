@@ -46,18 +46,16 @@ describe("MonthCalendar", () => {
       expect(screen.getByRole("button", { name: "Next month" })).toBeInTheDocument();
     });
 
-    it("should have semantic grid structure with ARIA roles", () => {
+    it("should have semantic calendar structure", () => {
       render(<MonthCalendar {...defaultProps} />);
-      const grid = screen.getByRole("grid", { name: "Month calendar" });
-      expect(grid).toBeInTheDocument();
-      
-      const columnHeaders = screen.getAllByRole("columnheader");
-      expect(columnHeaders).toHaveLength(7); // 7 weekdays
+      const calendar = screen.getByLabelText("Month calendar");
+      expect(calendar).toBeInTheDocument();
+      expect(calendar).toHaveClass("month-calendar-grid");
     });
 
     it("should have aria-live on month title for screen readers", () => {
-      const { container } = render(<MonthCalendar {...defaultProps} />);
-      const title = container.querySelector(".month-calendar-title");
+      render(<MonthCalendar {...defaultProps} />);
+      const title = screen.getByTestId("month-title");
       expect(title).toHaveAttribute("aria-live", "polite");
     });
   });
@@ -88,10 +86,12 @@ describe("MonthCalendar", () => {
     it("should call onMonthChange with current month when clicking Today", async () => {
       const user = userEvent.setup();
       render(<MonthCalendar {...defaultProps} />);
-      
+
       await user.click(screen.getByRole("button", { name: "Jump to current month" }));
-      
+
       expect(mockOnMonthChange).toHaveBeenCalledTimes(1);
+      const calledMonth = mockOnMonthChange.mock.calls[0][0];
+      expect(calledMonth.format("YYYY-MM")).toBe(dayjs().format("YYYY-MM"));
     });
   });
 
@@ -125,10 +125,11 @@ describe("MonthCalendar", () => {
       ];
 
       render(<MonthCalendar {...defaultProps} events={events} />);
-      
-      // Should appear on all Mondays in the visible calendar (5 Mondays in Jan 2025 grid)
+
+      // Should appear on all Mondays in the visible calendar
+      // Jan 2025 grid shows: Dec 30 (Mon), Jan 6, 13, 20, 27 (Mon) = 5 Mondays total
       const eventButtons = screen.getAllByRole("button", { name: /Edit Weekly meeting/i });
-      expect(eventButtons.length).toBeGreaterThanOrEqual(4);
+      expect(eventButtons.length).toBe(5);
     });
 
     it("should show event type label when no title provided", () => {
@@ -257,29 +258,30 @@ describe("MonthCalendar", () => {
     it("should handle Home key to jump to first day of month", async () => {
       const user = userEvent.setup();
       render(<MonthCalendar {...defaultProps} />);
-      
-      // Focus any day button (using a day in January)
+
+      // Navigate to January 15 using arrow keys
+      // Initial focus is on January 1, so press ArrowRight 14 times to reach January 15
+      for (let i = 0; i < 14; i++) {
+        await user.keyboard("{ArrowRight}");
+      }
+
+      // Verify we're on January 15
       const dayButtons = screen.getAllByRole("button");
-      const someButton = dayButtons.find((btn) => 
-        btn.getAttribute("aria-label")?.includes("January 15") && 
-        btn.getAttribute("tabindex") === "-1"
+      const jan15Button = dayButtons.find((btn) =>
+        btn.getAttribute("aria-label")?.includes("Wednesday, January 15, 2025")
       );
-      
-      expect(someButton).toBeDefined();
-      someButton!.focus();
-      expect(someButton).toHaveFocus();
-      
+      expect(jan15Button).toBeDefined();
+      expect(jan15Button).toHaveFocus();
+
       // Press Home
       await user.keyboard("{Home}");
-      
+
       // Focus should move to first day of month (January 1)
-      // Find the first day button after Home press
-      const firstDayButton = dayButtons.find((btn) => 
+      const firstDayButton = dayButtons.find((btn) =>
         btn.getAttribute("aria-label")?.includes("Wednesday, January 1, 2025")
       );
       expect(firstDayButton).toBeDefined();
-      // The component should have updated the focused state
-      expect(firstDayButton!.getAttribute("tabindex")).toBe("0");
+      expect(firstDayButton).toHaveFocus();
     });
 
     it("should handle End key to jump to last day of month", async () => {

@@ -19,9 +19,10 @@ const getPaydayForMonth = (
   holidayMap: Map<string, PublicHolidayInfo>,
 ) => {
   const scheduledPayday = dayjs(`${year}-${pad2(month)}-${PAYDAY_DAY_OF_MONTH}`);
-  const isWeekend = getISOWeekday(scheduledPayday) >= 6;
+  // Special rule: December payday is always set to the 23rd to avoid December 24 (Christmas Eve).
+  // This ensures employees receive their salary well before the Christmas holiday period.
   const isDecemberChristmasHoliday =
-    month === 12 && holidayMap.has(formatHdayDate(scheduledPayday)) && !isWeekend;
+    month === 12 && holidayMap.has(formatHdayDate(scheduledPayday));
   let payday = isDecemberChristmasHoliday ? dayjs(`${year}-12-23`) : scheduledPayday;
   while (!isBusinessDay(payday, holidayMap)) {
     payday = payday.subtract(1, "day");

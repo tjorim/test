@@ -29,7 +29,8 @@ const DAY_FORMAT = "YYYY-MM-DD";
  */
 const parseHdayDate = (value?: string) => {
   if (!value) return null;
-  return dayjs(value.replace(/\//g, "-"));
+  const parsed = dayjs(value.replace(/\//g, "-"));
+  return parsed.isValid() ? parsed : null;
 };
 
 /**
@@ -159,7 +160,12 @@ export function MonthCalendar({
           addEvent(current, { event, index });
           current = current.add(1, "day");
         }
-      } else if (event.type === "weekly" && event.weekday) {
+      } else if (
+        event.type === "weekly" &&
+        event.weekday &&
+        event.weekday >= 1 &&
+        event.weekday <= 7
+      ) {
         const firstOccurrence = days.find((day) => day.isoWeekday() === event.weekday);
         if (!firstOccurrence) return;
         let current = firstOccurrence;
@@ -236,7 +242,7 @@ export function MonthCalendar({
           <Button
             variant="outline-secondary"
             size="sm"
-            onClick={() => onMonthChange(dayjs())}
+            onClick={() => handleMoveFocus(dayjs())}
             aria-label="Jump to current month"
           >
             Today
@@ -250,14 +256,14 @@ export function MonthCalendar({
             <i className="bi bi-chevron-right" aria-hidden="true"></i>
           </Button>
         </div>
-        <div className="month-calendar-title" aria-live="polite">
+        <div className="month-calendar-title" data-testid="month-title" aria-live="polite">
           <span>{month.format("MMMM YYYY")}</span>
         </div>
       </div>
 
-      <div className="month-calendar-grid" role="grid" aria-label="Month calendar">
+      <div className="month-calendar-grid" aria-label="Month calendar">
         {weekDays.map((label) => (
-          <div key={label} className="month-calendar-weekday" role="columnheader">
+          <div key={label} className="month-calendar-weekday">
             {label}
           </div>
         ))}
