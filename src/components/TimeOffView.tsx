@@ -223,13 +223,22 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     setEndDateError("");
   };
 
-  const handleOpenEditModal = (index: number) => {
+  /**
+   * Opens the event modal with pre-filled form data from an existing event.
+   * @param index - Index of the event to use for pre-filling
+   * @param editIndex - The edit index to set (-1 for new/duplicate, or event index for editing)
+   */
+  const openEventModalWithPrefill = (index: number, editIndex: number) => {
     const event = events[index];
     if (!event) return;
 
-    setEditIndex(index);
+    setEditIndex(editIndex);
     prefillFormFromEvent(event);
     setShowEventModal(true);
+  };
+
+  const handleOpenEditModal = (index: number) => {
+    openEventModalWithPrefill(index, index);
   };
 
   const handleSubmitEvent = () => {
@@ -309,12 +318,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   };
 
   const handleDuplicate = (index: number) => {
-    const event = events[index];
-    if (!event) return;
-
-    setEditIndex(-1);
-    prefillFormFromEvent(event);
-    setShowEventModal(true);
+    openEventModalWithPrefill(index, -1);
   };
 
   const handleBulkDuplicate = () => {
