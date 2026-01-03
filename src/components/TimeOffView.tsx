@@ -100,13 +100,13 @@ interface TimeOffViewProps {
 }
 
 export function TimeOffView({ isActive = true }: TimeOffViewProps) {
+  const DEFAULT_WEEKDAY = 1;
   const {
     events,
     addEvent,
     updateEvent,
     deleteEvent,
     deleteEvents,
-    duplicateEvent,
     duplicateEvents,
     importHday,
     exportHday,
@@ -128,7 +128,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
 
   // Event form state
   const [eventType, setEventType] = useState<"range" | "weekly">("range");
-  const [eventWeekday, setEventWeekday] = useState(1);
+  const [eventWeekday, setEventWeekday] = useState(DEFAULT_WEEKDAY);
   const [eventStart, setEventStart] = useState("");
   const [eventEnd, setEventEnd] = useState("");
   const [eventTitle, setEventTitle] = useState("");
@@ -150,7 +150,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
 
   const resetForm = () => {
     setEventType("range");
-    setEventWeekday(1);
+    setEventWeekday(DEFAULT_WEEKDAY);
     setEventStart("");
     setEventEnd("");
     setEventTitle("");
@@ -204,24 +204,41 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
     setShowEventModal(true);
   };
 
-  const handleOpenEditModal = (index: number) => {
-    const event = events[index];
-    if (!event) return;
-
-    setEditIndex(index);
-
+  const prefillFormFromEvent = (event: HdayEvent) => {
     if (event.type === "range") {
       setEventType("range");
       setEventStart(event.start || "");
       setEventEnd(event.end || "");
+      setEventWeekday(DEFAULT_WEEKDAY);
     } else if (event.type === "weekly") {
       setEventType("weekly");
-      setEventWeekday(event.weekday || 1);
+      setEventWeekday(event.weekday || DEFAULT_WEEKDAY);
+      setEventStart("");
+      setEventEnd("");
     }
 
     setEventTitle(event.title || "");
     setEventFlags(event.flags || []);
+    setStartDateError("");
+    setEndDateError("");
+  };
+
+  /**
+   * Opens the event modal with pre-filled form data from an existing event.
+   * @param index - Index of the event to use for pre-filling
+   * @param editIndex - The edit index to set (-1 for new/duplicate, or event index for editing)
+   */
+  const openEventModalWithPrefill = (index: number, editIndex: number) => {
+    const event = events[index];
+    if (!event) return;
+
+    setEditIndex(editIndex);
+    prefillFormFromEvent(event);
     setShowEventModal(true);
+  };
+
+  const handleOpenEditModal = (index: number) => {
+    openEventModalWithPrefill(index, index);
   };
 
   const handleSubmitEvent = () => {
@@ -301,8 +318,7 @@ export function TimeOffView({ isActive = true }: TimeOffViewProps) {
   };
 
   const handleDuplicate = (index: number) => {
-    duplicateEvent(index);
-    toast.showSuccess("Event duplicated", "📄");
+    openEventModalWithPrefill(index, -1);
   };
 
   const handleBulkDuplicate = () => {
